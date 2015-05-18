@@ -1,0 +1,63 @@
+{% extends 'explorer/base.html' %}
+{% load staticfiles %}
+
+{% block css_block %}
+    <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/leaflet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/leaflet.label.css' %}">	
+    <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/Control.Geocoder.css' %}">	
+{% endblock %}
+
+{% block head_js_block %}
+{% endblock %}
+	
+
+{% block content %}
+
+    <!-- #popup-wrapper-->
+    <div id="popup-wrapper" class="popup-wrapper">
+        <div class="popup-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button type="button" class="close right" id="popup-close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="descriptionTitle"></div>
+                        <div id="description"></div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#popup-wrapper-->
+
+    <!-- Map Content -->
+    <div id="map" class="map"></div>
+
+{% endblock %}
+
+{% block modal_block %}
+{% endblock %}
+
+{% block js_block %}
+    <script type="text/javascript">
+        var startDate = '{{ startDate }}';
+        var endDate = '{{ endDate }}';
+    </script>
+	<script type="text/javascript" src="{% static 'explorer/js/d3.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/moment.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/leaflet.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/leaflet.label-src.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/topojson.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/Control.Geocoder.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/SoundExplorerMap.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/application.js' %}"></script>
+	<script type="text/javascript" src="{% static 'explorer/js/controllers.js' %}"></script>
+{% endblock %}
+
+
+	
+	
+

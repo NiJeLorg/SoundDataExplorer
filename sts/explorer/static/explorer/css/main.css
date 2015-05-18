@@ -1,0 +1,119 @@
+/*!
+ * Main css for DNAinfo Crime Map
+ */
+
+html, body {
+    height: 100%;
+    color: #252525;
+}
+
+.map {
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    width:100%;
+    margin-top: 50px;
+	overflow: hidden;
+	-webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.map-popup-wrapper-open {
+	bottom:250px;
+}
+
+.popup-wrapper {
+    z-index: 1001;
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 0px;
+    overflow: auto;
+    background: #fff; /*#d9d9d9;*/
+    border-top: #545454 1px solid;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.popup-wrapper-open {
+	height: 250px;
+}
+ 
+.popup-content {
+	display: none;
+	text-align: left;
+	width: 100%;
+	padding: 8px;
+    height: 25%;
+    display: block;	
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #545454;
+  shape-rendering: crispEdges;
+  width: 1px;
+}
+
+
+/*
+* Leaflet overrides
+*/
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+	background-color: #595959;
+}
+
+/*
+* Bootstrap overrides
+*/
+
+.navbar {
+	min-height: 50px;
+	margin-bottom: 0px;
+	border-radius: 0px; 
+}
+
+.navbar-default {
+	border-color: #098ca8;
+}
+
+.navbar-default .navbar-brand {
+	color: #098ca8;
+}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+	color: #545454;
+	background-color: transparent;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #098ca8;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #545454;
+  background-color: transparent;
+}
+
+.navbar-right {
+  margin-right: 15px;
+}
+
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+  color: #dbdbdb;
+  background-color: #931212;
+}
+
+
+
