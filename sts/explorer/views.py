@@ -41,7 +41,7 @@ def beaconApi(request):
 		beaches = Beaches.objects.all()
 		for beach in beaches:
 			#pull data based on date range selected
-			scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('DryWeatherPassSamples'), Sum('WetWeatherPassSamples'))
+			scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
 			for score in scores:
 				if score['NumberOfSamples__sum'] > 0:
 					# parse dates into strings
@@ -56,7 +56,9 @@ def beaconApi(request):
 					data['properties']['EndDate'] = endDateobject
 					data['properties']['NumberOfSamples'] = score['NumberOfSamples__sum']
 					data['properties']['TotalPassSamples'] = score['TotalPassSamples__sum']
+					data['properties']['TotalDryWeatherSamples'] = score['TotalDryWeatherSamples__sum']
 					data['properties']['DryWeatherPassSamples'] = score['DryWeatherPassSamples__sum']
+					data['properties']['TotalWetWeatherSamples'] = score['TotalWetWeatherSamples__sum']
 					data['properties']['WetWeatherPassSamples'] = score['WetWeatherPassSamples__sum']
 					data['geometry'] = {}
 					data['geometry']['type'] = 'Point'

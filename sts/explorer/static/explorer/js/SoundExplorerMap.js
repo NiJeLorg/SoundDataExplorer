@@ -46,7 +46,14 @@ SoundExplorerMap.onEachFeature_POINTS = function(feature,layer){
         color: '#f1f1f1'
 	};
 
-	layer.bindLabel("<span class='text-capitalize'>" + feature.properties.BeachName + "</span>", { direction:'auto' });
+
+	var pctPass = ((feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100).toFixed(1);
+
+	var pctDryPass = ((feature.properties.DryWeatherPassSamples / feature.properties.TotalDryWeatherSamples) * 100).toFixed(1);
+
+	var pctWetPass = ((feature.properties.WetWeatherPassSamples / feature.properties.TotalWetWeatherSamples) * 100).toFixed(1);
+
+	layer.bindLabel("<span class='text-capitalize'>" + feature.properties.BeachName + "<br />" + feature.properties.County + "</span> County, " + feature.properties.State + "<br />" + pctPass + "% of total samples pass<br />" + pctDryPass + "% of dry weather samples pass<br />" + pctWetPass + "% of wet weather samples pass<br />" + feature.properties.NumberOfSamples + " total samples", { direction:'auto' });
 	
     layer.on('mouseover', function(ev) {		
 
@@ -123,7 +130,7 @@ SoundExplorerMap.SDEPctPassColor = function (d){
            d > 85 ? '#f9ae08' :
            d > 78 ? '#f9ae08' :
            d >= 0 ? '#ef4136' :
-                   '#545454' ;	
+                   	'#545454' ;	
 }
 
 
