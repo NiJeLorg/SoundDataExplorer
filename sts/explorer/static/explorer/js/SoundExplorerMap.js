@@ -173,6 +173,14 @@ SoundExplorerMap.drawTimeSlider = function (){
 					.on("slideend", function(evt, value) {
 						// run a function to update map layers with new dates
 						SoundExplorerMap.updateMapFromSlider(value);
+						// update combo boxes
+						var start_date = moment(value[0]).format('YYYY-MM');
+						start_date = start_date + '-01';
+						console.log(start_date);
+						$( "#start_date" ).val(start_date);
+						var end_date = moment(value[1]).format('YYYY-MM');
+						end_date = end_date + '-01';
+						$( "#end_date" ).val(end_date);
 					});
 
 	d3.select('#timeSlider').call(mapSlider);
@@ -195,10 +203,6 @@ SoundExplorerMap.updateMapFromSlider = function (value){
 		// add new data
 		MY_MAP.POINTS.addData(geojsonData);
 	});
-
-
-
-	
 
 }
 
