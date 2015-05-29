@@ -18,9 +18,10 @@ from django.db.models import Sum
 
 # Create your views here.
 def index(request):	
-	startDate = request.GET.get("startDate","2000-01-01")
-	endDate = request.GET.get("endDate","2020-01-01")
-	context_dict = {'startDate': startDate, 'endDate': endDate}
+	#startDate = request.GET.get("startDate","2000-01-01")
+	#endDate = request.GET.get("endDate","2100-01-01")
+	#context_dict = {'startDate': startDate, 'endDate': endDate}
+	context_dict = {}
 	return render(request, 'explorer/index.html', context_dict)
 
 def beaconApi(request):
@@ -30,7 +31,7 @@ def beaconApi(request):
 
 	if request.method == 'GET':
 		startDate = request.GET.get("startDate","2000-01-01")
-		endDate = request.GET.get("endDate","2020-01-01")
+		endDate = request.GET.get("endDate","2100-01-01")
 		# create data objects from start and end dates
 		startDateparsed = dateutil.parser.parse(startDate)
 		startDateobject = startDateparsed.date()

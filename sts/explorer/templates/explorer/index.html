@@ -5,6 +5,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/leaflet.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/leaflet.label.css' %}">	
     <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/Control.Geocoder.css' %}">	
+    <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/d3.slider.css' %}"> 
+
 {% endblock %}
 
 {% block head_js_block %}
@@ -18,14 +20,32 @@
         <div class="popup-content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-9">
+                        <form class="form-inline padding-top-5 padding-bottom-10">
+                          <div class="form-group">
+                            <label for="vda">View Data As: </label>
+                            <select class="form-control" id="vda">
+                              <option>Interactive Timeline</option>
+                            </select>
+                          </div>
+                          <div class="form-group pull-right">
+                            <label for="start_date">Select Data Between: </label>
+                            <select class="form-control" name="start_date" id="start_date"></select>
+                            <select class="form-control" name="end_date" id="end_date"></select>
+                          </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-3 grey-background">
                         <button type="button" class="close right" id="popup-close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="pull-left padding-top-5 padding-bottom-10">Points of Interest</h4>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-6">
-                        <div id="descriptionTitle"></div>
-                        <div id="description"></div>
+                    <div class="col-sm-9">
+                        <div id="timeSlider"></div>
+                    </div>  
+                    <div class="col-sm-3 grey-background">
+                        <p>List of Layers</p>
                     </div>  
                 </div>
             </div>
@@ -42,15 +62,12 @@
 {% endblock %}
 
 {% block js_block %}
-    <script type="text/javascript">
-        var startDate = '{{ startDate }}';
-        var endDate = '{{ endDate }}';
-    </script>
 	<script type="text/javascript" src="{% static 'explorer/js/d3.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/moment.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/leaflet.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/leaflet.label-src.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/topojson.js' %}"></script>
+    <script type="text/javascript" src="{% static 'explorer/js/d3.slider.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/Control.Geocoder.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/SoundExplorerMap.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/application.js' %}"></script>

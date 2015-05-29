@@ -9,9 +9,10 @@
 var POINTS = null;
 var MY_MAP = null;
 var count = 0;
+var mapSlider = null;
 
 $().ready(new function(){
     var myMap = new SoundExplorerMap();
     myMap.loadPointLayers();
-    MY_MAP = myMap;			
+    MY_MAP = myMap;	
 });

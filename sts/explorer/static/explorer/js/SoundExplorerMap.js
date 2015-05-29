@@ -13,6 +13,7 @@ function SoundExplorerMap() {
 		maxZoom:17,
     	center: this.center,
    	 	zoom: this.zoom,
+   	 	zoomControl: false,
 	});
 	
 	// add CartoDB tiles
@@ -20,6 +21,9 @@ function SoundExplorerMap() {
 	  attribution: 'Created By <a href="http://nijel.org/">NiJeL</a> | &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 	});
 	this.map.addLayer(this.CartoDBLayer);
+
+	// load zoom control in top right
+	this.map.addControl(L.control.zoom({ position: 'topright' }));
 	
 	//load geocoder control
 	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Address Search', geocoder:new L.Control.Geocoder.Google()}));
@@ -35,6 +39,7 @@ function SoundExplorerMap() {
 	this.POINTS = null;
 
 }
+
 
 SoundExplorerMap.onEachFeature_POINTS = function(feature,layer){	
 	var highlight = {
@@ -91,6 +96,10 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 	// load points layers
 	var thismap = this;
 
+	// create date for today and for 5 years ago
+	var endDate = moment().endOf('month').add(1, 'days').format("YYYY-MM-DD");
+	var startDate = moment().subtract(5, 'years').startOf('month').format("YYYY-MM-DD");
+
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
 
@@ -103,9 +112,14 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 			onEachFeature: SoundExplorerMap.onEachFeature_POINTS
 		}).addTo(thismap.map);
 
+		// draw time slider with these data
+		SoundExplorerMap.drawTimeSlider(geojsonData.features);
+
 	});
 
 }
+
+
 
 SoundExplorerMap.getStyleFor_POINTS = function (feature, latlng){
 	var pctPass = (feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100
@@ -131,6 +145,61 @@ SoundExplorerMap.SDEPctPassColor = function (d){
            d > 78 ? '#f9ae08' :
            d >= 0 ? '#ef4136' :
                    	'#545454' ;	
+}
+
+
+SoundExplorerMap.drawTimeSlider = function (){
+	var minDate = new Date(2004,0,1);
+	var maxDate = moment().toDate();
+	var fiveYearAgo = moment().subtract(5, 'years').toDate();
+
+	mapSlider = d3.slider()
+					.axis(
+						d3.svg.axis()
+							.orient("top")
+							.scale(
+								d3.time.scale()
+									.domain([minDate, maxDate])
+							)
+							.ticks(d3.time.years)
+							.tickSize(24, 0)
+							.tickFormat(d3.time.format("%Y"))
+					)
+					.scale(
+						d3.time.scale()
+							.domain([minDate, maxDate])
+					)
+					.value( [ fiveYearAgo, maxDate ] )
+					.on("slideend", function(evt, value) {
+						// run a function to update map layers with new dates
+						SoundExplorerMap.updateMapFromSlider(value);
+					});
+
+	d3.select('#timeSlider').call(mapSlider);
+
+}
+
+SoundExplorerMap.updateMapFromSlider = function (value){
+	// moment parses unix offsets and javascript date objects in the same way
+	var startDate = moment(value[0]).startOf('month').format("YYYY-MM-DD");
+	var endDate = moment(value[1]).endOf('month').format("YYYY-MM-DD");
+
+	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
+		geojsonData = data;
+
+		$.each(geojsonData.features, function(i, d){
+			d.properties.leafletId = 'layerID' + i;
+		});
+		// clear layer
+		MY_MAP.POINTS.clearLayers();
+		// add new data
+		MY_MAP.POINTS.addData(geojsonData);
+	});
+
+
+
+	
+
 }
 
 
