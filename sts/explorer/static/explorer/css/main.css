@@ -1,5 +1,5 @@
 /*!
- * Main css for DNAinfo Crime Map
+ * Main css for Sound Data Explorer
  */
 
 html, body {
@@ -90,6 +90,18 @@ html, body {
 /*
 * Bootstrap overrides
 */
+
+@font-face {
+    font-family: 'Print Clearly';
+    src: url('../fonts/PrintClearly-webfont.eot');
+    src: url('../fonts/PrintClearly-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/PrintClearly-webfont.woff') format('woff'),
+         url('../fonts/PrintClearly-webfont.ttf') format('truetype'),
+         url('../fonts/PrintClearly-webfont.svg#print_clearlyregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
 
 .navbar {
 	min-height: 50px;

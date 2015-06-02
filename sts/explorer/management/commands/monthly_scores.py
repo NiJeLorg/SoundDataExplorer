@@ -32,40 +32,34 @@ class Command(BaseCommand):
 				NumberOfSamples = len(samples)
 				if NumberOfSamples > 0:
 					for sample in samples:
-						today = sample.StartDate
-						threeDaysAgo = sample.StartDate + relativedelta(days=-3)
-						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-						print sample
-						print precip['PrecipitationIn__sum']
+						#skip Total Coliform samples
+						if sample.CharacteristicName != 'Total Coliform':
+							today = sample.StartDate
+							threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+							precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+							print sample
+							print precip['PrecipitationIn__sum']
 
-						if precip['PrecipitationIn__sum'] >= 0.5:
-							TotalWetWeatherSamples += 1
-						else:
-							TotalDryWeatherSamples += 1 
+							if precip['PrecipitationIn__sum'] > 0.5:
+								TotalWetWeatherSamples += 1
+							else:
+								TotalDryWeatherSamples += 1 
 
-						if sample.CharacteristicName == 'Enterococcus':
-							if sample.ResultValue <= 104:
-								TotalPassSamples += 1
-								if precip['PrecipitationIn__sum'] >= 0.5:
-									WetWeatherPassSamples += 1
-								else:
-									DryWeatherPassSamples += 1
+							if sample.CharacteristicName == 'Enterococcus':
+								if sample.ResultValue < 104:
+									TotalPassSamples += 1
+									if precip['PrecipitationIn__sum'] > 0.5:
+										WetWeatherPassSamples += 1
+									else:
+										DryWeatherPassSamples += 1
 
-						elif sample.CharacteristicName == 'Fecal Coliform':
-							if sample.ResultValue <= 100:
-								TotalPassSamples = TotalPassSamples + 1
-								if precip['PrecipitationIn__sum'] >= 0.5:
-									WetWeatherPassSamples += 1
-								else:
-									DryWeatherPassSamples += 1
-
-						elif sample.CharacteristicName == 'Total Coliform':
-							if sample.ResultValue <= 100:
-								TotalPassSamples = TotalPassSamples + 1
-								if precip['PrecipitationIn__sum'] >= 0.5:
-									WetWeatherPassSamples += 1
-								else:
-									DryWeatherPassSamples += 1
+							elif sample.CharacteristicName == 'Fecal Coliform':
+								if sample.ResultValue < 1000:
+									TotalPassSamples = TotalPassSamples + 1
+									if precip['PrecipitationIn__sum'] > 0.5:
+										WetWeatherPassSamples += 1
+									else:
+										DryWeatherPassSamples += 1
 
 				# write to database
 				obj, created = MonthlyScores.objects.update_or_create(BeachID=beach, MonthYear=firstOfMonth, NumberOfSamples=NumberOfSamples, TotalPassSamples=TotalPassSamples, TotalDryWeatherSamples=TotalDryWeatherSamples, DryWeatherPassSamples=DryWeatherPassSamples, TotalWetWeatherSamples=TotalWetWeatherSamples, WetWeatherPassSamples=WetWeatherPassSamples)

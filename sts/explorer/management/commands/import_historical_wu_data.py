@@ -17,7 +17,7 @@ class Command(BaseCommand):
 		stations = WeatherStations.objects.distinct()
 		#between today and 2004
 		today = datetime.today()
-		earliest = datetime(2012, 2, 1)
+		earliest = datetime(2012, 8, 1)
 
 		for dateEval in rrule(MONTHLY, dtstart=earliest, until=today):
 			print dateEval.strftime("%Y/%m/%d")

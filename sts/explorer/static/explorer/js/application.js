@@ -6,7 +6,8 @@
 /*
   On DOM load handlers
  */
-var POINTS = null;
+var BEACON_POINTS = null;
+var BEACON_D3_POINTS = null;
 var MY_MAP = null;
 var count = 0;
 var mapSlider = null;
