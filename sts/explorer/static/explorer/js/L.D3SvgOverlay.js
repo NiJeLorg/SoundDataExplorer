@@ -225,6 +225,7 @@ L.D3SvgOverlay = L.Class.extend({
 
     onRemove: function (map) {
         this._svg.remove();
+        /*
         this.map.off(this._options.updateOn, this.draw, this);
         this.map.off("moveend", this.updSvg, this);
         if (this._zoomAnimated) {
@@ -237,6 +238,7 @@ L.D3SvgOverlay = L.Class.extend({
             this.map.off("viewreset", this._zoomCalc, this);
             this.map.off("viewreset", this._zoomChange, this);
         }
+        */
     },
 
     addTo: function (map) {

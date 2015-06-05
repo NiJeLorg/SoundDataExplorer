@@ -89,7 +89,6 @@ $( document ).ready(function() {
 					// update combo boxes
 					var start_date = moment(value[0]).format('YYYY-MM');
 					start_date = start_date + '-01';
-					console.log(start_date);
 					$( "#start_date" ).val(start_date);
 					var end_date = moment(value[1]).format('YYYY-MM');
 					end_date = end_date + '-01';
@@ -104,6 +103,77 @@ $( document ).ready(function() {
 
 	}
 
+	// listen for modal click
+	$('#siteView').on('show.bs.modal', function (event) {
+		var link = $(event.relatedTarget);
+		var beachid = link.data('beachid');
+		var lat = link.data('lat');
+		var lon = link.data('lon');
+		var modalMap = new SoundExplorerModalMap(lat, lon);
+		modalMap.loadPointLayers();
+		setTimeout(function() {
+		modalMap.map.invalidateSize();		
+		}, 10);
+		// ajax call to WQ samples api 
+		var startDate = moment($( "#start_date option:selected" ).val()).format("YYYY-MM-DD");
+		var endDate = moment($( "#end_date option:selected" ).val()).format("YYYY-MM-DD");
+
+	    $.ajax({
+	        type: 'GET',
+	        url:  'modalapi/?startDate=' + startDate + '&endDate=' + endDate + '&beachId=' + beachid,
+	        success: function(data){
+	        	console.log(data);
+	        	$("#modalData").html(data);
+	        }
+	    });
+
+	    //zoom main map on modal open
+	    SoundExplorerMap.modalZoom(lat, lon);
+
+	});
+
+	$('#siteView').on('hidden.bs.modal', function (event) {
+		// destroy old map container and create a new one
+		modalMap.remove();
+		$( "#portholeDiv" ).before( '<div id="modalMap"></div>' );
+		// clear modal data areas
+		$("#modalData").html('');
+
+		
+	});
+
+	// toggle map layer listeners
+	$( "#boatlaunch" ).change(function() {
+		if ($( "#boatlaunch" ).prop('checked')) {
+			SoundExplorerMap.addExtraLayers('boatlaunch');
+		} else {
+			SoundExplorerMap.removeExtraLayers('boatlaunch');
+		}
+	});
+
+	$( "#csos" ).change(function() {
+		if ($( "#csos" ).prop('checked')) {
+			SoundExplorerMap.addExtraLayers('csos');
+		} else {
+			SoundExplorerMap.removeExtraLayers('csos');
+		}
+	});
+
+	$( "#impervious" ).change(function() {
+		if ($( "#impervious" ).prop('checked')) {
+			SoundExplorerMap.addExtraLayers('impervious');
+		} else {
+			SoundExplorerMap.removeExtraLayers('impervious');
+		}
+	});
+
+	$( "#watersheds" ).change(function() {
+		if ($( "#watersheds" ).prop('checked')) {
+			SoundExplorerMap.addExtraLayers('watersheds');
+		} else {
+			SoundExplorerMap.removeExtraLayers('watersheds');
+		}
+	});
 
 
 });
