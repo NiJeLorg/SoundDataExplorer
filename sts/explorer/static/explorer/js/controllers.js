@@ -9,11 +9,13 @@ $( document ).ready(function() {
 	// open the bottom area on page load
 	$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
 	$( ".map" ).toggleClass("map-popup-wrapper-open");
+	$( ".legend" ).toggleClass("legend-popup-wrapper-open");
 
 	// close popup tray
 	$('#popup-close').click(function() {
 		$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
 		$( ".map" ).toggleClass("map-popup-wrapper-open");
+		$( ".legend" ).toggleClass("legend-popup-wrapper-open");
 	});
 
 	// create start and end date combo boxes
@@ -44,24 +46,21 @@ $( document ).ready(function() {
 
 	// set up combo box selction to update map and slider
 	$( "#start_date" ).change(function() {
-	  var minDate = new Date(2004,0,1);
-	  var maxDate = moment().toDate();
-	  var start_date = moment($( "#start_date option:selected" ).val()).toDate();
-	  var end_date = moment($( "#end_date option:selected" ).val()).toDate();
-	  updateSlider(minDate, maxDate, start_date, end_date);
-
+	  updateSlider();
 	});
 
 	$( "#end_date" ).change(function() {
-	  var minDate = new Date(2004,0,1);
-	  var maxDate = moment().toDate();
-	  var start_date = moment($( "#start_date option:selected" ).val()).toDate();
-	  var end_date = moment($( "#end_date option:selected" ).val()).toDate();
-	  updateSlider(minDate, maxDate, start_date, end_date);
-
+	  updateSlider();
 	});
 
 	function updateSlider (minDate, maxDate, start_date, end_date) {
+		$("body").addClass("loading");
+
+		var minDate = new Date(2004,0,1);
+		var maxDate = moment().toDate();
+		var start_date = moment($( "#start_date option:selected" ).val()).toDate();
+		var end_date = moment($( "#end_date option:selected" ).val()).toDate();
+
 	  	// destroy the old slider
 	  	d3.select('#timeSlider').selectAll("*").remove();
 
@@ -84,6 +83,7 @@ $( document ).ready(function() {
 				)
 				.value( [ start_date, end_date ] )
 				.on("slideend", function(evt, value) {
+					$("body").addClass("loading");
 					// run a function to update map layers with new dates
 					SoundExplorerMap.updateMapFromSlider(value);
 					// update combo boxes
@@ -112,8 +112,9 @@ $( document ).ready(function() {
 		var modalMap = new SoundExplorerModalMap(lat, lon);
 		modalMap.loadPointLayers();
 		setTimeout(function() {
-		modalMap.map.invalidateSize();		
+			modalMap.map.invalidateSize();		
 		}, 10);
+		MY_MAP_MODAL = modalMap;
 		// ajax call to WQ samples api 
 		var startDate = moment($( "#start_date option:selected" ).val()).format("YYYY-MM-DD");
 		var endDate = moment($( "#end_date option:selected" ).val()).format("YYYY-MM-DD");
@@ -122,7 +123,6 @@ $( document ).ready(function() {
 	        type: 'GET',
 	        url:  'modalapi/?startDate=' + startDate + '&endDate=' + endDate + '&beachId=' + beachid,
 	        success: function(data){
-	        	console.log(data);
 	        	$("#modalData").html(data);
 	        }
 	    });
@@ -135,7 +135,7 @@ $( document ).ready(function() {
 	$('#siteView').on('hidden.bs.modal', function (event) {
 		// destroy old map container and create a new one
 		modalMap.remove();
-		$( "#portholeDiv" ).before( '<div id="modalMap"></div>' );
+		$( "#modalMapWrapper" ).append( '<div id="modalMap"></div>' );
 		// clear modal data areas
 		$("#modalData").html('');
 
@@ -143,35 +143,74 @@ $( document ).ready(function() {
 	});
 
 	// toggle map layer listeners
+	$( "#beacon" ).change(function() {
+		if ($( "#beacon" ).prop('checked')) {
+			SoundExplorerMap.addLayers('beacon');
+		} else {
+			SoundExplorerMap.removeLayers('beacon');
+		}
+	});
+
 	$( "#boatlaunch" ).change(function() {
 		if ($( "#boatlaunch" ).prop('checked')) {
-			SoundExplorerMap.addExtraLayers('boatlaunch');
+			SoundExplorerMap.addLayers('boatlaunch');
 		} else {
-			SoundExplorerMap.removeExtraLayers('boatlaunch');
+			SoundExplorerMap.removeLayers('boatlaunch');
 		}
 	});
 
 	$( "#csos" ).change(function() {
 		if ($( "#csos" ).prop('checked')) {
-			SoundExplorerMap.addExtraLayers('csos');
+			SoundExplorerMap.addLayers('csos');
 		} else {
-			SoundExplorerMap.removeExtraLayers('csos');
+			SoundExplorerMap.removeLayers('csos');
 		}
 	});
 
 	$( "#impervious" ).change(function() {
 		if ($( "#impervious" ).prop('checked')) {
-			SoundExplorerMap.addExtraLayers('impervious');
+			$('#impervious-legend').removeClass('hidden').addClass('show');
+			SoundExplorerMap.addLayers('impervious');
 		} else {
-			SoundExplorerMap.removeExtraLayers('impervious');
+			$('#impervious-legend').removeClass('show').addClass('hidden');
+			SoundExplorerMap.removeLayers('impervious');
 		}
 	});
 
 	$( "#watersheds" ).change(function() {
 		if ($( "#watersheds" ).prop('checked')) {
-			SoundExplorerMap.addExtraLayers('watersheds');
+			SoundExplorerMap.addLayers('watersheds');
 		} else {
-			SoundExplorerMap.removeExtraLayers('watersheds');
+			SoundExplorerMap.removeLayers('watersheds');
+		}
+	});
+
+	$( "#shellfish" ).change(function() {
+		if ($( "#shellfish" ).prop('checked')) {
+			$('#shellfish-legend').removeClass('hidden').addClass('show');
+			SoundExplorerMap.addLayers('shellfish');
+		} else {
+			$('#shellfish-legend').removeClass('show').addClass('hidden');
+			SoundExplorerMap.removeLayers('shellfish');
+		}
+	});
+
+	$( "#wastewater" ).change(function() {
+		if ($( "#wastewater" ).prop('checked')) {
+			SoundExplorerMap.addLayers('wastewater');
+		} else {
+			SoundExplorerMap.removeLayers('wastewater');
+		}
+	});
+
+	$( "#landuse" ).change(function() {
+		if ($( "#landuse" ).prop('checked')) {
+			$("body").addClass("loading");
+			$('#lulc-legend').removeClass('hidden').addClass('show');
+			SoundExplorerMap.addLayers('landuse');
+		} else {
+			$('#lulc-legend').removeClass('show').addClass('hidden');
+			SoundExplorerMap.removeLayers('landuse');
 		}
 	});
 

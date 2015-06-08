@@ -75,6 +75,7 @@ def modalApi(request):
 	startDate = request.GET.get("startDate","2000-01-01")
 	endDate = request.GET.get("endDate","2100-01-01")
 	beachId = request.GET.get("beachId","")
+	tab = request.GET.get("tab","precip")
 
 	# create data objects from start and end dates
 	startDateparsed = dateutil.parser.parse(startDate)
@@ -102,14 +103,14 @@ def modalApi(request):
 
 
 	# select the most recent sample available
-	latestSample = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).latest('StartDate')
+	latestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).latest('StartDate')
 
-	# calculate the min, max and geo mean
+	# calculate the min, max and mean
 	sampleAggregates = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(AvgValue=Avg('ResultValue'),MinValue=Min('ResultValue'),MaxValue=Max('ResultValue'))
 
 
 
-	context_dict = {'startDate': startDate, 'endDate': endDate, 'beach':beach ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'sampleAggregates':sampleAggregates}
+	context_dict = {'startDate': startDate, 'endDate': endDate, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'sampleAggregates':sampleAggregates}
 
 	return render(request, 'explorer/modal.html', context_dict)
 

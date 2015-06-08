@@ -11,19 +11,37 @@ function SoundExplorerModalMap(lat, lon) {
     this.zoom = 16;
 
     this.map = new L.Map('modalMap', {
-    	dragging: false,
-		minZoom:16,
-		maxZoom:16,
-		zoomControl: false,
-		attributionControl: false,
+		minZoom:14,
+		maxZoom:17,
     	center: this.center,
    	 	zoom: this.zoom,
+   	 	zoomControl: false,
 	});
 	
 	// add CartoDB tiles
-	this.CartoDBLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png');
+	/*
+	this.CartoDBLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{
+	  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+	});
 	this.map.addLayer(this.CartoDBLayer);
-				
+	*/
+
+	this.OSMHOTLayer = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',{
+	  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="http://hotosm.org/">OSM HOT</a>'
+	});
+	this.map.addLayer(this.OSMHOTLayer);
+
+	// load zoom control in top right
+	this.map.addControl(L.control.zoom({ position: 'topright' }));
+
+	//load scale bars
+	this.map.addControl(L.control.scale());
+
+	// enable events
+    this.map.doubleClickZoom.enable();
+    this.map.scrollWheelZoom.enable();
+
+		
 	// empty containers for layers 
 	this.BEACON_POINTS = null;
 	this.BEACON_D3_POINTS = null;
@@ -219,6 +237,40 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 
 	thismap.BEACON_D3_POINTS.addTo(thismap.map);
 
+
+}
+
+SoundExplorerModalMap.updateMapFromSlider = function (value){
+	// close popups
+	MY_MAP_MODAL.map.closePopup();
+	// moment parses unix offsets and javascript date objects in the same way
+	var startDate = moment(value[0]).startOf('month').format("YYYY-MM-DD");
+	var endDate = moment(value[1]).endOf('month').format("YYYY-MM-DD");
+
+	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
+		geojsonData = data;
+
+		$.each(geojsonData.features, function(i, d){
+			d.properties.leafletId = 'layerID' + i;
+			// create coordiantes with latLon instead of lonLat for use with D3 later
+			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
+			d.properties.pctPass = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+			var pctFail = 100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
+		});
+
+		// clear layer
+		MY_MAP_MODAL.BEACON_POINTS.clearLayers();
+		// add new data
+		MY_MAP_MODAL.BEACON_POINTS.addData(geojsonData);
+
+		// remove D3 layer
+		MY_MAP_MODAL.map.removeLayer(MY_MAP_MODAL.BEACON_D3_POINTS);
+		// recreate new D3 layer
+		SoundExplorerModalMap.createBEACON_D3_POINTS(geojsonData.features, MY_MAP_MODAL);
+		MY_MAP_MODAL.BEACON_D3_POINTS.addTo(MY_MAP_MODAL.map);
+		
+	});
 
 }
 

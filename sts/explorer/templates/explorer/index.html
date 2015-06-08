@@ -55,31 +55,55 @@
                         <h4 class="padding-top-5 padding-bottom-10">Points of Interest</h4>
                         <div class="checkbox">
                           <label>
+                            <input type="checkbox" value="beacon" id="beacon" checked>
+                            <svg width='14' height='14'>
+                              <circle cx="7" cy="7" r="7" fill="#f47f45" />
+                            </svg>
+                            Sampling Locations
+                          </label>
+                        </div>
+                        <div class="checkbox">
+                          <label>
                             <input type="checkbox" value="watersheds" id="watersheds">
+                            <svg width='14' height='14'>
+                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: none; stroke: black; stroke-width: 2;" />                            
+                            </svg>
                             Long Island Sound Regions
                           </label>
                         </div>
                         <div class="checkbox">
                           <label>
                             <input type="checkbox" value="shellfish" id="shellfish">
+                            <svg width='14' height='14'>
+                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #fb9a99; opacity: 0.75; stroke: black; stroke-width: 2;" />                            
+                            </svg>
                             Shellfishing Areas
                           </label>
                         </div>
                         <div class="checkbox">
                           <label>
                             <input type="checkbox" value="boatlaunch" id="boatlaunch">
+                            <svg width='14' height='14'>
+                              <circle cx="7" cy="7" r="7" fill="#545454" />
+                            </svg>
                             Boat Launch Sites
                           </label>
                         </div>
                         <div class="checkbox">
                           <label>
                             <input type="checkbox" value="landuse" id="landuse">
-                            Land Use
+                            <svg width='14' height='14'>
+                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #007a04; opacity: 0.5; stroke: black; stroke-width: 2;" />
+                            </svg>                         
+                            Land Use & Land Cover
                           </label>
                         </div>
                         <div class="checkbox">
                           <label>
                             <input type="checkbox" value="impervious" id="impervious">
+                            <svg width='14' height='14'>
+                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #969696; stroke: black; stroke-width: 2;" />     
+                            </svg>                       
                             Impervious Surfaces
                           </label>
                         </div>
@@ -87,12 +111,18 @@
                         <div class="checkbox">
                           <label>
                             <input type="checkbox" value="wastewater" id="wastewater">
+                            <svg width='14' height='14'>
+                              <circle cx="7" cy="7" r="7" fill="#35978f" />
+                            </svg>
                             Wastewater Treatment Plants
                           </label>
                         </div>
                         <div class="checkbox">
                           <label>
                             <input type="checkbox" value="csos" id="csos">
+                            <svg width='14' height='14'>
+                              <circle cx="7" cy="7" r="7" fill="#543005" />
+                            </svg>
                             Combined Sewer Overflow
                           </label>
                         </div>
@@ -106,7 +136,56 @@
     <!-- Map Content -->
     <div id="map" class="map"></div>
     <div class="legend">
-        <svg xmlns="http://www.w3.org/2000/svg" width="438.925" height="178.996"><defs><clipPath id="a"><path d="M0 841.7h1191V0H0v841.7z"/></clipPath><clipPath id="b"><path d="M0 841.7h1191V0H0v841.7z"/></clipPath><clipPath id="c"><path d="M0 841.7h1191V0H0v841.7z"/></clipPath><clipPath id="d"><path d="M0 841.7h1191V0H0v841.7z"/></clipPath><clipPath id="e"><path d="M0 841.8h1190.6V0H0v841.8z"/></clipPath></defs><text x="199.845" y="99.847" font-size="20.5"><tspan x="199.84547 207.97047" y="99.847" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">A</tspan> <tspan x="199.845" y="118.597" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">B</tspan> <tspan x="199.345" y="137.472" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">C</tspan> <tspan x="199.345" y="153.097" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">D</tspan> <tspan x="199.84547 206.22044" y="167.722" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">F</tspan></text><g clip-path="url(#a)" transform="matrix(1.707 0 0 -1.707 -1604.98 786.859)"><path stroke-miterlimit="10" d="M1067.3 451.4v-94.8" fill="none" stroke="#6d6e71"/></g><g clip-path="url(#b)" transform="matrix(1.707 0 0 -1.707 -1604.98 786.859)"><path stroke-miterlimit="10" d="M979.5 412.4H1156m-186-55.8h198" fill="none" stroke="#6d6e71"/><path d="M1091 401.6c-1.8-.7-4 .3-4.6 2.2-.7 2 .3 4 2.2 4.7 2 .7 4-.3 4.7-2.2.7-2-.3-4-2.2-4.7" fill="#009444"/><path d="M1091 361.8c-1.8-.7-4 .3-4.6 2.2-.7 2 .3 4 2.2 4.7 2 .6 4-.4 4.7-2.3.7-2-.3-4-2.2-4.6" fill="#be1e2d"/></g><text x="221.095" y="98.972" font-size="20.5"><tspan x="221.09547 226.22052 232.9704 238.84549 244.72043" y="98.972" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">Pass</tspan> <tspan x="228.22049 232.84543 239.59546 242.3454 244.72043" y="167.722" style="-inkscape-font-specification:PrintClearly" font-size="14.625" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">Fail</tspan></text><g clip-path="url(#c)" transform="matrix(1.707 0 0 -1.707 -1604.98 788.859)"><path d="M988.8 372.6c0-6.4-5.2-11.6-11.6-11.6-6.4 0-11.6 5.2-11.6 11.6 0 6.5 5.2 11.7 11.6 11.7 6.4 0 11.6-5.2 11.6-11.7" fill="#f9ae08"/></g><text x="53.62" y="163.922" font-size="20.5"><tspan x="53.62" y="163.922" style="-inkscape-font-specification:PrintClearly" font-size="35.6" font-weight="bold" fill="#fff" font-family="Print Clearly">C</tspan></text><path d="M377.005 151.7v-19.5c-10.7 0-19.4 8.7-19.4 19.5s8.7 19.5 19.4 19.5c10.8 0 19.5-8.7 19.5-19.5h-19.5z" fill="#009444"/><path d="M396.605 151.7c0-10.8-8.8-19.5-19.5-19.5v19.5h19z" fill="#be1e2d"/><path d="M392.905 151.7c0 8.7-7 15.8-15.8 15.8-9 0-16-7-16-15.8 0-8.7 7-15.8 16-15.8 8 0 15 7 15 15.8" fill="#fff"/><path d="M340.005 46.2c6.5 6.5 17 6.5 23.5 0s6.5-17 0-23.5l-11.7-11.8-11.8 12c-6.5 6.5-6.5 17 0 23.5" fill="#c1e6e7"/><path stroke-miterlimit="10" d="M340.005 46.2c6.5 6.5 17 6.5 23.5 0s6.5-17 0-23.5l-11.7-11.8-11.8 12c-6.5 6.5-6.5 17 0 23.5z" fill="none" stroke="#098ca8" stroke-width="3.4"/><text x="339.763" y="39.027" font-size="20.5"><tspan x="339.76349 346.16351 352.26349" y="39.027" style="-inkscape-font-specification:PrintClearly" font-size="18" font-weight="bold" fill="#098ca8" font-family="Print Clearly">85%</tspan></text><path d="M92.605 31.2c0 8.8-7 16-16 16-8.7 0-15.8-7.2-15.8-16s7-16 16-16c8.7 0 15.8 7.2 15.8 16" fill="#ef4136"/><path stroke-miterlimit="10" d="M92.605 31.2c0 8.8-7 16-16 16-8.7 0-15.8-7.2-15.8-16s7-16 16-16c8.7 0 15.8 7.2 15.8 16z" fill="none" stroke="#f7941e" stroke-width="3.4"/><path stroke-miterlimit="10" d="M98.705 31.2h7.4m-14-15.6l5-5.2m-21-1.2V1.7m-15.7 14l-5.4-5.3m5.3 36.3l-4.1 4.2m19.8 2v7.4m15.5-13.6l5.2 5.3" fill="none" stroke="#fbb040" stroke-width="3.4" stroke-linecap="round"/><text x="65.191" y="36.508" font-size="20.5"><tspan x="65.191483 71.191483 77.191483" y="36.508" style="-inkscape-font-specification:PrintClearly" font-size="18" font-weight="bold" fill="#fff" font-family="Print Clearly">27%</tspan></text><g clip-path="url(#d)" transform="matrix(1.707 0 0 -1.707 -1641.409 784.145)"><path stroke-miterlimit="10" d="M988.5 441h4.4" fill="none" stroke="#fbb040" stroke-width="2" stroke-linecap="round"/></g><g transform="matrix(1.668 0 0 -1.668 -1563.148 782.435)" clip-path="url(#e)"><path d="M1053 408.2c-2-.7-4 .3-4.7 2.2-.7 2 .3 4 2.2 4.7 2 1 4 0 4.7-2 .7-2-.3-4-2.3-4" fill="#39b54a"/><path d="M1053 397.3c-2-.7-4 .3-4.7 2.2-.7 2 .3 4 2.2 4.7 2 .7 4-.3 4.7-2.2.6-2-.4-4-2.3-4.7" fill="#f7e34f"/><path d="M1053 387c-2-.7-4 .3-4.8 2.2-.6 2 .4 4 2.3 4.7 2 0 4-1 4.6-3 1-2 0-4-2-4.8" fill="#f9ae08"/><path d="M1053 376.8c-2-.6-4 .4-4.8 2.3-.7 2 .3 4 2.2 5 2 1 4 0 4.7-2 1-2 0-4-2-4.4" fill="#f47f45"/><path d="M1053 367.4c-2-.7-4 .3-4.8 2.2-.7 2 .3 4 2.2 4.7 2 .7 4-.3 4.7-2.2 1-2 0-4-2-4" fill="#ef4136"/></g><text x="182.32" y="115.122" style="line-height:82.99999833%;-inkscape-font-specification:Print Clearly" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" fill="#6d6e71" font-family="Print Clearly"><tspan x="180.92" y="115.122" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5" text-anchor="end">Average of</tspan> <tspan x="180.92" y="133.322" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5" text-anchor="end">Multiple Samples</tspan></text><text x="258.42" y="121.122" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:Print Clearly" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" fill="#6d6e71" font-family="Print Clearly"><tspan x="258.42" y="121.122" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5">Individual</tspan> <tspan x="258.42" y="139.322" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5">Sample Score</tspan></text><text x="223.72" y="55.322" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:Print Clearly" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" fill="#6d6e71" font-family="Print Clearly"><tspan x="223.72" y="55.322" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5">Percentage of</tspan> <tspan x="223.72" y="73.622" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5">Wet Weather Samples</tspan></text><text x="212.021" y="55.322" letter-spacing="0" font-weight="300" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:Print Clearly" word-spacing="0" font-size="24" text-anchor="end" fill="#6d6e71" font-family="Print Clearly"><tspan x="210.521" y="55.322" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5">Percentage of</tspan> <tspan x="210.521" y="73.622" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.5">Dry Weather Samples</tspan></text></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="359.263" height="178.858"><defs><clipPath id="a"><path d="M0 841.68h1190.88V0H0v841.68z"/></clipPath><clipPath id="b"><path d="M0 841.68h1190.88V0H0v841.68z"/></clipPath><clipPath id="c"><path d="M0 841.68h1190.88V0H0v841.68z"/></clipPath><clipPath id="d"><path d="M0 841.68h1190.88V0H0v841.68z"/></clipPath><clipPath id="e"><path d="M0 841.795h1190.6V0H0v841.795z"/></clipPath></defs><text y="-413.069" x="1003.722" transform="matrix(1.25 0 0 1.25 -1095.369 616.19)" font-size="16.389"><tspan y="-413.069" x="1003.7219 1010.1625" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">A</tspan> <tspan y="-398.091" x="1003.722" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">B</tspan> <tspan y="-383.008" x="1003.254" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">C</tspan> <tspan y="-370.537" x="1003.254" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">D</tspan> <tspan y="-358.827" x="1003.7219 1008.769" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">F</tspan></text><g clip-path="url(#a)" transform="matrix(1.707 0 0 -1.707 -1645.57 786.827)"><path d="M1067.288 451.376v-94.75" fill="none" stroke="#6d6e71" stroke-miterlimit="10"/></g><g clip-path="url(#b)" transform="matrix(1.707 0 0 -1.707 -1645.57 786.827)"><path d="M979.45 412.4h176.662M969.952 356.625h198.025" fill="none" stroke="#6d6e71" stroke-miterlimit="10"/><path d="M1091.104 401.568c-1.907-.68-4.005.313-4.686 2.22-.68 1.907.313 4.005 2.22 4.686 1.907.68 4.005-.313 4.686-2.22.68-1.907-.313-4.005-2.22-4.686" fill="#009444"/><path d="M1091.104 361.75c-1.907-.68-4.005.314-4.686 2.22-.68 1.908.313 4.006 2.22 4.687 1.907.68 4.005-.313 4.686-2.22.68-1.907-.313-4.005-2.22-4.686" fill="#be1e2d"/></g><text y="-413.848" x="1020.668" transform="matrix(1.25 0 0 1.25 -1095.369 616.19)" font-size="16.389"><tspan y="-413.848" x="1020.6684 1024.8256 1030.2357 1034.9315 1039.6273" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">Pass</tspan> <tspan y="-358.821" x="1026.3948 1030.1187 1035.5288 1037.6835 1039.6273" style="-inkscape-font-specification:PrintClearly" font-size="11.71" font-weight="bold" fill="#6d6e71" font-family="Print Clearly">Fail</tspan></text><g clip-path="url(#c)" transform="matrix(1.707 0 0 -1.707 -1645.57 788.827)"><path d="M988.817 372.64c0-6.416-5.2-11.616-11.615-11.616s-11.615 5.2-11.615 11.615c0 6.414 5.2 11.614 11.615 11.614s11.615-5.2 11.615-11.615" fill="#f9ae08"/></g><text x="1108.429" y="597.77" font-size="20.486" transform="translate(-1095.369 -433.91)"><tspan style="-inkscape-font-specification:PrintClearly" x="1108.429" y="597.77" font-size="35.617" font-weight="bold" fill="#fff" font-family="Print Clearly">C</tspan></text><path d="M336.465 151.716v-19.578c-10.76 0-19.485 8.744-19.485 19.53 0 10.787 8.724 19.53 19.485 19.53 10.746 0 19.456-8.718 19.482-19.482h-19.482z" fill="#009444"/><path d="M355.997 151.668c0-10.76-8.743-19.485-19.53-19.485v19.485h19.53z" fill="#be1e2d"/><path d="M352.307 151.668c0 8.748-7.093 15.84-15.84 15.84-8.75 0-15.844-7.092-15.844-15.84 0-8.748 7.093-15.84 15.843-15.84 8.748 0 15.84 7.092 15.84 15.84" fill="#fff"/><path d="M299.442 46.157c6.487 6.487 17.002 6.487 23.487.002 6.484-6.486 6.484-17-.003-23.488L311.184 10.93l-11.742 11.742c-6.485 6.483-6.485 17 0 23.485" fill="#c1e6e7"/><path d="M299.442 46.157c6.487 6.487 17.002 6.487 23.487.002 6.484-6.486 6.484-17-.003-23.488L311.184 10.93l-11.742 11.742c-6.485 6.483-6.485 17 0 23.485z" fill="none" stroke="#098ca8" stroke-width="3.414" stroke-miterlimit="10"/><text x="1367.385" y="482.205" font-size="20.486" transform="translate(-1068.226 -443.205)"><tspan style="-inkscape-font-specification:PrintClearly" x="1367.3848 1373.7825 1379.9467" y="482.205" font-size="18" font-weight="bold" fill="#098ca8" font-family="Print Clearly">85%</tspan></text><path d="M52.016 31.143c0 8.784-7.12 15.904-15.904 15.904-8.784 0-15.906-7.12-15.906-15.904 0-8.784 7.122-15.904 15.906-15.904s15.904 7.12 15.904 15.903" fill="#ef4136"/><path d="M52.016 31.143c0 8.784-7.12 15.904-15.904 15.904-8.784 0-15.906-7.12-15.906-15.904 0-8.784 7.122-15.904 15.906-15.904s15.904 7.12 15.904 15.903z" fill="none" stroke="#f7941e" stroke-width="3.414" stroke-miterlimit="10"/><path d="M58.067 31.143h7.478M51.636 15.617l5.288-5.288M36.11 9.186V1.708M20.584 15.617l-5.288-5.288M20.584 46.67l-4.2 4.2M36.152 52.763v7.478M51.636 46.67l5.288 5.287" fill="none" stroke="#fbb040" stroke-width="3.414" stroke-linecap="round" stroke-miterlimit="10"/><text x="1156.448" y="475.131" font-size="20.486" transform="translate(-1131.798 -438.624)"><tspan style="-inkscape-font-specification:PrintClearly" x="1156.4481 1162.4258 1168.4034" y="475.131" font-size="18" font-weight="bold" fill="#fff" font-family="Print Clearly">27%</tspan></text><g clip-path="url(#d)" transform="matrix(1.707 0 0 -1.707 -1681.999 784.113)"><path d="M988.546 441.06h4.38" fill="none" stroke="#fbb040" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10"/></g><g transform="matrix(1.668 0 0 -1.668 -1603.737 782.403)" clip-path="url(#e)"><path d="M1052.95 408.2c-1.908-.68-4.006.313-4.687 2.22-.68 1.907.313 4.005 2.22 4.686 1.907.68 4.005-.313 4.686-2.22.68-1.908-.314-4.006-2.22-4.687" fill="#39b54a"/><path d="M1052.937 397.273c-1.907-.68-4.005.313-4.686 2.22-.68 1.907.314 4.005 2.22 4.686 1.908.68 4.006-.314 4.687-2.22.68-1.908-.313-4.006-2.22-4.687" fill="#f7e34f"/><path d="M1052.925 387.023c-1.907-.68-4.005.313-4.686 2.22-.682 1.907.312 4.005 2.22 4.686 1.906.68 4.004-.314 4.685-2.22.68-1.908-.313-4.006-2.22-4.687" fill="#f9ae08"/><path d="M1052.914 376.845c-1.907-.68-4.005.313-4.686 2.22-.68 1.907.313 4.005 2.22 4.686 1.907.682 4.005-.312 4.686-2.22.68-1.906-.313-4.004-2.22-4.685" fill="#f47f45"/><path d="M1052.903 367.37c-1.907-.68-4.005.313-4.686 2.22-.68 1.908.313 4.006 2.22 4.687 1.907.68 4.005-.313 4.686-2.22.68-1.908-.313-4.006-2.22-4.687" fill="#ef4136"/></g><text style="line-height:82.99999833%;-inkscape-font-specification:Print Clearly" x="1237.105" y="550.96" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" fill="#6d6e71" font-family="Print Clearly" transform="translate(-1095.369 -435.91)"><tspan x="1235.655" y="550.96" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45" text-anchor="end">Average of</tspan><tspan x="1235.655" y="569.22" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45" text-anchor="end">Multiple Samples</tspan></text><text style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:Print Clearly" x="1313.209" y="556.96" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" fill="#6d6e71" font-family="Print Clearly" transform="translate(-1095.369 -435.91)"><tspan x="1313.209" y="556.96" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45">Individual </tspan><tspan x="1313.209" y="575.22" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45">Sample Score</tspan></text><text style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:Print Clearly" x="1278.528" y="491.235" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" fill="#6d6e71" font-family="Print Clearly" transform="translate(-1095.369 -435.91)"><tspan x="1278.528" y="491.235" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45">Percentage of</tspan><tspan x="1278.528" y="509.495" style="text-align:start;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45">Wet Weather Samples</tspan></text><text style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:Print Clearly" x="1266.79" y="491.235" font-size="24" font-weight="300" letter-spacing="0" word-spacing="0" text-anchor="end" fill="#6d6e71" font-family="Print Clearly" transform="translate(-1095.369 -435.91)"><tspan x="1265.34" y="491.235" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45">Percentage of</tspan><tspan x="1265.34" y="509.495" style="text-align:end;line-height:82.99999833%;-inkscape-font-specification:'Print Clearly,'" font-size="22" font-weight="normal" letter-spacing="-1.45">Dry Weather Samples</tspan></text></svg>
+          <div class="legend-cloropleth hidden" id="impervious-legend">
+            Percent Impervious Surface
+            <ul>
+                <li class="min">0%</li>
+                <li class="max">&gt;25%</li>
+                <li class="graph">
+                    <div class="colors">
+                        <div class="quartile" style="background-color:#f7f7f7"></div>
+                        <div class="quartile" style="background-color:#d9d9d9"></div>
+                        <div class="quartile" style="background-color:#bdbdbd"></div>
+                        <div class="quartile" style="background-color:#969696"></div>
+                        <div class="quartile" style="background-color:#636363"></div>
+                        <div class="quartile" style="background-color:#252525"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="legend-category hidden" id="shellfish-legend">
+          <p>Shellfish Areas</p>
+            <div class="col-sm-12">
+              <ul>
+                <li><div class="bullet" style="background: #a6cee3; opacity: 0.75;"></div> Approved</li><li>
+                <div class="bullet" style="background: #1f78b4; opacity: 0.75;"></div> Conditionally Approved</li>
+                <li><div class="bullet" style="background: #b2df8a; opacity: 0.75;"></div> Restricted-Relay/Depuration</li>
+                <li><div class="bullet" style="background: #33a02c; opacity: 0.75;"></div> Conditionally Restricted-Relay/Depuration</li>
+                <li><div class="bullet" style="background: #fb9a99; opacity: 0.75;"></div> Restricted-Relay</li>
+                <li><div class="bullet" style="background: #e31a1c; opacity: 0.75;"></div> Conditionally Restricted-Relay</li>
+                <li><div class="bullet" style="background: #fdbf6f; opacity: 0.75;"></div> Prohibited</li>
+              </ul>
+            </div>
+        </div>
+        <div class="legend-category hidden" id="lulc-legend">
+          <p>Land Use & Land Cover</p>
+            <div class="col-sm-12">
+              <ul>
+                <li><div class="bullet" style="background: #fbffbf; opacity: 0.5;"></div> Agricultural Vegetation</li><li>
+                <div class="bullet" style="background: #00c5ff; opacity: 0.5;"></div> Aquatic Vegetation</li>
+                <li><div class="bullet" style="background: #da3a32; opacity: 0.5;"></div> Developed and Other Human Use</li>
+                <li><div class="bullet" style="background: #007a04; opacity: 0.5;"></div> Forest and Woodland</li>
+                <li><div class="bullet" style="background: #b2259b; opacity: 0.5;"></div> Introduced and Semi Natural Vegetation</li>
+                <li><div class="bullet" style="background: #545857; opacity: 0.5;"></div> Nonvascular and Sparse Vascular Rock Vegetation</li>
+                <li><div class="bullet" style="background: #2c00c5; opacity: 0.5;"></div> Open Water</li>
+                <li><div class="bullet" style="background: #f1def2; opacity: 0.5;"></div> Polar and High Montane Vegetation</li>
+                <li><div class="bullet" style="background: #931f19; opacity: 0.5;"></div> Recently Disturbed or Modified</li>
+                <li><div class="bullet" style="background: #d7b588; opacity: 0.5;"></div> Semi-Desert</li>
+                <li><div class="bullet" style="background: #fdc55c; opacity: 0.5;"></div> Shrubland and Grassland</li>
+              </ul>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
@@ -151,7 +230,6 @@
            <div class="row">
                 <div class="col-md-5" id="modalMapWrapper">
                     <div id="modalMap"></div>
-                    <div id="portholeDiv"></div>
                 </div>
                 <div class="col-md-7">
                     <div id="modalData"></div>
@@ -166,8 +244,17 @@
 
 {% block js_block %}
     <script type="text/javascript">
+      //add loading class to body
+      $("body").addClass("loading");
+      // remove when widdow is fully loaded
+      window.onload = function() {
+        $("body").removeClass("loading");
+      }
+    </script>
+    <script type="text/javascript">
         var boatlaunch = "{% static 'explorer/data/boatlaunch_ny_ct.topojson' %}";
         var csos = "{% static 'explorer/data/CSO_locations_NY_Sound.topojson' %}";
+        var csos_CT = "{% static 'explorer/data/CT_Municipal_CSO_Locations4326.topojson' %}";
         var impervious = "{% static 'explorer/data/impervious_LI_Sound.topojson' %}";
         var watersheds = "{% static 'explorer/data/NY_CT_HUC8_LISWatersheds.topojson' %}";
         var shellfish = "{% static 'explorer/data/shellfish_CT.topojson' %}";
@@ -180,11 +267,12 @@
 	<script type="text/javascript" src="{% static 'explorer/js/leaflet.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/leaflet.label-src.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/topojson.js' %}"></script>
-    <script type="text/javascript" src="{% static 'explorer/js/d3.slider.js' %}"></script>
+  <script type="text/javascript" src="{% static 'explorer/js/esri-leaflet.js' %}"></script>
+  <script type="text/javascript" src="{% static 'explorer/js/d3.slider.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/Control.Geocoder.js' %}"></script>
-    <script type="text/javascript" src="{% static 'explorer/js/L.D3SvgOverlay.js' %}"></script>
+  <script type="text/javascript" src="{% static 'explorer/js/L.D3SvgOverlay.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/SoundExplorerMap.js' %}"></script>
-    <script type="text/javascript" src="{% static 'explorer/js/SoundExplorerModalMap.js' %}"></script>
+  <script type="text/javascript" src="{% static 'explorer/js/SoundExplorerModalMap.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/application.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/controllers.js' %}"></script>
 {% endblock %}

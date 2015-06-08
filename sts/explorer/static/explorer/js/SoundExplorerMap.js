@@ -15,12 +15,18 @@ function SoundExplorerMap() {
    	 	zoom: this.zoom,
    	 	zoomControl: false,
 	});
-	
+
 	// add CartoDB tiles
+	/*
 	this.CartoDBLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{
 	  attribution: 'Created By <a href="http://nijel.org/">NiJeL</a> | &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 	});
 	this.map.addLayer(this.CartoDBLayer);
+	*/
+	this.OSMHOTLayer = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',{
+	  attribution: 'Created By <a href="http://nijel.org/">NiJeL</a> | &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="http://hotosm.org/">OSM HOT</a>'
+	});
+	this.map.addLayer(this.OSMHOTLayer);
 
 	// load zoom control in top right
 	this.map.addControl(L.control.zoom({ position: 'topright' }));
@@ -40,11 +46,13 @@ function SoundExplorerMap() {
 	this.BEACON_D3_POINTS = null;
 	this.BOATLAUNCH = null;
 	this.CSOS = null;
+	this.CSOS_CT = null;
 	this.IMPERVIOUS = null;
 	this.WATERSHEDS = null;
 	this.SHELLFISH = null;
 	this.WASTEWATER_CT = null;
 	this.WASTEWATER_NY = null;
+	this.LANDUSE = null;
 
 	// popup container to catch popups
 	this.popup = new L.Popup({ 
@@ -107,7 +115,8 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 			// don't toggle classes
 		} else {
 			$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
-			$( ".map" ).toggleClass("map-popup-wrapper-open");		
+			$( ".map" ).toggleClass("map-popup-wrapper-open");
+			$( ".legend" ).toggleClass("legend-popup-wrapper-open");
 		}
 
 		var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
@@ -303,6 +312,12 @@ SoundExplorerMap.onEachFeature_CSOS = function(feature,layer){
 
 }
 
+SoundExplorerMap.onEachFeature_CSOS_CT = function(feature,layer){
+
+	layer.bindLabel(feature.properties.Location + "<br />" + feature.properties.TownName, { direction:'auto' });
+
+}
+
 SoundExplorerMap.onEachFeature_IMPERVIOUS = function(feature,layer){
 	var pctIS10 = (feature.properties.pctIS10).toFixed(1);
 
@@ -310,12 +325,30 @@ SoundExplorerMap.onEachFeature_IMPERVIOUS = function(feature,layer){
 
 }
 
-
 SoundExplorerMap.onEachFeature_WATERSHEDS = function(feature,layer){
 
 	layer.bindLabel(feature.properties.Name, { direction:'auto' });
 
 }
+
+SoundExplorerMap.onEachFeature_SHELLFISH = function(feature,layer){
+
+	layer.bindLabel(feature.properties.CLASS, { direction:'auto' });
+
+}
+
+SoundExplorerMap.onEachFeature_WASTEWATER_CT = function(feature,layer){
+
+	layer.bindLabel(feature.properties.FAC_NAME + "<br />Permit Number: " + feature.properties.NPDES_PRMT, { direction:'auto' });
+
+}
+
+SoundExplorerMap.onEachFeature_WASTEWATER_NY = function(feature,layer){
+
+	layer.bindLabel(feature.properties.Facility_N + "<br />Permit Number: " + feature.properties.SPDES_ID, { direction:'auto' });
+
+}
+
 
 SoundExplorerMap.prototype.loadExtraLayers = function (){
 	// load all other layers -- don't show yet
@@ -333,7 +366,6 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 		});
 	}
 
-
 	d3.json(csos, function(data) {
 		var csosTopojson = topojson.feature(data, data.objects.CSOs_LISound_NY).features;
 		drawCsos(csosTopojson);
@@ -343,6 +375,18 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 		thismap.CSOS = L.geoJson(csosTopojson, {
 		    pointToLayer: SoundExplorerMap.getStyleFor_CSOS,
 			onEachFeature: SoundExplorerMap.onEachFeature_CSOS
+		});
+	}
+
+	d3.json(csos_CT, function(data) {
+		var csos_CTTopojson = topojson.feature(data, data.objects.CT_Municipal_CSO_Locations_4326).features;
+		drawcsos_CT(csos_CTTopojson);
+	});
+
+	function drawcsos_CT(csos_CTTopojson) {
+		thismap.CSOS_CT = L.geoJson(csos_CTTopojson, {
+		    pointToLayer: SoundExplorerMap.getStyleFor_CSOS,
+			onEachFeature: SoundExplorerMap.onEachFeature_CSOS_CT
 		});
 	}
 
@@ -370,6 +414,61 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 		});
 	}
 
+	d3.json(shellfish, function(data) {
+		var shellfishTopojson = topojson.feature(data, data.objects.SHELLFISH_AREA_CLASS_POLY_4326).features;
+		drawShellfish(shellfishTopojson);
+
+	});
+
+	function drawShellfish(shellfishTopojson) {
+		thismap.SHELLFISH = L.geoJson(shellfishTopojson, {
+		    style: SoundExplorerMap.getStyleFor_SHELLFISH,
+			onEachFeature: SoundExplorerMap.onEachFeature_SHELLFISH
+		});
+	}
+
+	// two wastewater layers -- one for CT and one for NY
+	d3.json(wastewater_CT, function(data) {
+		var wastewater_CTTopojson = topojson.feature(data, data.objects.stp_2013_4326).features;
+		drawWastewater_CT(wastewater_CTTopojson);
+
+	});
+
+	function drawWastewater_CT(wastewater_CTTopojson) {
+		thismap.WASTEWATER_CT = L.geoJson(wastewater_CTTopojson, {
+		    pointToLayer: SoundExplorerMap.getStyleFor_WASTEWATER,
+			onEachFeature: SoundExplorerMap.onEachFeature_WASTEWATER_CT
+		});
+	}
+
+	/*
+	d3.json(wastewater_NY, function(data) {
+		var wastewater_NYTopojson = topojson.feature(data, data.objects.wastewater_NY).features;
+		drawWastewater_NY(wastewater_NYTopojson);
+
+	});
+
+	function drawWastewater_NY(wastewater_NYTopojson) {
+		thismap.WASTEWATER_NY = L.geoJson(wastewater_NYTopojson, {
+		    pointToLayer: SoundExplorerMap.getStyleFor_WASTEWATER,
+			onEachFeature: SoundExplorerMap.onEachFeature_WASTEWATER_NY
+		});
+	}
+	*/
+
+	thismap.WASTEWATER_NY = L.esri.featureLayer("http://services.arcgis.com/jDGuO8tYggdCCnUJ/ArcGIS/rest/services/Municipal_wastewater_discharge_facilities_in_NYS/FeatureServer/0", {
+			pointToLayer: SoundExplorerMap.getStyleFor_WASTEWATER,
+			onEachFeature: SoundExplorerMap.onEachFeature_WASTEWATER_NY
+	});
+
+	thismap.LANDUSE = L.esri.dynamicMapLayer("http://gis1.usgs.gov/arcgis/rest/services/gap/GAP_Land_Cover_NVC_Class_Landuse/MapServer", {
+		  opacity : 0.5
+		});
+
+	thismap.LANDUSE.on('load', function(e){
+	  $("body").removeClass("loading");
+	});
+
 
 
 }
@@ -377,7 +476,7 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 SoundExplorerMap.getStyleFor_BOATLAUNCH = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 5,
+		radius: 3,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
@@ -393,11 +492,11 @@ SoundExplorerMap.getStyleFor_BOATLAUNCH = function (feature, latlng){
 SoundExplorerMap.getStyleFor_CSOS = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 5,
+		radius: 3,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
-		fillColor: '#bf5b17',
+		fillColor: '#543005',
 		fillOpacity: 1
 	});
 	
@@ -428,13 +527,47 @@ SoundExplorerMap.getStyleFor_WATERSHEDS = function (feature){
     }
 }
 
+SoundExplorerMap.getStyleFor_SHELLFISH = function (feature){
+	
+    return {
+        weight: 1,
+        opacity: 0.75,
+        color: '#f1f1f1',
+        fillOpacity: 0.75,
+        fillColor: SoundExplorerMap.fillColor_SHELLFISH(feature.properties.AV_LEGEND)
+    }
+}
 
-SoundExplorerMap.addExtraLayers = function (layer){
+SoundExplorerMap.getStyleFor_WASTEWATER = function (feature, latlng){
+
+	var pointMarker = L.circleMarker(latlng, {
+		radius: 3,
+		color: '#bdbdbd',
+		weight: 1,
+		opacity: 1,
+		fillColor: '#35978f',
+		fillOpacity: 1
+	});
+	
+	return pointMarker;
+	
+}
+
+
+
+SoundExplorerMap.addLayers = function (layer){
+	if (layer == "beacon") {
+		MY_MAP.BEACON_POINTS.addTo(MY_MAP.map);
+		if (MY_MAP.map.getZoom() >= 14) {
+			MY_MAP.BEACON_D3_POINTS.addTo(MY_MAP.map);
+		}
+	}
 	if (layer == "boatlaunch") {
 		MY_MAP.BOATLAUNCH.addTo(MY_MAP.map);
 	}
 	if (layer == "csos") {
 		MY_MAP.CSOS.addTo(MY_MAP.map);
+		MY_MAP.CSOS_CT.addTo(MY_MAP.map);
 	}
 	if (layer == "impervious") {
 		MY_MAP.IMPERVIOUS.addTo(MY_MAP.map);
@@ -442,21 +575,37 @@ SoundExplorerMap.addExtraLayers = function (layer){
 	if (layer == "watersheds") {
 		MY_MAP.WATERSHEDS.addTo(MY_MAP.map);
 	}
+	if (layer == "shellfish") {
+		MY_MAP.SHELLFISH.addTo(MY_MAP.map);
+	}
+	if (layer == "wastewater") {
+		MY_MAP.WASTEWATER_CT.addTo(MY_MAP.map);
+		MY_MAP.WASTEWATER_NY.addTo(MY_MAP.map);
+	}
+	if (layer == "landuse") {
+		MY_MAP.LANDUSE.addTo(MY_MAP.map).bringToBack();
+	}
 
-
-	MY_MAP.BEACON_POINTS.bringToFront();
+	if (MY_MAP.map.hasLayer(MY_MAP.BEACON_POINTS)) {
+		MY_MAP.BEACON_POINTS.bringToFront();
+	}
 	if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 		MY_MAP.BEACON_D3_POINTS.bringToFront();
 	}
 
 }
 
-SoundExplorerMap.removeExtraLayers = function (layer){
+SoundExplorerMap.removeLayers = function (layer){
+	if (layer == "beacon") {
+		MY_MAP.map.removeLayer(MY_MAP.BEACON_POINTS);
+		MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
+	}
 	if (layer == "boatlaunch") {
 		MY_MAP.map.removeLayer(MY_MAP.BOATLAUNCH);
 	}
 	if (layer == "csos") {
 		MY_MAP.map.removeLayer(MY_MAP.CSOS);
+		MY_MAP.map.removeLayer(MY_MAP.CSOS_CT);
 	}
 	if (layer == "impervious") {
 		MY_MAP.map.removeLayer(MY_MAP.IMPERVIOUS);
@@ -464,8 +613,31 @@ SoundExplorerMap.removeExtraLayers = function (layer){
 	if (layer == "watersheds") {
 		MY_MAP.map.removeLayer(MY_MAP.WATERSHEDS);
 	}
+	if (layer == "shellfish") {
+		MY_MAP.map.removeLayer(MY_MAP.SHELLFISH);
+	}
+	if (layer == "wastewater") {
+		MY_MAP.map.removeLayer(MY_MAP.WASTEWATER_CT);
+		MY_MAP.map.removeLayer(MY_MAP.WASTEWATER_NY);
+	}
+	if (layer == "landuse") {
+		MY_MAP.map.removeLayer(MY_MAP.LANDUSE);
+	}
+
 }
 
+
+SoundExplorerMap.fillColor_SHELLFISH = function (d){
+    return d == 'A' ? '#a6cee3' :
+           d == 'CA' ? '#1f78b4' :
+           d == 'R-R/DP' ? '#b2df8a' :
+           d == 'CR-R/DP' ? '#33a02c' :
+           d == 'R-R' ? '#fb9a99' :
+           d == 'CR-R' ? '#e31a1c' :
+           d == 'P' ? '#fdbf6f' :
+                   	'#fff' ;	
+
+}
 
 SoundExplorerMap.fillColor_IMPERVIOUS = function (d){
     return d > 25 ? '#252525' :
@@ -629,6 +801,7 @@ SoundExplorerMap.drawTimeSlider = function (){
 					)
 					.value( [ fiveYearAgo, maxDate ] )
 					.on("slideend", function(evt, value) {
+						$("body").addClass("loading");
 						// run a function to update map layers with new dates
 						SoundExplorerMap.updateMapFromSlider(value);
 						// update combo boxes
@@ -687,6 +860,7 @@ SoundExplorerMap.updateMapFromSlider = function (value){
 			}
 		}
 
+		$("body").removeClass("loading");
 
 	});
 
