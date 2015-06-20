@@ -1,0 +1,354 @@
+<form class="form-inline padding-top-5 padding-bottom-10">
+  <div class="form-group">
+    <label for="vdaMain">View Data As: </label>
+    <select class="form-control" id="vdaMain">
+    {% if tab == "timeline" %}
+      <option value="timelineMain"selected>Interactive Timeline</option>
+      <option value="precipMain">Precipitation Information</option>
+    {% else %}
+      <option value="timelineMain">Interactive Timeline</option>
+      <option value="precipMain" selected>Precipitation Information</option>
+    {% endif %} 
+    </select>
+  </div>
+  <div class="form-group pull-right">
+    <label for="start_date">Select Data Between: </label>
+    <select class="form-control" name="start_date" id="start_date"></select>
+    <select class="form-control" name="end_date" id="end_date"></select>
+  </div>
+</form>
+<div class="clearfix"></div>
+<div id="precipMain" class="show">
+  <h4>For the selected time period, all samples failed:</h4>
+  <div class="precipVisWrapper">
+    <div class="container-fluid marginTopBottom20">
+      <div class="col-md-6">
+        <div id="ringSvgMain" class="pull-left"></div>
+        <div id="ringTextMain" class='textPopup textRingPopup'></div>
+      </div>
+      <div class="col-md-6">
+        <div id="dropSvgMain" class="dropMargin pull-left"></div>
+        <div id="dropTextMain" class='textPopup textDropPopup'></div>
+        <div class="clearfix"></div>
+        <div id="sunSvgMain" class="pull-left"></div>
+        <div id="sunTextMain" class='textPopup textSunPopup'></div>
+      </div>            
+    </div>
+  </div>
+</div>
+<div id="timelineMain" class="show">
+  <div id="timeSlider"></div>  
+</div>
+
+
+<script type="text/javascript">
+
+  $( document ).ready(function() {
+
+    function createStartEndCombos() {
+      // create start and end date combo boxes
+      var start_date_options = '';
+      var end_date_options = '';
+
+      var start_date_selected = moment('{{ startDate|date:"c"}}').startOf('month');
+      var end_date_selected = moment('{{ endDate|date:"c"}}').endOf('month');
+
+      var minDate = moment(new Date(2003,11,31));
+      var begincheckDate = moment().startOf('month');
+      var endcheckDate = moment().endOf('month');
+
+      while (begincheckDate.isAfter(minDate)) {
+        var startvalue = begincheckDate.format('YYYY-MM-DD');
+        var endvalue = endcheckDate.format('YYYY-MM-DD');
+        var printValue = begincheckDate.format('MMM YYYY');
+        var selected_start = '';
+        var selected_end = '';
+        if (begincheckDate.isSame(start_date_selected)) {
+          var selected_start = 'selected';
+        }
+        if (endcheckDate.isSame(end_date_selected)) {
+          var selected_end = 'selected';
+        }
+
+        start_date_options += '<option ' + selected_start + ' value="' + startvalue + '">' + printValue + '</option>'; 
+
+        end_date_options += '<option ' + selected_end + ' value="' + endvalue + '">' + printValue + '</option>'; 
+
+        begincheckDate.subtract(1, 'months');
+        endcheckDate.subtract(1, 'months').endOf('month');
+      }
+
+      $('#start_date').html(start_date_options);
+      $('#end_date').html(end_date_options);
+    }
+
+    function drawTimeSlider() {
+      var minDate = new Date(2004,0,1);
+      var maxDate = moment().toDate();
+      var start_date_selected = moment('{{ startDate|date:"c"}}').startOf('month').toDate();
+      var end_date_selected = moment('{{ endDate|date:"c"}}').endOf('month').toDate();
+
+      var mapSlider = d3.slider()
+              .axis(
+                d3.svg.axis()
+                  .orient("top")
+                  .scale(
+                    d3.time.scale()
+                      .domain([minDate, maxDate])
+                  )
+                  .ticks(d3.time.years)
+                  .tickSize(24, 0)
+                  .tickFormat(d3.time.format("%Y"))
+              )
+              .scale(
+                d3.time.scale()
+                  .domain([minDate, maxDate])
+              )
+              .value( [ start_date_selected, end_date_selected ] )
+              .on("slideend", function(evt, value) {
+                $("body").addClass("loading");
+                // run a function to update map layers with new dates
+                SoundExplorerMap.updateMapFromSlider(value);
+              });
+
+      d3.select('#timeSlider').call(mapSlider);
+
+      // ensure the correct tabs are hidden and shown
+      {% if tab == "timeline" %}
+        $('#precipMain').removeClass('show').addClass('hidden');
+      {% else %}
+        $('#timelineMain').removeClass('show').addClass('hidden');
+      {% endif %}
+
+    }
+
+
+    // set up combo box selction to update map and slider
+    $( "#start_date" ).change(function() {
+      updateSlider();
+    });
+
+    $( "#end_date" ).change(function() {
+      updateSlider();
+    });
+
+    function updateSlider (minDate, maxDate, start_date, end_date) {
+      $("body").addClass("loading");
+
+      var minDate = new Date(2004,0,1);
+      var maxDate = moment().toDate();
+      var start_date = moment($( "#start_date option:selected" ).val()).toDate();
+      var end_date = moment($( "#end_date option:selected" ).val()).toDate();
+
+      // destroy the old slider
+      d3.select('#timeSlider').selectAll("*").remove();
+
+        // recreate slider
+      mapSlider = d3.slider()
+          .axis(
+            d3.svg.axis()
+              .orient("top")
+              .scale(
+                d3.time.scale()
+                  .domain([minDate, maxDate])
+              )
+              .ticks(d3.time.years)
+              .tickSize(24, 0)
+              .tickFormat(d3.time.format("%Y"))
+          )
+          .scale(
+            d3.time.scale()
+              .domain([minDate, maxDate])
+          )
+          .value( [ start_date, end_date ] )
+          .on("slideend", function(evt, value) {
+            $("body").addClass("loading");
+            // run a function to update map layers with new dates
+            SoundExplorerMap.updateMapFromSlider(value);
+            // update combo boxes
+            var start_date = moment(value[0]).format('YYYY-MM');
+            start_date = start_date + '-01';
+            $( "#start_date" ).val(start_date);
+            var end_date = moment(value[1]).format('YYYY-MM');
+            end_date = end_date + '-01';
+            $( "#end_date" ).val(end_date);         
+          });
+
+      d3.select('#timeSlider').call(mapSlider);
+
+      // update the map data as well
+      var value = [ start_date, end_date ];
+      SoundExplorerMap.updateMapFromSlider(value);
+
+    }
+
+
+
+    // create the ring chart, drop, and sun charts on the main page
+    // draw ring chart
+    function drawRingChartMain() {
+
+      var TotalPassSamplesSum = {{ scores.TotalPassSamplesSum }};
+      var NumberOfSamplesSum = {{ scores.NumberOfSamplesSum }};
+
+      var pctPass = ((TotalPassSamplesSum / NumberOfSamplesSum) * 100);
+      var pctFail = 100 - pctPass;
+
+      var pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: pctPass}];
+
+      var w = 140;
+      var h = 140;
+      var innerRadius = 55;
+      var outerRadius = 65;
+
+      var arc = d3.svg.arc()
+          .outerRadius(outerRadius)
+          .innerRadius(innerRadius);
+
+      var pie = d3.layout.pie()
+        .sort(null)
+        .value(function(d) { return d.pct; });
+
+      var ringSvg = d3.select('#ringSvgMain').append('svg')
+        .attr('width', w)
+        .attr('height', h)
+        .append('g')
+        .attr("class", "rings")
+        .attr("transform", "translate("+w/2+","+h/2+")")
+        .selectAll(".arc")
+        .data(function(d) { return pie(pctPassFail); });
+
+      ringSvg.enter().append('text')
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(0,12)")
+        .attr('style', function(d) { 
+          if (d.data.name == "fail") {
+            var pctNum = +d.data.pct;
+            if (pctNum == 100) {
+              var fontSize = 42;
+            } else {
+              var fontSize = 50;
+            }       
+            return "font-size: "+ fontSize +"; stroke: #be1e2d; }"
+          } 
+        })
+        .text(function(d) { 
+          if (d.data.name == "fail") {
+            return d.data.pct.toFixed(0) + "%";
+          }
+        });
+
+
+      var rings = ringSvg.enter()
+        .append("path")
+        .attr("class", "arc")
+        .attr("d", arc)
+        .style("fill", function(d) {
+          if (d.data.name == "pass") {
+            return "#009444";
+          } else {
+            return "#be1e2d";
+          }
+        });
+
+      //add text next to ring chart
+      $('#ringTextMain').text(pctFail.toFixed(0) + "% of the time in total.");
+
+    }
+
+        // draw raindrop chart
+    function drawDropChartMain() {
+      var WetWeatherPassSamplesSum = {{ scores.WetWeatherPassSamplesSum }};
+      var TotalWetWeatherSamplesSum = {{ scores.TotalWetWeatherSamplesSum }};
+
+      var pctWetFail = 100 - ((WetWeatherPassSamplesSum / TotalWetWeatherSamplesSum) * 100).toFixed(0);
+
+      var dropSvg = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="53.771" height="59.867249" id="svg2" xml:space="preserve"><g transform="matrix(1.25,0,0,-1.25,0,59.86725)" id="g10"><g transform="translate(9.4551,8.6643)"id="g20"><path d="m 0,0 c 6.529,-6.529 17.116,-6.53 23.643,-0.002 6.528,6.528 6.527,17.114 -0.002,23.643 L 11.82,35.462 0,23.642 C -6.528,17.114 -6.528,6.528 0,0" id="path22" style="fill:#c1e5e6;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g><g transform="translate(9.4551,8.6643)" id="g24"><path d="m 0,0 c 6.529,-6.529 17.116,-6.53 23.643,-0.002 6.528,6.528 6.527,17.114 -0.002,23.643 L 11.82,35.462 0,23.642 C -6.528,17.114 -6.528,6.528 0,0 z" id="path26" style="fill:none;stroke:#0a8ba7;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" /></g></g>';
+
+      // change translation if 100%, between 99 and 10 percent and less than 10 percent.
+      if (pctWetFail == 100) {
+        var fontSize = 16;
+        var translateRight = 9;
+      } else if (pctWetFail > 9.99) {
+        var fontSize = 20;
+        var translateRight = 10;    
+      } else {
+        var fontSize = 20;
+        var translateRight = 15;        
+      }
+
+      var dropSvgText = '<g transform="translate('+ translateRight +',40)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'; stroke:#0a8ba7;">'+pctWetFail+'%</text></g>';
+
+      var dropSvgClose = '</svg>';
+
+      dropSvg = dropSvg + dropSvgText + dropSvgClose;
+
+      $('#dropSvgMain').append(dropSvg);
+
+      $('#dropTextMain').text(pctWetFail + "% of the time after wet weather.");
+
+    }
+
+
+    // draw sun chart
+    function drawSunChartMain() {
+      var DryWeatherPassSamplesSum = {{ scores.DryWeatherPassSamplesSum }};
+      var TotalDryWeatherSamplesSum = {{ scores.TotalDryWeatherSamplesSum }};
+
+      var pctDryFail = 100 - ((DryWeatherPassSamplesSum / TotalDryWeatherSamplesSum) * 100).toFixed(0);
+
+      var sunSvg = '<svg width="78.911" height="78.212"><g transform="matrix(1.25 0 0 -1.25 0 78.21)"><path d="M46.63 30.497c0-8.034-6.512-14.546-14.545-14.546-8.034 0-14.546 6.513-14.546 14.547s6.51 14.546 14.545 14.546c8.033 0 14.546-6.512 14.546-14.546" fill="#ee4137"/><path d="M46.63 30.497c0-8.034-6.512-14.546-14.545-14.546-8.034 0-14.546 6.513-14.546 14.547s6.51 14.546 14.545 14.546c8.033 0 14.546-6.512 14.546-14.546z" fill="none" stroke="#f79420" stroke-width="3" stroke-miterlimit="10"/><path d="M52.164 30.497h6.84M46.283 44.695l4.836 4.836M32.085 50.576v6.84M17.886 44.695L13.05 49.53M17.886 16.298l-3.842-3.842M32.123 10.726v-6.84M46.283 16.298l4.836-4.836M4.207 30.497h6.84" fill="none" stroke="#faaf41" stroke-width="5" stroke-linecap="round" stroke-miterlimit="10"/></g>';
+
+      // change translation if 100%, between 99 and 10 percent and less than 10 percent.
+      if (pctDryFail == 100) {
+        var fontSize = 14;
+        var translateRight = 24;
+      } else if (pctDryFail > 9.99) {
+        var fontSize = 18;
+        var translateRight = 25;    
+      } else {
+        var fontSize = 20;
+        var translateRight = 28;        
+      }
+
+
+      var sunSvgText = '<g transform="translate('+ translateRight +',45)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'; stroke:#fff;">'+pctDryFail+'%</text></g>';
+
+      var sunSvgClose = '</svg>';
+
+      sunSvg = sunSvg + sunSvgText + sunSvgClose;
+
+      $('#sunSvgMain').append(sunSvg);
+
+      $('#sunTextMain').text(pctDryFail + "% of the time after dry weather. ");
+
+    }
+
+    createStartEndCombos();
+    drawTimeSlider();
+    drawRingChartMain();
+    drawDropChartMain();
+    drawSunChartMain();
+
+
+    // on change listener for combo box main
+    $('#vdaMain').change(function() {
+      // remove show class
+      if ($('#precipMain').hasClass('show')) {
+        $('#precipMain').removeClass('show').addClass('hidden');
+      }
+      if ($('#timelineMain').hasClass('show')) {
+        $('#timelineMain').removeClass('show').addClass('hidden');
+      }
+
+      var show = $( "#vdaMain option:selected" ).val();
+      $('#'+show).removeClass('hidden').addClass('show');
+
+    });
+
+
+
+  });
+
+
+</script>

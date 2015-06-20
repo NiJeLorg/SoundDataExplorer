@@ -45,11 +45,11 @@
             </form>
             <div class="clearfix"></div>
             <div id="precip" class="show">
-            	<h4>For the selected time period this site's samples failed:</h4>
+            	<h4>For the selected time period, this site's samples failed:</h4>
             	<div class="container-fluid marginTopBottom20">
 	              	<div class="col-md-6">
 	            		<div id="ringSvgModal" class="pull-left"></div>
-	            		<div id="ringTextModal" class='textPopup textDropPopup'></div>
+	            		<div id="ringTextModal" class='textPopup textRingPopup'></div>
 	            	</div>
 	            	<div class="col-md-6">
 	            		<div id="dropSvgModal" class="dropMargin pull-left"></div>
@@ -118,6 +118,104 @@
             	<div id="timeSliderModal"></div>
             </div>
             <div class="clearfix"></div>
+            <div class="container-fluid">
+            	<div class="row">
+            		<div class="col-md-12 grey-background-modal">
+                        <h4 class="padding-top-5">Points of Interest</h4>
+			            <div class="container-fluid padding-bottom-10">
+			            	<div class="row">
+                        		<div class="col-md-6">
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="beaconModal" id="beaconModal">
+			                            <svg width='14' height='14'>
+			                              <circle cx="7" cy="7" r="7" fill="#f47f45" />
+			                            </svg>
+			                            Sampling Locations
+			                          </label>
+			                        </div>
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="watershedsModal" id="watershedsModal">
+			                            <svg width='14' height='14'>
+			                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #08519c; stroke: black; stroke-width: 2; opacity: 0.5;" />                            
+			                            </svg>
+			                            Long Island Sound Regions
+			                          </label>
+			                        </div>
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="subwatershedsModal" id="subwatershedsModal">
+			                            <svg width='14' height='14'>
+			                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #9ecae1; stroke: black; stroke-width: 2; opacity: 0.75;" />                            
+			                            </svg>
+			                            Subwatersheds
+			                          </label>
+			                        </div>
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="shellfishModal" id="shellfishModal">
+			                            <svg width='14' height='14'>
+			                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #fb9a99; opacity: 0.75; stroke: black; stroke-width: 2;" />                            
+			                            </svg>
+			                            Shellfishing Areas
+			                          </label>
+			                        </div>
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="boatlaunchModal" id="boatlaunchModal">
+			                            <svg width='14' height='14'>
+			                              <circle cx="7" cy="7" r="7" fill="#545454" />
+			                            </svg>
+			                            Boat Launch Sites
+			                          </label>
+			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="landuseModal" id="landuseModal">
+			                            <svg width='14' height='14'>
+			                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #007a04; opacity: 0.5; stroke: black; stroke-width: 2;" />
+			                            </svg>                         
+			                            Land Use & Land Cover
+			                          </label>
+			                        </div>
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="imperviousModal" id="imperviousModal">
+			                            <svg width='14' height='14'>
+			                              <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #969696; stroke: black; stroke-width: 2;" />     
+			                            </svg>                       
+			                            Impervious Surfaces
+			                          </label>
+			                        </div>
+
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="wastewaterModal" id="wastewaterModal">
+			                            <svg width='14' height='14'>
+			                              <circle cx="7" cy="7" r="7" fill="#35978f" />
+			                            </svg>
+			                            Wastewater Treatment Plants
+			                          </label>
+			                        </div>
+			                        <div class="checkbox">
+			                          <label>
+			                            <input type="checkbox" value="csosModal" id="csosModal">
+			                            <svg width='14' height='14'>
+			                              <circle cx="7" cy="7" r="7" fill="#543005" />
+			                            </svg>
+			                            Combined Sewer Overflow
+			                          </label>
+			                        </div>
+			                    </div>
+		                    </div>
+	                    </div>
+                    </div> 
+            	</div>
+            </div>
+
             <hr />
             <small>
             	Our Partners at Sample Location United provided us with this data. Learn more about them at <a href="#">Data Sources</a>. This bacteria data is scored based on the US EPA criteria for safe primary contact (swimming). More information on <a href="#">Criteria & Scoring</a>. 
@@ -192,29 +290,36 @@
 			var start_date_options = '';
 			var end_date_options = '';
 
-			var start_date_selected = moment($( "#start_date option:selected" ).val());
-			var end_date_selected = moment($( "#end_date option:selected" ).val());
+			var start_date_selected = moment($( "#start_date option:selected" ).val()).startOf('month');
+			var end_date_selected = moment($( "#end_date option:selected" ).val()).endOf('month');
 
-			var minDate = moment(new Date(2004,0,1));
-			var checkDate = moment().startOf('month');
+			var minDate = moment('{{ earliestSample.StartDate|date:"c" }}');
+			var earliestDate = moment(new Date(2003,11,31))
+			if (minDate.isBefore(earliestDate)) {
+				minDate = earliestDate;
+			}
+			var begincheckDate = moment('{{ latestSample.StartDate|date:"c" }}').startOf('month');
+			var endcheckDate = moment('{{ latestSample.StartDate|date:"c" }}').endOf('month');
 
-			while (checkDate.isAfter(minDate)) {
-				var value = checkDate.format('YYYY-MM-DD');
-				var printValue = checkDate.format('MMM YYYY');
+			while (begincheckDate.isAfter(minDate)) {
+				var startvalue = begincheckDate.format('YYYY-MM-DD');
+				var endvalue = endcheckDate.format('YYYY-MM-DD');
+				var printValue = begincheckDate.format('MMM YYYY');
 				var selected_start = '';
 				var selected_end = '';
-				if (checkDate.isSame(start_date_selected)) {
+				if (begincheckDate.isSame(start_date_selected)) {
 					var selected_start = 'selected';
 				}
-				if (checkDate.isSame(end_date_selected)) {
+				if (endcheckDate.isSame(end_date_selected)) {
 					var selected_end = 'selected';
 				}
 
-				start_date_options += '<option ' + selected_start + ' value="' + value + '">' + printValue + '</option>'; 
+				start_date_options += '<option ' + selected_start + ' value="' + startvalue + '">' + printValue + '</option>'; 
 
-				end_date_options += '<option ' + selected_end + ' value="' + value + '">' + printValue + '</option>'; 
+				end_date_options += '<option ' + selected_end + ' value="' + endvalue + '">' + printValue + '</option>'; 
 
-				checkDate.subtract(1, 'months');
+				begincheckDate.subtract(1, 'months');
+				endcheckDate.subtract(1, 'months').endOf('month');
 			}
 
 			$('#start_date_modal').html(start_date_options);
@@ -273,7 +378,11 @@
 				})
 				.text(function(d) { 
 					if (d.data.name == "fail") {
-						return d.data.pct.toFixed(0) + "%";
+						if (isNaN(d.data.pct)) {
+							return "No Data";
+						} else {
+							return d.data.pct.toFixed(0) + "%";
+						}
 					}
 				});
 
@@ -291,7 +400,9 @@
 				});
 
 			//add text next to ring chart
-			$('#ringTextModal').text(pctFail.toFixed(0) + "% of the time in total.");
+			if (!isNaN(pctFail)) {
+				$('#ringTextModal').text(pctFail.toFixed(0) + "% of the time in total.");
+			} 
 
 		}
 
@@ -325,9 +436,12 @@
 
 			dropSvg = dropSvg + dropSvgText + dropSvgClose;
 
-			$('#dropSvgModal').append(dropSvg);
+			if (!isNaN(pctWetFail)) {
+				$('#dropSvgModal').append(dropSvg);
 
-			$('#dropTextModal').text(pctWetFail + "% of the time after wet weather.");
+				$('#dropTextModal').text(pctWetFail + "% of the time after wet weather.");
+			} 
+
 
 		}
 
@@ -362,18 +476,34 @@
 
 			sunSvg = sunSvg + sunSvgText + sunSvgClose;
 
-			$('#sunSvgModal').append(sunSvg);
+			if (!isNaN(pctDryFail)) {
+				$('#sunSvgModal').append(sunSvg);
 
-			$('#sunTextModal').text(pctDryFail + "% of the time after dry weather.");
+				$('#sunTextModal').text(pctDryFail + "% of the time after dry weather.");
+			}
+
 
 		}
 
 
 		function drawTimeSliderModal() {
-			var minDate = new Date(2004,0,1);
-			var maxDate = moment().toDate();
-			var start_date_selected = moment($( "#start_date option:selected" ).val()).toDate();
-			var end_date_selected = moment($( "#end_date option:selected" ).val()).toDate();
+			var minDate = moment('{{ earliestSample.StartDate|date:"c" }}').startOf('month');
+			var maxDate = moment('{{ latestSample.StartDate|date:"c" }}').endOf('month');
+
+			var start_date_selected = moment($( "#start_date option:selected" ).val());
+			var end_date_selected = moment($( "#end_date option:selected" ).val());
+
+			if (start_date_selected.isBefore(minDate)) {
+				start_date_selected = minDate;
+			}
+			if (end_date_selected.isAfter(maxDate)) {
+				end_date_selected = maxDate;
+			}
+
+			minDate = minDate.toDate();
+			maxDate = maxDate.toDate();
+			start_date_selected = start_date_selected.toDate();
+			end_date_selected = end_date_selected.toDate();
 
 			var mapSliderModal = d3.slider()
 							.axis(
@@ -547,12 +677,157 @@
 		        type: 'GET',
 		        url:  'modalapi/?startDate=' + startDate + '&endDate=' + endDate + '&beachId=' + beachid + '&tab=' + tab,
 		        success: function(data){
-		        	$("body").removeClass("loading");
 		        	$("#modalData").html(data);
+		        	$("body").removeClass("loading");
 		        }
 		    });
 
 		}
+
+		// ensure correct checked layers on page load
+		if ($('#beacon').prop('checked')) {
+			$('#beaconModal').prop('checked', true);
+		}
+		if ($('#watersheds').prop('checked')) {
+			$('#watershedsModal').prop('checked', true);
+		}
+		if ($('#subwatersheds').prop('checked')) {
+			$('#subwatershedsModal').prop('checked', true);
+		}
+		if ($('#shellfish').prop('checked')) {
+			$('#shellfishModal').prop('checked', true);
+		}
+		if ($('#boatlaunch').prop('checked')) {
+			$('#boatlaunchModal').prop('checked', true);
+		}
+		if ($('#landuse').prop('checked')) {
+			$('#landuseModal').prop('checked', true);
+		}
+		if ($('#impervious').prop('checked')) {
+			$('#imperviousModal').prop('checked', true);
+		}
+		if ($('#wastewater').prop('checked')) {
+			$('#wastewaterModal').prop('checked', true);
+		}
+		if ($('#csos').prop('checked')) {
+			$('#csosModal').prop('checked', true);
+		}
+
+		// listeners here for additonal layers
+		$( "#beaconModal" ).change(function() {
+			if ($( "#beaconModal" ).prop('checked')) {
+				$('#beacon').prop('checked', true);
+				SoundExplorerMap.addLayers('beacon');
+				SoundExplorerModalMap.addLayers('beacon');
+			} else {
+				$('#beacon').prop('checked', false);
+				SoundExplorerMap.removeLayers('beacon');
+				SoundExplorerModalMap.removeLayers('beacon');
+			}
+		});
+
+		$( "#boatlaunchModal" ).change(function() {
+			if ($( "#boatlaunchModal" ).prop('checked')) {
+				$('#boatlaunch').prop('checked', true);
+				SoundExplorerMap.addLayers('boatlaunch');
+				SoundExplorerModalMap.addLayers('boatlaunch');
+			} else {
+				$('#boatlaunch').prop('checked', false);
+				SoundExplorerMap.removeLayers('boatlaunch');
+				SoundExplorerModalMap.removeLayers('boatlaunch');
+			}
+		});
+
+		$( "#csosModal" ).change(function() {
+			if ($( "#csosModal" ).prop('checked')) {
+				$('#csos').prop('checked', true);
+				SoundExplorerMap.addLayers('csos');
+				SoundExplorerModalMap.addLayers('csos');
+			} else {
+				$('#csos').prop('checked', false);
+				SoundExplorerMap.removeLayers('csos');
+				SoundExplorerModalMap.removeLayers('csos');
+			}
+		});
+
+		$( "#imperviousModal" ).change(function() {
+			if ($( "#imperviousModal" ).prop('checked')) {
+				$('#impervious-legend').removeClass('hidden').addClass('show');
+				$('#impervious').prop('checked', true);
+				SoundExplorerMap.addLayers('impervious');
+				SoundExplorerModalMap.addLayers('impervious');
+			} else {
+				$('#impervious').prop('checked', false);
+				$('#impervious-legend').removeClass('show').addClass('hidden');
+				SoundExplorerMap.removeLayers('impervious');
+				SoundExplorerModalMap.removeLayers('impervious');
+			}
+		});
+
+		$( "#watershedsModal" ).change(function() {
+			if ($( "#watershedsModal" ).prop('checked')) {
+				$('#watersheds').prop('checked', true);
+				SoundExplorerMap.addLayers('watersheds');
+				SoundExplorerModalMap.addLayers('watersheds');
+			} else {
+				$('#watersheds').prop('checked', false);
+				SoundExplorerMap.removeLayers('watersheds');
+				SoundExplorerModalMap.removeLayers('watersheds');
+			}
+		});
+
+		$( "#subwatershedsModal" ).change(function() {
+			if ($( "#subwatershedsModal" ).prop('checked')) {
+				$('#subwatersheds').prop('checked', true);
+				SoundExplorerMap.addLayers('subwatersheds');
+				SoundExplorerModalMap.addLayers('subwatersheds');
+			} else {
+				$('#subwatersheds').prop('checked', false);
+				SoundExplorerMap.removeLayers('subwatersheds');
+				SoundExplorerModalMap.removeLayers('subwatersheds');
+			}
+		});
+
+		$( "#shellfishModal" ).change(function() {
+			if ($( "#shellfishModal" ).prop('checked')) {
+				$('#shellfish-legend').removeClass('hidden').addClass('show');
+				$('#shellfish').prop('checked', true);
+				SoundExplorerMap.addLayers('shellfish');
+				SoundExplorerModalMap.addLayers('shellfish');
+			} else {
+				$('#shellfish').prop('checked', false);
+				$('#shellfish-legend').removeClass('show').addClass('hidden');
+				SoundExplorerMap.removeLayers('shellfish');
+				SoundExplorerModalMap.removeLayers('shellfish');
+			}
+		});
+
+		$( "#wastewaterModal" ).change(function() {
+			if ($( "#wastewaterModal" ).prop('checked')) {
+				$('#wastewater').prop('checked', true);
+				SoundExplorerMap.addLayers('wastewater');
+				SoundExplorerModalMap.addLayers('wastewater');
+			} else {
+				$('#wastewater').prop('checked', false);
+				SoundExplorerMap.removeLayers('wastewater');
+				SoundExplorerModalMap.removeLayers('wastewater');
+			}
+		});
+
+		$( "#landuseModal" ).change(function() {
+			if ($( "#landuseModal" ).prop('checked')) {
+				$("body").addClass("loading");
+				$('#lulc-legend').removeClass('hidden').addClass('show');
+				$('#landuse').prop('checked', true);
+				SoundExplorerMap.addLayers('landuse');
+				SoundExplorerModalMap.addLayers('landuse');
+			} else {
+				$('#landuse').prop('checked', false);
+				$('#lulc-legend').removeClass('show').addClass('hidden');
+				SoundExplorerMap.removeLayers('landuse');
+				SoundExplorerModalMap.removeLayers('landuse');
+			}
+		});
 
 
 

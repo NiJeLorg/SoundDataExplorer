@@ -18,90 +18,6 @@ $( document ).ready(function() {
 		$( ".legend" ).toggleClass("legend-popup-wrapper-open");
 	});
 
-	// create start and end date combo boxes
-	var start_date_options = '';
-	var end_date_options = '';
-
-	var minDate = moment(new Date(2004,0,1));
-	var checkDate = moment().startOf('month');
-	var fiveYearAgo = moment().subtract(5, 'years').startOf('month');
-
-	while (checkDate.isAfter(minDate)) {
-		var value = checkDate.format('YYYY-MM-DD');
-		var printValue = checkDate.format('MMM YYYY');
-		var selected = '';
-		if (checkDate.isSame(fiveYearAgo)) {
-			var selected = 'selected';
-		}
-		start_date_options += '<option ' + selected + ' value="' + value + '">' + printValue + '</option>'; 
-
-		end_date_options += '<option value="' + value + '">' + printValue + '</option>'; 
-
-		checkDate.subtract(1, 'months');
-	}
-
-	$('#start_date').html(start_date_options);
-	$('#end_date').html(end_date_options);
-
-
-	// set up combo box selction to update map and slider
-	$( "#start_date" ).change(function() {
-	  updateSlider();
-	});
-
-	$( "#end_date" ).change(function() {
-	  updateSlider();
-	});
-
-	function updateSlider (minDate, maxDate, start_date, end_date) {
-		$("body").addClass("loading");
-
-		var minDate = new Date(2004,0,1);
-		var maxDate = moment().toDate();
-		var start_date = moment($( "#start_date option:selected" ).val()).toDate();
-		var end_date = moment($( "#end_date option:selected" ).val()).toDate();
-
-	  	// destroy the old slider
-	  	d3.select('#timeSlider').selectAll("*").remove();
-
-	  	// recreate slider
-		mapSlider = d3.slider()
-				.axis(
-					d3.svg.axis()
-						.orient("top")
-						.scale(
-							d3.time.scale()
-								.domain([minDate, maxDate])
-						)
-						.ticks(d3.time.years)
-						.tickSize(24, 0)
-						.tickFormat(d3.time.format("%Y"))
-				)
-				.scale(
-					d3.time.scale()
-						.domain([minDate, maxDate])
-				)
-				.value( [ start_date, end_date ] )
-				.on("slideend", function(evt, value) {
-					$("body").addClass("loading");
-					// run a function to update map layers with new dates
-					SoundExplorerMap.updateMapFromSlider(value);
-					// update combo boxes
-					var start_date = moment(value[0]).format('YYYY-MM');
-					start_date = start_date + '-01';
-					$( "#start_date" ).val(start_date);
-					var end_date = moment(value[1]).format('YYYY-MM');
-					end_date = end_date + '-01';
-					$( "#end_date" ).val(end_date);					
-				});
-
-		d3.select('#timeSlider').call(mapSlider);
-
-		// update the map data as well
-		var value = [ start_date, end_date ];
-		SoundExplorerMap.updateMapFromSlider(value);
-
-	}
 
 	// listen for modal click
 	$('#siteView').on('show.bs.modal', function (event) {
@@ -111,6 +27,7 @@ $( document ).ready(function() {
 		var lon = link.data('lon');
 		var modalMap = new SoundExplorerModalMap(lat, lon);
 		modalMap.loadPointLayers();
+		modalMap.loadExtraLayers();
 		setTimeout(function() {
 			modalMap.map.invalidateSize();		
 		}, 10);
@@ -182,6 +99,14 @@ $( document ).ready(function() {
 			SoundExplorerMap.addLayers('watersheds');
 		} else {
 			SoundExplorerMap.removeLayers('watersheds');
+		}
+	});
+
+	$( "#subwatersheds" ).change(function() {
+		if ($( "#subwatersheds" ).prop('checked')) {
+			SoundExplorerMap.addLayers('subwatersheds');
+		} else {
+			SoundExplorerMap.removeLayers('subwatersheds');
 		}
 	});
 

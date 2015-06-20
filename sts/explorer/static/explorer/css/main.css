@@ -55,7 +55,7 @@ body.loading .loading-modal {
 }
 
 .map-popup-wrapper-open {
-	bottom:260px;
+	bottom:310px;
 }
 
 .popup-wrapper {
@@ -76,7 +76,7 @@ body.loading .loading-modal {
 }
 
 .popup-wrapper-open {
-	height: 260px;
+	height: 310px;
 }
  
 .popup-content {
@@ -97,7 +97,12 @@ body.loading .loading-modal {
 
 .grey-background {
   background: #d1d3d4;
-  min-height: 300px;
+  min-height: 350px;
+}
+
+.grey-background-modal {
+  background: #d1d3d4;
+  border: solid 1px #545454;
 }
 
 .padding-top-5 {
@@ -229,7 +234,7 @@ tbody td, thead th {
 }
 
 .legend-popup-wrapper-open {
-  bottom:290px;
+  bottom: 340px;
 }
 
 
@@ -334,6 +339,11 @@ tbody td, thead th {
   margin-top: 10px;
 }
 
+.textRingPopup {
+  height: 160px;
+  padding-left: 14px;
+}
+
 .textDropPopup {
   padding-left: 14px;
 }
@@ -377,17 +387,17 @@ tbody td, thead th {
 
 .modal-header {
   border-bottom: 0;
+  margin-bottom: 20px;
 }
 
 .modal-body {
   min-height: 100%; 
   height: auto;
-  margin-top: 10px;
 }
 
 #modalMapWrapper {
   margin-top: 200px;
-  margin-bottom: 200px;
+  margin-bottom: 20px;
 }
 
 #modalMap {

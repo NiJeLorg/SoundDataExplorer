@@ -49,6 +49,7 @@ function SoundExplorerMap() {
 	this.CSOS_CT = null;
 	this.IMPERVIOUS = null;
 	this.WATERSHEDS = null;
+	this.SUBWATERSHEDS = null; // just impervious layer with different styling
 	this.SHELLFISH = null;
 	this.WASTEWATER_CT = null;
 	this.WASTEWATER_NY = null;
@@ -72,14 +73,19 @@ function SoundExplorerMap() {
 
 
 SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){	
+	// we'll now add an ID to each layer so we can fire the mouseover and click outside of the map
+    layer._leaflet_id = feature.properties.leafletId;
+
 	var highlight = {
 	    weight: 2,
-	    color: '#000'
+	    color: '#fff'
 	};
 	var noHighlight = {
         weight: 1,
-        color: '#f1f1f1'
+        color: '#636363'
 	};
+
+
 
 	var start_date = moment($( "#start_date option:selected" ).val()).format('MMMM YYYY');
 	var end_date = moment($( "#end_date option:selected" ).val()).format('MMMM YYYY');
@@ -95,6 +101,42 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 
 	layer.bindLabel("<span class='text-capitalize'>" + feature.properties.BeachName + "<br />" + feature.properties.County + "</span> County, " + feature.properties.State, { direction:'auto' });
 	
+    // onclick set content in bottom bar and open doc if not open already 
+	layer.on("click",function(ev){
+
+		if ($( ".popup-wrapper" ).hasClass( "popup-wrapper-open" )) {
+			// don't toggle classes
+		} else {
+			$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
+			$( ".map" ).toggleClass("map-popup-wrapper-open");
+			$( ".legend" ).toggleClass("legend-popup-wrapper-open");
+		}
+
+		if (!isNaN(pctWetFail)) {
+			var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
+			var dropPrint = "<div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of the time after wet weather.</div></div><div class='clearfix'></div>";
+		} else {
+			var dropPrint = '';
+		}
+		
+		if (!isNaN(pctDryFail)) {
+			var sunSvg = SoundExplorerMap.createSun(pctDryFail);
+			var sunPrint = "<div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of the time after dry weather.</div></div><div class='clearfix'>";
+		} else {
+			var sunPrint = '';
+		}
+		
+
+		MY_MAP.popup.setLatLng(ev.target._latlng);
+		MY_MAP.popup.setContent(feature.properties.BeachName + "<br />For the selected time period, samples failed: <br /><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div><small>" + feature.properties.TotalPassSamples + " samples taken from " + start_date + " to " + end_date + ". Site sampled from " + sample_start_date + " through " + sample_end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View to see detailed data.</a>");
+		MY_MAP.map.openPopup(MY_MAP.popup);
+
+		// draw ring after popup is open
+		SoundExplorerMap.createRing(feature.properties.pctPassFail);
+
+
+	});
+
     layer.on('mouseover', function(ev) {		
 
 		layer.setStyle(highlight);
@@ -109,32 +151,6 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		layer.setStyle(noHighlight);		
     });	
 
-    // onclick set content in bottom bar and open doc if not open already 
-	layer.on("click",function(ev){	
-		if ($( ".popup-wrapper" ).hasClass( "popup-wrapper-open" )) {
-			// don't toggle classes
-		} else {
-			$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
-			$( ".map" ).toggleClass("map-popup-wrapper-open");
-			$( ".legend" ).toggleClass("legend-popup-wrapper-open");
-		}
-
-		var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
-		var sunSvg = SoundExplorerMap.createSun(pctDryFail);
-
-		MY_MAP.popup.setLatLng(ev.target._latlng)
-		MY_MAP.popup.setContent(feature.properties.BeachName + "<br />For the selected time period, samples failed: <br /><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div><div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of the time after wet weather.</div></div><div class='clearfix'></div><div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of the time after dry weather.</div></div><div class='clearfix'></div>" + feature.properties.TotalPassSamples + " samples taken from " + start_date + " to " + end_date + ". Site sampled from " + sample_start_date + " through " + sample_end_date + ".<br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View to see detailed data.</a>")
-		MY_MAP.map.openPopup(MY_MAP.popup);
-
-		// draw ring after popup is open
-		SoundExplorerMap.createRing(feature.properties.pctPassFail);
-
-
-	});
-
-	// we'll now add an ID to each layer so we can fire the mouseover and click outside of the map
-    layer._leaflet_id = 'layerID' + count;
-    count++;
 
 }
 
@@ -277,9 +293,6 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 		// create the D3 layer for Beacon data, but don't add to map until we hit a specfic zoom level
 		SoundExplorerMap.createBEACON_D3_POINTS(geojsonData.features, thismap);
 
-		// draw time slider with these data
-		SoundExplorerMap.drawTimeSlider(geojsonData.features);
-
 	});
 
 }
@@ -288,7 +301,7 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 	var marker = L.circleMarker(latlng, {
 		radius: 5,
-		color: '#bdbdbd',
+		color: '#636363',
 		weight: 1,
 		opacity: 1,
 		fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.pctPass),
@@ -298,7 +311,6 @@ SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 	return marker;
 	
 }
-
 
 SoundExplorerMap.onEachFeature_BOATLAUNCH = function(feature,layer){
 
@@ -322,6 +334,12 @@ SoundExplorerMap.onEachFeature_IMPERVIOUS = function(feature,layer){
 	var pctIS10 = (feature.properties.pctIS10).toFixed(1);
 
 	layer.bindLabel(feature.properties.Name + "<br />" + pctIS10 + "% impervious surfaces", { direction:'auto' });
+
+}
+
+SoundExplorerMap.onEachFeature_SUBWATERSHEDS = function(feature,layer){
+
+	layer.bindLabel(feature.properties.Name, { direction:'auto' });
 
 }
 
@@ -400,6 +418,10 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 		    style: SoundExplorerMap.getStyleFor_IMPERVIOUS,
 			onEachFeature: SoundExplorerMap.onEachFeature_IMPERVIOUS
 		});
+		thismap.SUBWATERSHEDS = L.geoJson(imperviousTopojson, {
+		    style: SoundExplorerMap.getStyleFor_SUBWATERSHEDS,
+			onEachFeature: SoundExplorerMap.onEachFeature_SUBWATERSHEDS
+		});
 	}
 
 	d3.json(watersheds, function(data) {
@@ -411,7 +433,7 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 		thismap.WATERSHEDS = L.geoJson(watershedsTopojson, {
 		    style: SoundExplorerMap.getStyleFor_WATERSHEDS,
 			onEachFeature: SoundExplorerMap.onEachFeature_WATERSHEDS
-		});
+		});		
 	}
 
 	d3.json(shellfish, function(data) {
@@ -516,14 +538,24 @@ SoundExplorerMap.getStyleFor_IMPERVIOUS = function (feature){
     }
 }
 
+SoundExplorerMap.getStyleFor_SUBWATERSHEDS = function (feature){	
+    return {
+        weight: 1,
+        opacity: 0.75,
+        color: '#000',
+        fillOpacity: 0.75,
+        fillColor: '#9ecae1'
+    }
+}
+
 SoundExplorerMap.getStyleFor_WATERSHEDS = function (feature){
 	
     return {
         weight: 1,
         opacity: 0.75,
-        color: '#545454',
-        fillOpacity: 0.00001,
-        fillColor: '#fff'
+        color: '#000',
+        fillOpacity: 0.5,
+        fillColor: '#08519c'
     }
 }
 
@@ -575,6 +607,9 @@ SoundExplorerMap.addLayers = function (layer){
 	if (layer == "watersheds") {
 		MY_MAP.WATERSHEDS.addTo(MY_MAP.map);
 	}
+	if (layer == "subwatersheds") {
+		MY_MAP.SUBWATERSHEDS.addTo(MY_MAP.map);
+	}
 	if (layer == "shellfish") {
 		MY_MAP.SHELLFISH.addTo(MY_MAP.map);
 	}
@@ -588,9 +623,6 @@ SoundExplorerMap.addLayers = function (layer){
 
 	if (MY_MAP.map.hasLayer(MY_MAP.BEACON_POINTS)) {
 		MY_MAP.BEACON_POINTS.bringToFront();
-	}
-	if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
-		MY_MAP.BEACON_D3_POINTS.bringToFront();
 	}
 
 }
@@ -612,6 +644,9 @@ SoundExplorerMap.removeLayers = function (layer){
 	}
 	if (layer == "watersheds") {
 		MY_MAP.map.removeLayer(MY_MAP.WATERSHEDS);
+	}
+	if (layer == "subwatersheds") {
+		MY_MAP.map.removeLayer(MY_MAP.SUBWATERSHEDS);
 	}
 	if (layer == "shellfish") {
 		MY_MAP.map.removeLayer(MY_MAP.SHELLFISH);
@@ -746,27 +781,17 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 		// entering new stuff
 		var bcEnter = beaconCircles.enter().append("g")
 			.attr("class", "beaconCircles")
-			.on('click', function(d){
-				// lat lon for click
-				thismap.map._layers[d.properties.leafletId].fire('click');
-			})
 			.on('mouseover', function(d){ 
 				beaconCircles.sort(function (a, b) { 
 					if (a.id != d.id) return -1;
 					else return 1;
 				});
-				thismap.map._layers[d.properties.leafletId].fire('mouseover');
-			})
-			.on('mouseout', function(d){ 
-				thismap.map._layers[d.properties.leafletId].fire('mouseout');
 			});
-
 
 		bcEnter.append('circle');
 		bcEnter.append('text');
 		bcEnter.append('g');
 		bcEnter.call(update);
-
 
 		// exiting old stuff
 		beaconCircles.exit().remove();
@@ -778,45 +803,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 }
 
 
-SoundExplorerMap.drawTimeSlider = function (){
-	var minDate = new Date(2004,0,1);
-	var maxDate = moment().toDate();
-	var fiveYearAgo = moment().subtract(5, 'years').toDate();
 
-	mapSlider = d3.slider()
-					.axis(
-						d3.svg.axis()
-							.orient("top")
-							.scale(
-								d3.time.scale()
-									.domain([minDate, maxDate])
-							)
-							.ticks(d3.time.years)
-							.tickSize(24, 0)
-							.tickFormat(d3.time.format("%Y"))
-					)
-					.scale(
-						d3.time.scale()
-							.domain([minDate, maxDate])
-					)
-					.value( [ fiveYearAgo, maxDate ] )
-					.on("slideend", function(evt, value) {
-						$("body").addClass("loading");
-						// run a function to update map layers with new dates
-						SoundExplorerMap.updateMapFromSlider(value);
-						// update combo boxes
-						var start_date = moment(value[0]).format('YYYY-MM');
-						start_date = start_date + '-01';
-						console.log(start_date);
-						$( "#start_date" ).val(start_date);
-						var end_date = moment(value[1]).format('YYYY-MM');
-						end_date = end_date + '-01';
-						$( "#end_date" ).val(end_date);
-					});
-
-	d3.select('#timeSlider').call(mapSlider);
-
-}
 
 SoundExplorerMap.updateMapFromSlider = function (value){
 	// close popups
@@ -825,6 +812,7 @@ SoundExplorerMap.updateMapFromSlider = function (value){
 	var startDate = moment(value[0]).startOf('month').format("YYYY-MM-DD");
 	var endDate = moment(value[1]).endOf('month').format("YYYY-MM-DD");
 
+	// update map
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
 
@@ -847,37 +835,62 @@ SoundExplorerMap.updateMapFromSlider = function (value){
 		// recreate new D3 layer
 		SoundExplorerMap.createBEACON_D3_POINTS(geojsonData.features, MY_MAP);
 
-		// depending on zoom level, add correct one to the map
-		if (MY_MAP.map.getZoom() < 10) {
+		// if zoom level is small, show the small dots on the map, otherwise show the big dots with scores
+		if (MY_MAP.map.getZoom() < 14) {
 			//check for existance of layers, then add or remove
 			if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 				MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
 			}
+			MY_MAP.BEACON_POINTS.setStyle({radius: 5});
 		} else {
 			//check for existance of layers, then add or remove
 			if (!MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 				MY_MAP.BEACON_D3_POINTS.addTo(MY_MAP.map);
 			}
+			MY_MAP.BEACON_POINTS.setStyle({radius: 24});
 		}
 
 		$("body").removeClass("loading");
 
 	});
 
+	// update precip charts
+	// which tab is open
+	if ($('#precipMain').hasClass('show')) {
+		var tab = 'precip';
+	}
+	if ($('#timelineMain').hasClass('show')) {
+		var tab = 'timeline';
+	}
+
+	$.ajax({
+        type: 'GET',
+        url:  'precipapi/?startDate=' + startDate + '&endDate=' + endDate + '&tab=' + tab,
+        success: function(data){
+        	$(".sliderPrecipWrapper").html(data);
+        }
+    });
+
+
 }
 
 SoundExplorerMap.checkZoomSwitchLayers = function (){
 	// if zoom level is small, show the small dots on the map, otherwise show the big dots with scores
-	if (MY_MAP.map.getZoom() < 14) {
-		//check for existance of layers, then add or remove
-		if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
-			MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
-		}
-	} else {
-		//check for existance of layers, then add or remove
-		if (!MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
-			MY_MAP.BEACON_D3_POINTS.addTo(MY_MAP.map);
-		}
+	// only if checked 
+	if ($( "#beacon" ).prop('checked')) {
+		if (MY_MAP.map.getZoom() < 14) {
+			//check for existance of layers, then add or remove
+			if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
+				MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
+			}
+			MY_MAP.BEACON_POINTS.setStyle({radius: 5});
+		} else {
+			//check for existance of layers, then add or remove
+			if (!MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
+				MY_MAP.BEACON_D3_POINTS.addTo(MY_MAP.map);
+			}
+			MY_MAP.BEACON_POINTS.setStyle({radius: 24});
+		}		
 	}
 
 }

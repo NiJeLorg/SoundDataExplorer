@@ -23,10 +23,11 @@ class Command(BaseCommand):
 			beaches = Beaches.objects.all()
 			for beach in beaches:
 				NumberOfSamples = 0
+				TotalNumberOfSamples = 0
 				TotalPassSamples = 0
 				TotalDryWeatherSamples = 0
 				DryWeatherPassSamples = 0
-				TotalWetWeatherSamples =0
+				TotalWetWeatherSamples = 0
 				WetWeatherPassSamples = 0
 				samples = BeachWQSamples.objects.filter(BeachID__exact=beach, StartDate__gte=firstOfMonth, StartDate__lte=lastOfMonth)
 				NumberOfSamples = len(samples)
@@ -42,8 +43,10 @@ class Command(BaseCommand):
 
 							if precip['PrecipitationIn__sum'] > 0.5:
 								TotalWetWeatherSamples += 1
+								TotalNumberOfSamples += 1
 							else:
 								TotalDryWeatherSamples += 1 
+								TotalNumberOfSamples += 1
 
 							if sample.CharacteristicName == 'Enterococcus':
 								if sample.ResultValue < 104:
@@ -55,18 +58,16 @@ class Command(BaseCommand):
 
 							elif sample.CharacteristicName == 'Fecal Coliform':
 								if sample.ResultValue < 1000:
-									TotalPassSamples = TotalPassSamples + 1
+									TotalPassSamples += 1
 									if precip['PrecipitationIn__sum'] > 0.5:
 										WetWeatherPassSamples += 1
 									else:
 										DryWeatherPassSamples += 1
 
 				# write to database
-				obj, created = MonthlyScores.objects.update_or_create(BeachID=beach, MonthYear=firstOfMonth, NumberOfSamples=NumberOfSamples, TotalPassSamples=TotalPassSamples, TotalDryWeatherSamples=TotalDryWeatherSamples, DryWeatherPassSamples=DryWeatherPassSamples, TotalWetWeatherSamples=TotalWetWeatherSamples, WetWeatherPassSamples=WetWeatherPassSamples)
+				updated_values = {'NumberOfSamples': TotalNumberOfSamples, 'TotalPassSamples': TotalPassSamples, 'TotalDryWeatherSamples': TotalDryWeatherSamples, 'DryWeatherPassSamples': DryWeatherPassSamples, 'TotalWetWeatherSamples': TotalWetWeatherSamples, 'WetWeatherPassSamples': WetWeatherPassSamples}
 
-				print beach
-				print NumberOfSamples
-				print TotalPassSamples
+				obj, created = MonthlyScores.objects.update_or_create(BeachID=beach, MonthYear=firstOfMonth, defaults=updated_values)
 
 	def handle(self, *args, **options):
 		print "Calculating Monthly Sample Pass/Fail...."

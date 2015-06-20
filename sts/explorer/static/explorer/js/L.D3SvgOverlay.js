@@ -17,7 +17,7 @@ if (typeof L == "undefined") {
 d3.select("head")
     .append("style")
     .attr("type", "text/css")
-    .text("svg.d3-overlay{pointer-events:none;position:absolute;}svg.d3-overlay>g.origin *{pointer-events:visiblePainted;}");
+    .text("svg.d3-overlay{pointer-events:none;position:absolute;}svg.d3-overlay>g.origin *{pointer-events:none;}");
 
 // Class definition
 L.D3SvgOverlay = L.Class.extend({
@@ -127,7 +127,6 @@ L.D3SvgOverlay = L.Class.extend({
         !this.translateAnim || this.translateAnim.remove();
         !this.scaleAnim || this.scaleAnim.remove();
         if (this._options.zoomDraw) {
-            console.log("drawing!");
             this.draw();
         }
     },

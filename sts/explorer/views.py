@@ -18,11 +18,16 @@ from django.db.models import Sum, Min, Max, Avg
 
 # Create your views here.
 def index(request):	
-	#startDate = request.GET.get("startDate","2000-01-01")
-	#endDate = request.GET.get("endDate","2100-01-01")
-	#context_dict = {'startDate': startDate, 'endDate': endDate}
-	context_dict = {}
-	return render(request, 'explorer/index.html', context_dict)
+	tab = "timeline"
+
+	# 5 year rolling window
+	endDate = datetime.date.today()
+	startDate = endDate + relativedelta(years=-5)
+
+	#select the monthly scores for this beach in the dates requested
+	scores = MonthlyScores.objects.filter(MonthYear__range=[startDate,endDate]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
+
+	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab})
 
 def beaconApi(request):
 	response = {}
@@ -36,6 +41,9 @@ def beaconApi(request):
 	startDateobject = startDateparsed.date()
 	endDateparsed = dateutil.parser.parse(endDate)
 	endDateobject = endDateparsed.date()
+
+	if startDateobject >= endDateobject:
+		endDateobject = startDateobject + relativedelta(months=1)
 
 	#select all the beaches and loop through them
 	beaches = Beaches.objects.all()
@@ -83,6 +91,10 @@ def modalApi(request):
 	endDateparsed = dateutil.parser.parse(endDate)
 	endDateobject = endDateparsed.date()
 
+	if startDateobject >= endDateobject:
+		endDateobject = startDateobject + relativedelta(months=1)
+
+
 	#beach look up
 	beach = Beaches.objects.get(BeachID__exact=beachId)
 
@@ -104,13 +116,31 @@ def modalApi(request):
 
 	# select the most recent sample available
 	latestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).latest('StartDate')
+	# earliest sample
+	earliestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).earliest('StartDate')
 
 	# calculate the min, max and mean
 	sampleAggregates = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(AvgValue=Avg('ResultValue'),MinValue=Min('ResultValue'),MaxValue=Max('ResultValue'))
 
 
+	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates})
 
-	context_dict = {'startDate': startDate, 'endDate': endDate, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'sampleAggregates':sampleAggregates}
 
-	return render(request, 'explorer/modal.html', context_dict)
+def precipApi(request):	
+	startDate = request.GET.get("startDate","2000-01-01")
+	endDate = request.GET.get("endDate","2100-01-01")
+	tab = request.GET.get("tab","timeline")
 
+	# create data objects from start and end dates
+	startDateparsed = dateutil.parser.parse(startDate)
+	startDateobject = startDateparsed.date()
+	endDateparsed = dateutil.parser.parse(endDate)
+	endDateobject = endDateparsed.date()
+
+	if startDateobject >= endDateobject:
+		endDateobject = startDateobject + relativedelta(months=1)
+
+	#select the monthly scores for this beach in the dates requested
+	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
+
+	return render(request, 'explorer/precipVis.html', {'scores':scores, 'startDate':startDateobject, 'endDate':endDateobject, 'tab':tab})
