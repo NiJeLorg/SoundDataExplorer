@@ -577,7 +577,7 @@ SoundExplorerMap.getStyleFor_WASTEWATER = function (feature, latlng){
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
-		fillColor: '#35978f',
+		fillColor: '#8856a7',
 		fillOpacity: 1
 	});
 	
