@@ -61,7 +61,7 @@ function SoundExplorerMap() {
 		minWidth: 100, 
 		minHeight: 30, 
 		closeButton:true,
-		autoPanPaddingTopLeft: L.point(0, 50)
+		autoPanPaddingTopLeft: L.point(0, 35)
 	});
 
 	// subscribe to zoomend event to show
@@ -128,7 +128,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		
 
 		MY_MAP.popup.setLatLng(ev.target._latlng);
-		MY_MAP.popup.setContent(feature.properties.BeachName + "<br />For the selected time period, samples failed: <br /><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div><small>" + feature.properties.TotalPassSamples + " samples taken from " + start_date + " to " + end_date + ". Site sampled from " + sample_start_date + " through " + sample_end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View to see detailed data.</a>");
+		MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ sample_start_date + " to " + sample_end_date + ": " + feature.properties.TotalPassSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
 		MY_MAP.map.openPopup(MY_MAP.popup);
 
 		// draw ring after popup is open
@@ -188,7 +188,7 @@ SoundExplorerMap.createRing = function (pctPassFail){
 				} else {
 					var fontSize = 20;
 				}				
-				return "font-size: "+ fontSize +"; stroke: #be1e2d; }"
+				return "font-size: "+ fontSize +"; stroke: #be1e2d; font-family:'Print Clearly'; }"
 			} 
 		})
 		.text(function(d) { 
@@ -543,7 +543,7 @@ SoundExplorerMap.getStyleFor_SUBWATERSHEDS = function (feature){
         weight: 1,
         opacity: 0.75,
         color: '#000',
-        fillOpacity: 0.75,
+        fillOpacity: 0.25,
         fillColor: '#9ecae1'
     }
 }
@@ -554,7 +554,7 @@ SoundExplorerMap.getStyleFor_WATERSHEDS = function (feature){
         weight: 1,
         opacity: 0.75,
         color: '#000',
-        fillOpacity: 0.5,
+        fillOpacity: 0.25,
         fillColor: '#08519c'
     }
 }
@@ -782,6 +782,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 		var bcEnter = beaconCircles.enter().append("g")
 			.attr("class", "beaconCircles")
 			.on('mouseover', function(d){ 
+				console.log('hello');
 				beaconCircles.sort(function (a, b) { 
 					if (a.id != d.id) return -1;
 					else return 1;

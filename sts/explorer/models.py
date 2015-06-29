@@ -15,7 +15,7 @@ class Beaches(models.Model):
 	EndLongitude = models.FloatField()
 
 	def __str__(self):
-		return self.BeachID
+		return self.BeachName
 
 class BeachWQSamples(models.Model):
 	StateCode = models.CharField(max_length=2)

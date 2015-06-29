@@ -1,6 +1,6 @@
 .d3-slider {
     position: relative;
-    font-family: Verdana,Arial,sans-serif;
+    /*font-family: Verdana,Arial,sans-serif;*/
     font-size: 1.1em;
     border: 1px solid #bcbec0;
     z-index: 2;
@@ -8,7 +8,7 @@
 }
 
 .d3-slider-horizontal {
-    height: 1.8em;
+    height: 0.8em;
     border-radius: 4px;
 }  
 
@@ -16,7 +16,7 @@
   background: #098ca8;
   left:0px;
   right:0px;
-  height: 1.8em;
+  height: 0.8em;
   position: absolute;
 }
 
@@ -36,7 +36,7 @@
 .d3-slider-handle {
     position: absolute;
     width: 0.5em;
-    height: 2.4em;
+    height: 1.4em;
     border: 1px solid #d3d3d3;
     border-radius: 4px;
     background: #6d6e71;
@@ -78,7 +78,7 @@
 }
 
 .d3-slider-axis text {
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .d3-slider-vertical .d3-slider-handle {
