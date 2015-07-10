@@ -14,15 +14,17 @@ class Command(BaseCommand):
 	def get_precip_data(self):
 		#build url to pass to WU
 		base_url = "http://www.wunderground.com/";
-		stations = WeatherStations.objects.distinct()
+		stations = WeatherStations.objects.filter(id__in=[1391,1392,1393,1394])
 		#between today and 2004
 		today = datetime.today()
-		earliest = datetime(2013, 12, 1)
+		earliest = datetime(2003, 1, 1)
+		counter = 0
 
 		for dateEval in rrule(MONTHLY, dtstart=earliest, until=today):
 			print dateEval.strftime("%Y/%m/%d")
 
-			for counter, station in enumerate(stations):
+			for station in stations:
+				counter += 1
 				#airport station
 				if station.Icao:
 					print station.Icao

@@ -1,0 +1,101 @@
+{% extends 'explorer/base.html' %}
+{% load staticfiles %}
+
+{% block css_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/pages.css' %}">
+{% endblock %}
+
+{% block head_js_block %}
+{% endblock %}
+	
+
+{% block content %}
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title">Findings & Solutions</h1>
+        <!--<p class="lead blog-description"></p>-->
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">Local Problems with Local Solutions</h2>
+
+            <p>Fecal contamination in water is found near the source. Pathogenic bacteria is killed by exposure to sun (UV disinfection) and is diluted by tides. If your beach has high bacterial counts, look no further than your own community for the source.</p>
+            <h4>The most common sources of fecal contamination:</h4>
+            <ul>
+              <li>Leaking municipal and private sewer lines</li>
+              <li>Failing septic systems and cesspools</li>
+              <li>Polluted stormwater runoff that delivers fecal matter and other pollutants from our streets, parks, storm drains and catch basins into our waterways (including waste from dogs, livestock, geese, raccoons, and other wildlife)</li>
+              <li>Polluted tributary streams, rivers, and creeks (tributaries receive stormwater runoff and sometimes sewage from leaking pipes or failing septic fields and cesspools)</li>
+              <li>Combined sewage overflows (CSOs) in old cities where combined sewer and stormwater pipes cause raw sewage and rain to bypass treatment plants in wet weather</li>
+              <li>Wildlife waste on our beaches and nearby properties</li>
+            </ul>
+            <h4>Solutions you can be a part of:</h4>
+            <ul>
+              <li>Share your concern about water pollution and support for solutions with your local elected officials and Department of Health.</li>
+              <li>Make sure the sewer line connected to your home, septic system, or cesspool is in good working condition and properly maintained.</li>
+              <li>Support investment in local wastewater infrastructure – keep the sewage in the pipes!</li>
+              <li>Keep stormwater on your property by planting rain gardens.</li>
+              <li>Support local green infrastructure projects that will let stormwater soak into the ground and lessen runoff.</li>
+              <li><a href="https://greencitiesbluewaters.wordpress.com/2014/11/25/people-power-citizen-watchdogs-get-the-job-done/" target="_blank">Be a Citizen Watchdog</a>. If you see sewage leaks or overflows, take pictures and send the documentation to <a href="mailto:pollution@savethesound.org">pollution@savethesound.org</a>.
+</li>
+              <li><a href="http://www.ctenvironment.org/#!ways-to-give/c1n6r" target="_blank">Become a member of Save the Sound</a>, <a href="http://www.ctenvironment.org/#!emails-alerts/cy1" target="_blank">join our email network</a> and support our regional initiatives to clean our beaches!</li>
+            </ul>
+
+            <h3>Exercise Safe Swimming Practices</h3>
+            <p>The #1 cause of beach closures and illnesses from swimming is high levels of fecal contamination in the water.  Most Health Departments test each beach once a week, the same day every week. If your beach is automatically closed after rainfall it is likely that there is a record of bacterial pollution at that beach after rainfall. If the data on the Sound Health Explorer shows that your beach fails regularly after wet weather, but it is not automatically closed, you can exercise caution by staying out of the water for 24 hours after rainfall of 1/2" or more and longer if it rains more than 1".</p>
+            <p>In New York, stay informed of possible sewage overflows near your favorite beaches by signing up to receive <a href="http://www.dec.ny.gov/chemical/90315.html#spill" target="_blank">Sewage Pollution Right to Know Alerts</a>.</p>
+            <h4>Waterborne Illnesses</h4>
+            <p>Exposure to fecal contaminated water can lead to a variety of illnesses including viral, parasitic, and bacterial infections. Experts estimate that there are 7.1 million mild-to-moderate cases and 560,000 moderate-to-severe cases of infectious waterborne disease in the United States each year and the Environmental Protection Agency estimates that between 1.8 and 3.5 million people get sick from recreational contact with fecal contaminated water each year.<sup>1</sup> While most people recover from these diseases, they can be deadly for children, the elderly, and other patients with weakened immune systems who comprise approximately 30% of our population at any one time.</p>
+            <p><a href="{% static 'explorer/pdfs/Recreational_Waterborne_Illnesses.pdf' %}">See the list of common waterborne illnesses from the U.S. Center for Disease Control</a>.</p>
+
+            <br />
+
+            <hr>
+            <p><sup>1</sup> <small>American Rivers <a href="http://www.americanrivers.org/initiatives/pollution/public-health/">http://www.americanrivers.org/initiatives/pollution/public-health/</a>. </small></p>
+
+            
+
+          </div><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module">
+            <h4>Learn More</h4>
+            <ol class="list-unstyled">
+              <li><a href="{% url 'about' %}">About</a></li>
+              <li><a href="{% url 'datasources' %}">Data Sources</a></li>
+              <li><a href="{% url 'criteriascoring' %}">Criteria & Scoring</a></li>
+              <li><a href="{% url 'findingssolutions' %}">Findings & Solutions</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4><a href="{% url 'index' %}">Back to the Sound Health Explorer</a></h4>
+          </div>
+
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+
+{% endblock %}
+
+
+{% block modal_block %}
+{% endblock %}
+
+{% block js_block %}
+{% endblock %}
+
+
+	
+	
+

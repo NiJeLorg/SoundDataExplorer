@@ -1,5 +1,5 @@
 /*!
- * Main css for Sound Data Explorer
+ * Main css for Sound Health Explorer
  */
 
 html, body {
@@ -344,6 +344,11 @@ tbody td, thead th {
 .legend-cloropleth li.graph div {
   width: 10px;
   height: 22px;
+}
+
+#legendClose {
+  position: absolute;
+  right: 10px;
 }
 
 /*

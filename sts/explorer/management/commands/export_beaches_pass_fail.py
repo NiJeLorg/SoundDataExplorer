@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from explorer.models import *
 import csv
 import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
 
@@ -21,7 +22,7 @@ class Command(BaseCommand):
 			headerRow = ['SiteID', 'Site Name', 'State', 'County', 'Total Number of Passing Samples', 'Number of Samples', 'Percent Pass All Samples', 'Grade All Samples', 'Dry Weather Passing Samples', 'Total Dry Weather Samples', 'Percent Pass Dry Samples', 'Grade Dry Samples', 'Wet Weather Passing Samples', 'Total Wet Weather Samples', 'Percent Pass Wet Samples', 'Grade Wet Samples']
 			writer.writerow(headerRow)
 			# 5 year rolling window
-			endDate = datetime.date.today()
+			endDate = datetime(2014, 12, 31)
 			startDate = endDate + relativedelta(years=-5)
 
 			beaches = Beaches.objects.all()
@@ -76,14 +77,30 @@ class Command(BaseCommand):
 					writer.writerow(row)
 
 	def calcGrade(self, pct):
-		if pct > 95:
+		if pct >= 99:
+			return 'A+'
+		elif pct >= 97:
 			return 'A'
-		elif pct > 90:
+		elif pct >= 95:
+			return 'A-'
+		elif pct >= 93:
+			return 'B+'
+		elif pct >= 91:
 			return 'B'
-		elif pct > 85:
+		elif pct >= 89:
+			return 'B-'
+		elif pct >= 87:
+			return 'C+'
+		elif pct >= 85:
 			return 'C'
-		elif pct > 78:
+		elif pct >= 83:
+			return 'C-'
+		elif pct >= 81:
+			return 'D+'
+		elif pct >= 79:
 			return 'D'
+		elif pct >= 77:
+			return 'D-'
 		elif pct >= 0:
 			return 'F'
 		else:

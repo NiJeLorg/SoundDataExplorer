@@ -18,6 +18,16 @@ $( document ).ready(function() {
 		$( ".legend" ).toggleClass("legend-popup-wrapper-open");
 	});
 
+	// open and close the legend
+	$('#legendClose').click(function() {
+		$( ".legend" ).addClass("hidden");
+		$( "#legendOpen" ).removeClass("hidden");		
+	});
+
+	$('#legendOpen').click(function() {
+		$( ".legend" ).removeClass("hidden");
+		$( "#legendOpen" ).addClass("hidden");		
+	});
 
 	// listen for modal click
 	$('#siteView').on('show.bs.modal', function (event) {

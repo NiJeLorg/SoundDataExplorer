@@ -1,5 +1,5 @@
 /* 
-* Functions to create the main Sound Data Explorer Map
+* Functions to create the main Sound Health Explorer Map
 */
 
 // initialize map
@@ -128,7 +128,12 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		
 
 		MY_MAP.popup.setLatLng(ev.target._latlng);
-		MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ sample_start_date + " to " + sample_end_date + ": " + feature.properties.TotalPassSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+		if (feature.properties.NumberOfSamples < 12) {
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
+		} else {
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+		}
+
 		MY_MAP.map.openPopup(MY_MAP.popup);
 
 		// draw ring after popup is open
@@ -188,7 +193,7 @@ SoundExplorerMap.createRing = function (pctPassFail){
 				} else {
 					var fontSize = 20;
 				}				
-				return "font-size: "+ fontSize +"; stroke: #be1e2d; font-family:'Print Clearly'; }"
+				return "font-size: "+ fontSize +"px; stroke: #be1e2d; font-family:'Print Clearly'; }"
 			} 
 		})
 		.text(function(d) { 
@@ -227,7 +232,7 @@ SoundExplorerMap.createDrop = function (pctWetFail){
 		var translateRight = 15;				
 	}
 
-	var dropSvgText = '<g transform="translate('+ translateRight +',40)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'; stroke:#0a8ba7;">'+pctWetFail+'%</text></g>';
+	var dropSvgText = '<g transform="translate('+ translateRight +',40)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'px; stroke:#0a8ba7;">'+pctWetFail+'%</text></g>';
 
 	var dropSvgClose = '</svg>';
 
@@ -254,7 +259,7 @@ SoundExplorerMap.createSun = function (pctDryFail){
 	}
 
 
-	var sunSvgText = '<g transform="translate('+ translateRight +',45)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'; stroke:#fff;">'+pctDryFail+'%</text></g>';
+	var sunSvgText = '<g transform="translate('+ translateRight +',45)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'px; stroke:#fff;">'+pctDryFail+'%</text></g>';
 
 	var sunSvgClose = '</svg>';
 
@@ -299,14 +304,26 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 
 
 SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
-	var marker = L.circleMarker(latlng, {
-		radius: 5,
-		color: '#636363',
-		weight: 1,
-		opacity: 1,
-		fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.pctPass),
-		fillOpacity: 1
-	});
+	if (feature.properties.NumberOfSamples < 12) {
+		var marker = L.circleMarker(latlng, {
+			radius: 5,
+			color: '#636363',
+			weight: 1,
+			opacity: 1,
+			fillColor: "#ccc",
+			fillOpacity: 1
+		});		
+	} else {
+		var marker = L.circleMarker(latlng, {
+			radius: 5,
+			color: '#636363',
+			weight: 1,
+			opacity: 1,
+			fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.pctPass),
+			fillOpacity: 1
+		});		
+	}
+
 	
 	return marker;
 	
@@ -573,7 +590,7 @@ SoundExplorerMap.getStyleFor_SHELLFISH = function (feature){
 SoundExplorerMap.getStyleFor_WASTEWATER = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 3,
+		radius: 5,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
@@ -685,21 +702,29 @@ SoundExplorerMap.fillColor_IMPERVIOUS = function (d){
 }
 
 SoundExplorerMap.SDEPctPassColor = function (d){
-    return d > 95 ? '#39b54a' :
-           d > 90 ? '#f7e34f' :
-           d > 85 ? '#f9ae08' :
-           d > 78 ? '#f47f45' :
-           d >= 0 ? '#ef4136' :
-                   	'#545454' ;	
+    return d >= 95 ? '#39b54a' :
+           d >= 89 ? '#f7e34f' :
+           d >= 83 ? '#f9ae08' :
+           d >= 77 ? '#f47f45' :
+           d >= 0  ? '#ef4136' :
+                   	 '#545454' ;	
 }
 
 SoundExplorerMap.SDEPctPassGrade = function (d){
-    return d > 95 ? 'A' :
-           d > 90 ? 'B' :
-           d > 85 ? 'C' :
-           d > 78 ? 'D' :
-           d >= 0 ? 'F' :
-                   	'' ;	
+    return d >= 99 ? 'A+' :
+           d >= 97 ? 'A' :
+           d >= 95 ? 'A-' :
+           d >= 93 ? 'B+' :
+           d >= 91 ? 'B' :
+           d >= 89 ? 'B-' :
+           d >= 87 ? 'C+' :
+           d >= 85 ? 'C' :
+           d >= 83 ? 'C-' :
+           d >= 81 ? 'D+' :
+           d >= 79 ? 'D' :
+           d >= 77 ? 'D-' :
+           d >= 0  ? 'F' :
+                   	 '' ;	
 }
 
 
@@ -719,8 +744,13 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr('r', circleRadius/scale)
 				.attr('cx',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr('cy',function(d){return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
-				.attr('fill', function(d){ 
-					return SoundExplorerMap.SDEPctPassColor(d.properties.pctPass);
+				.attr('fill', function(d){
+					if (d.properties.NumberOfSamples < 12) {
+						return "#ccc";
+					} else {
+						return SoundExplorerMap.SDEPctPassColor(d.properties.pctPass);
+					}
+					
 				})
 				.attr('stroke', 'white')
 				.attr('stroke-width', circleStroke/scale);
@@ -748,8 +778,16 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("text-anchor", "middle")
 				.attr("dx", function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; })
-				.attr('style', "font-size: "+ 24/scale +";")
-				.text(function(d) { return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPass); });
+				.attr('style', "font-size: "+ 24/scale +"px;")
+				.text(function(d) { 
+					if (d.properties.NumberOfSamples < 12) {
+						return 'N/A';
+					} else {
+						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPass);	
+					}
+					 
+
+				});
 
 		}
 
@@ -773,7 +811,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 		beaconCircles.selectAll("circle")
 			.attr('r', innerRadius/scale);
 		beaconCircles.selectAll("text")
-			.attr('style', "font-size: "+ 24/scale +";")
+			.attr('style', "font-size: "+ 24/scale +"px;")
 			.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; });
 		beaconCircles.selectAll("path")
 			.attr("d", arc);		
@@ -901,7 +939,7 @@ SoundExplorerMap.modalZoom = function (lat, lon){
 	// when a user opens a modal, have the main map zoom to the dot
 	MY_MAP.map.panTo([lat,lon]);
 	MY_MAP.map.setZoom(16);
-	MY_MAP.map.panBy([400, 200]);
+	MY_MAP.map.panBy([0, 200]);
 
 }
 

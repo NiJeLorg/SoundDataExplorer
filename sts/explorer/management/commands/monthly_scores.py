@@ -49,7 +49,7 @@ class Command(BaseCommand):
 								TotalNumberOfSamples += 1
 
 							if sample.CharacteristicName == 'Enterococcus':
-								if sample.ResultValue < 104:
+								if sample.ResultValue <= 104:
 									TotalPassSamples += 1
 									if precip['PrecipitationIn__sum'] > 0.5:
 										WetWeatherPassSamples += 1
@@ -57,7 +57,7 @@ class Command(BaseCommand):
 										DryWeatherPassSamples += 1
 
 							elif sample.CharacteristicName == 'Fecal Coliform':
-								if sample.ResultValue < 1000:
+								if sample.ResultValue <= 1000:
 									TotalPassSamples += 1
 									if precip['PrecipitationIn__sum'] > 0.5:
 										WetWeatherPassSamples += 1

@@ -10,21 +10,20 @@ import dateutil.parser
 
 """
   Loads BEACON Water Quality from CSV
+  Change on 7-7-15: Using this code to import Storet data in BEACON schema
 """
 class Command(BaseCommand):
     
     def load_BEACON_data(self):
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         # open LIS_Beacon_Beach_WQdata.csv and dump into BeachWQSamples table
-        with open(os.path.join(__location__, 'LIS_Beacon_Beach_WQdata.csv'), 'rb') as f:
+        with open(os.path.join(__location__, 'Storet_NY_NLIS_Data_Beacon_Schema.csv'), 'rb') as f:
             reader = csv.reader(f)
             for row in reader:
                 if row[0] != 'StateCode': # Ignore the header row, import everything else
                     # parse dates
                     SDparsed = dateutil.parser.parse(row[7])
-                    STparsed = dateutil.parser.parse(row[8])
                     SDObject = SDparsed.date()
-                    STObject = STparsed.time()
 
                     # get Beaches object to pass
                     beach = Beaches.objects.get(BeachID=row[1])
@@ -58,6 +57,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print "Loading BEACON Data...."
         self.load_BEACON_data()
+        print "Done."
 
 
 

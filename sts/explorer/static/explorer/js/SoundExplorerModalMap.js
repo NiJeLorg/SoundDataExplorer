@@ -1,5 +1,5 @@
 /* 
-* Functions to create the main Sound Data Explorer Map
+* Functions to create the main Sound Health Explorer Map
 */
 
 
@@ -103,7 +103,7 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 		});
 
 		if ($('#beacon').prop('checked')) {
-			thismap.BEACON_POINTS.addTo(thismap.map);
+			thismap.BEACON_POINTS.addTo(thismap.map).bringToFront();
 		}
 
 		// create the D3 layer for Beacon data, but don't add to map until we hit a specfic zoom level
@@ -251,7 +251,7 @@ SoundExplorerModalMap.prototype.loadExtraLayers = function (){
 		});
 
 		if ($('#impervious').prop('checked')) {
-			thismap.IMPERVIOUS.addTo(thismap.map);
+			thismap.IMPERVIOUS.addTo(thismap.map).bringToBack();
 		}
 
 		thismap.SUBWATERSHEDS = L.geoJson(imperviousTopojson, {
@@ -260,7 +260,7 @@ SoundExplorerModalMap.prototype.loadExtraLayers = function (){
 		});
 
 		if ($('#subwatersheds').prop('checked')) {
-			thismap.SUBWATERSHEDS.addTo(thismap.map);
+			thismap.SUBWATERSHEDS.addTo(thismap.map).bringToBack();
 		}
 	}
 
@@ -276,7 +276,7 @@ SoundExplorerModalMap.prototype.loadExtraLayers = function (){
 		});	
 
 		if ($('#watersheds').prop('checked')) {
-			thismap.WATERSHEDS.addTo(thismap.map);
+			thismap.WATERSHEDS.addTo(thismap.map).bringToBack();
 		}
 	
 	}
@@ -294,7 +294,7 @@ SoundExplorerModalMap.prototype.loadExtraLayers = function (){
 		});
 
 		if ($('#shellfish').prop('checked')) {
-			thismap.SHELLFISH.addTo(thismap.map);
+			thismap.SHELLFISH.addTo(thismap.map).bringToBack();
 		}
 	}
 
@@ -350,7 +350,7 @@ SoundExplorerModalMap.prototype.loadExtraLayers = function (){
 	});
 
 	if ($('#landuse').prop('checked')) {
-		thismap.LANDUSE.addTo(thismap.map);
+		thismap.LANDUSE.addTo(thismap.map).bringToBack();
 	}
 
 
@@ -435,7 +435,7 @@ SoundExplorerModalMap.getStyleFor_SHELLFISH = function (feature){
 SoundExplorerModalMap.getStyleFor_WASTEWATER = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 3,
+		radius: 5,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
@@ -450,8 +450,8 @@ SoundExplorerModalMap.getStyleFor_WASTEWATER = function (feature, latlng){
 
 SoundExplorerModalMap.addLayers = function (layer){
 	if (layer == "beacon") {
-		MY_MAP_MODAL.BEACON_POINTS.addTo(MY_MAP_MODAL.map);
-		MY_MAP_MODAL.BEACON_D3_POINTS.addTo(MY_MAP_MODAL.map);
+		MY_MAP_MODAL.BEACON_POINTS.addTo(MY_MAP_MODAL.map).bringToFront();
+		MY_MAP_MODAL.BEACON_D3_POINTS.addTo(MY_MAP_MODAL.map).bringToFront();
 	}
 	if (layer == "boatlaunch") {
 		MY_MAP_MODAL.BOATLAUNCH.addTo(MY_MAP_MODAL.map);
@@ -461,16 +461,16 @@ SoundExplorerModalMap.addLayers = function (layer){
 		MY_MAP_MODAL.CSOS_CT.addTo(MY_MAP_MODAL.map);
 	}
 	if (layer == "impervious") {
-		MY_MAP_MODAL.IMPERVIOUS.addTo(MY_MAP_MODAL.map);
+		MY_MAP_MODAL.IMPERVIOUS.addTo(MY_MAP_MODAL.map).bringToBack();
 	}
 	if (layer == "watersheds") {
-		MY_MAP_MODAL.WATERSHEDS.addTo(MY_MAP_MODAL.map);
+		MY_MAP_MODAL.WATERSHEDS.addTo(MY_MAP_MODAL.map).bringToBack();
 	}
 	if (layer == "subwatersheds") {
-		MY_MAP_MODAL.SUBWATERSHEDS.addTo(MY_MAP_MODAL.map);
+		MY_MAP_MODAL.SUBWATERSHEDS.addTo(MY_MAP_MODAL.map).bringToBack();
 	}
 	if (layer == "shellfish") {
-		MY_MAP_MODAL.SHELLFISH.addTo(MY_MAP_MODAL.map);
+		MY_MAP_MODAL.SHELLFISH.addTo(MY_MAP_MODAL.map).bringToBack();
 	}
 	if (layer == "wastewater") {
 		MY_MAP_MODAL.WASTEWATER_CT.addTo(MY_MAP_MODAL.map);
@@ -545,21 +545,29 @@ SoundExplorerModalMap.fillColor_IMPERVIOUS = function (d){
 
 
 SoundExplorerModalMap.SDEPctPassColor = function (d){
-    return d > 95 ? '#39b54a' :
-           d > 90 ? '#f7e34f' :
-           d > 85 ? '#f9ae08' :
-           d > 78 ? '#f47f45' :
-           d >= 0 ? '#ef4136' :
-                   	'#545454' ;	
+    return d >= 95 ? '#39b54a' :
+           d >= 89 ? '#f7e34f' :
+           d >= 83 ? '#f9ae08' :
+           d >= 77 ? '#f47f45' :
+           d >= 0  ? '#ef4136' :
+                   	 '#545454' ;	
 }
 
 SoundExplorerModalMap.SDEPctPassGrade = function (d){
-    return d > 95 ? 'A' :
-           d > 90 ? 'B' :
-           d > 85 ? 'C' :
-           d > 78 ? 'D' :
-           d >= 0 ? 'F' :
-                   	'' ;	
+    return d >= 99 ? 'A+' :
+           d >= 97 ? 'A' :
+           d >= 95 ? 'A-' :
+           d >= 93 ? 'B+' :
+           d >= 91 ? 'B' :
+           d >= 89 ? 'B-' :
+           d >= 87 ? 'C+' :
+           d >= 85 ? 'C' :
+           d >= 83 ? 'C-' :
+           d >= 81 ? 'D+' :
+           d >= 79 ? 'D' :
+           d >= 77 ? 'D-' :
+           d >= 0  ? 'F' :
+                   	 '' ;	
 }
 
 
@@ -608,7 +616,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("text-anchor", "middle")
 				.attr("dx", function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; })
-				.attr('style', "font-size: "+ 24/scale +";")
+				.attr('style', "font-size: "+ 24/scale +"px;")
 				.text(function(d) { return SoundExplorerModalMap.SDEPctPassGrade(d.properties.pctPass); });
 
 		}
@@ -633,7 +641,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 		beaconCircles.selectAll("circle")
 			.attr('r', innerRadius/scale);
 		beaconCircles.selectAll("text")
-			.attr('style', "font-size: "+ 24/scale +";")
+			.attr('style', "font-size: "+ 24/scale +"px;")
 			.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; });
 		beaconCircles.selectAll("path")
 			.attr("d", arc);		
@@ -662,7 +670,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 	});
 
 	if ($('#beacon').prop('checked')) {
-		thismap.BEACON_D3_POINTS.addTo(thismap.map);
+		thismap.BEACON_D3_POINTS.addTo(thismap.map).bringToFront();
 	}
 
 

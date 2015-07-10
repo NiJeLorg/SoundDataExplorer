@@ -1,0 +1,130 @@
+{% extends 'explorer/base.html' %}
+{% load staticfiles %}
+
+{% block css_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/pages.css' %}">
+{% endblock %}
+
+{% block head_js_block %}
+{% endblock %}
+	
+
+{% block content %}
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title">Data Sources</h1>
+        <!--<p class="lead blog-description"></p>-->
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">Best Available Data on Long Island Sound</h2>
+
+            <p>Save the Sound works to include the most reliable and comprehensive data available in this website. We will continue to update the existing datasets and add new ones to more fully tell the story of the health of Long Island Sound.</p>
+            <p>If you represent an organization that has a robust and current water quality dataset for Long Island Sound, please contact us at <a href="mailto:plinderoth@savethesound.org">plinderoth@savethesound.org</a> to discuss including it on this site.</p>
+            <h3>Current Data Sets</h3>
+            <p>The data displayed on this website today has been collected from the following sources:</p>
+            <ul>
+              <li>Beach Sampling Data: </li>
+              <ul>
+                <li>EPA STORET database: <a href="http://ofmpub.epa.gov/storpubl/dw_pages.querycriteria">http://ofmpub.epa.gov/storpubl/<br />dw_pages.querycriteria</a></li>
+                <li>EPA Beacon2 database: <a href="http://watersgeo.epa.gov/beacon2">http://watersgeo.epa.gov/beacon2</a></li>
+              </ul>
+              <li>Watershed and Subwatershed boundaries:</li> 
+              <ul>
+                <li>The Watershed Boundary Dataset is being developed under the leadership of the Subcommittee on Spatial Water Data, which is part of the Advisory Committee on Water Information (ACWI) and the Federal Geographic Data Committee (FGDC). The U.S. Department of Agriculture (USDA) Natural Resources Conservation Service (NRCS), along with many other federal agencies and national associations, have representatives on the Subcommittee on Spatial Water Data.</li>
+                <li>Website: <a href="http://www.nrcs.usda.gov/wps/portal/nrcs/main/national/water/watersheds/dataset/">http://www.nrcs.usda.gov/wps/portal/nrcs/main/<br />national/water/watersheds/dataset/</a></li>
+              </ul>
+              <li>Boat Launch Sites:</li> 
+              <ul>
+                <li>Connecticut:</li>
+                  <ul>
+                    <li>Connecticut DEEP Boat Launches; State of Connecticut, Department of Environmental Protection (data compiler, editor and publisher)</li>
+                    <li>Website: <a href="http://www.cteco.uconn.edu/metadata/dep/document/DEP_Boat_Launch_FGDC_Plus.htm">http://www.cteco.uconn.edu/metadata/dep/<br />document/DEP_Boat_Launch_FGDC_Plus.htm</a></li>
+                  </ul>
+                <li>New York:</li>
+                  <ul>
+                    <li>New York State Boat Launches (NYSDEC); New York State Department of Environmental Conservation</li>
+                    <li>Website: <a href="http://gis.ny.gov/gisdata/metadata/nysdec.boatlaunch_KML.xml">http://gis.ny.gov/gisdata/metadata/<br />nysdec.boatlaunch_KML.xml</a></li>
+                  </ul>
+              </ul>
+              <li>Land Use & Land Cover:</li> 
+              <ul>
+                <li>CLEAR (Center for Land Use Education and Research); University of Connecticut, Middlesex County Extension Center</li>
+                <li>Website: <a href="http://clear.uconn.edu/projects/landscapeLIS/landcover.htm">http://clear.uconn.edu/projects/landscapeLIS/<br />landcover.htm</a></li>
+              </ul>
+              <li>Wastewater Treatment Plants:</li> 
+              <ul>
+                <li>Connecticut:</li>
+                  <ul>
+                    <li>Connecticut Department of Energy and Environmental Protection, Office of Information Management - GIS</li>
+                    <li>Website: <a href="http://www.ct.gov/deep">http://www.ct.gov/deep</a></li>
+                  </ul>
+                <li>New York:</li>
+                  <ul>
+                    <li>New York State Department of Environmental Conservation</li>
+                    <li>Website: <a href="http://www.arcgis.com/home/webmap/viewer.html?url=http://services.arcgis.com/jDGuO8tYggdCCnUJ/ArcGIS/rest/services/Municipal_wastewater_discharge_facilities_in_NYS/FeatureServer&source=sd">http://www.arcgis.com/home/webmap/viewer.html?<br />url=http://services.arcgis.com/jDGuO8tYggdCCnUJ/<br />ArcGIS/rest/services/Municipal_wastewater_discharge<br />_facilities_in_NYS/FeatureServer&source=sd</a></li>
+                  </ul>
+              </ul>
+              <li>Combined Sewer Overflow Outfalls:</li> 
+              <ul>
+                <li>Connecticut:</li>
+                  <ul>
+                    <li>Connecticut Department of Energy and Environmental Protection, Office of Information Management - GIS</li>
+                    <li>Website: <a href="http://www.ct.gov/deep">http://www.ct.gov/deep</a></li>
+                  </ul>
+                <li>New York:</li>
+                  <ul>
+                    <li>New York State Department of Environmental Conservation</li>
+                    <li>Website: <a href="http://www.dec.ny.gov/chemical/90321.html">http://www.dec.ny.gov/chemical/90321.html</a></li>
+                  </ul>
+              </ul>
+              <li>Precipitation Data:</li>
+                <ul>
+                  <li>Weather Underground API: <a href="http://www.wunderground.com/weather/api">http://www.wunderground.com/<br />weather/api</a></li>
+                </ul>
+
+            </ul>
+
+          </div><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module">
+            <h4>Learn More</h4>
+            <ol class="list-unstyled">
+              <li><a href="{% url 'about' %}">About</a></li>
+              <li><a href="{% url 'datasources' %}">Data Sources</a></li>
+              <li><a href="{% url 'criteriascoring' %}">Criteria & Scoring</a></li>
+              <li><a href="{% url 'findingssolutions' %}">Findings & Solutions</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4><a href="{% url 'index' %}">Back to the Sound Health Explorer</a></h4>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+
+{% endblock %}
+
+
+{% block modal_block %}
+{% endblock %}
+
+{% block js_block %}
+{% endblock %}
+
+
+	
+	
+

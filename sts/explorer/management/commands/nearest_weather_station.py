@@ -23,7 +23,8 @@ class Command(BaseCommand):
 			data = json.loads(response.read())
 
 			airportStations = data['location']['nearby_weather_stations']['airport']['station']
-			pwsStations = data['location']['nearby_weather_stations']['pws']['station']
+			# no longer including personal weather stations
+			#pwsStations = data['location']['nearby_weather_stations']['pws']['station']
 			for i, airport in enumerate(airportStations):
 				if i == 0:
 					ws = WeatherStations()
@@ -37,18 +38,18 @@ class Command(BaseCommand):
 					ws.save()
 
 
-			for j, pws in enumerate(pwsStations):
-				if j <= 2:
-					ws = WeatherStations()
-					ws.BeachID = beach
-					ws.Neighborhood = pws['neighborhood']
-					ws.City = pws['city']
-					ws.State = pws['state']
-					ws.Country = pws['country']
-					ws.PwsId = pws['id']
-					ws.DistanceKm = int(pws['distance_km'])
-					ws.DistanceMi = int(pws['distance_mi'])
-					ws.save()
+			#for j, pws in enumerate(pwsStations):
+			#	if j <= 2:
+			#		ws = WeatherStations()
+			#		ws.BeachID = beach
+			#		ws.Neighborhood = pws['neighborhood']
+			#		ws.City = pws['city']
+			#		ws.State = pws['state']
+			#		ws.Country = pws['country']
+			#		ws.PwsId = pws['id']
+			#		ws.DistanceKm = int(pws['distance_km'])
+			#		ws.DistanceMi = int(pws['distance_mi'])
+			#		ws.save()
 
 			#sleep code for 1 minute to conform with API
 			if counter % 10 == 0:
@@ -59,6 +60,7 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		print "Loading WU Metadata...."
 		self.weather_station_lookup()
+		print "Done."
 
 
 

@@ -1,5 +1,5 @@
 /**
- * Application.js: Sets global JS variables and initializes Sound Data Explorer
+ * Application.js: Sets global JS variables and initializes Sound Health Explorer
  * Author: NiJeL
  */
 

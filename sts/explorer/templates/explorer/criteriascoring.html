@@ -1,0 +1,101 @@
+{% extends 'explorer/base.html' %}
+{% load staticfiles %}
+
+{% block css_block %}
+  <link rel="stylesheet" type="text/css" href="{% static 'explorer/css/pages.css' %}">
+{% endblock %}
+
+{% block head_js_block %}
+{% endblock %}
+	
+
+{% block content %}
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title">Criteria & Scoring</h1>
+        <!--<p class="lead blog-description"></p>-->
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">What Do the Numbers Mean?</h2>
+
+            <p>The most common cause of getting sick from swimming is exposure to fecal contaminated water. For this reason, beach water quality testing focuses on bacteria levels in the water. The bacteria scores on this website follow the United States Environmental Protection Agency (EPA) 2004 federal guidelines for safe recreational water quality.<sup>1</sup> These guidelines are used by the health departments in New York and Connecticut for coastal beach monitoring and management.</p>
+            <p>The unacceptable levels of bacteria set in these guidelines are based on an anticipated illness rate of 19 or more illnesses per 1,000 swimmers. This means that at concentrations of 104/100mL Enterococcus or higher, approximately 19 out of 1,000 swimmers can be reasonably expected to contract a waterborne illness. These illnesses come in the form of viruses, parasites, or bacterial infections. <a href="{% static 'explorer/pdfs/Recreational_Waterborne_Illnesses.pdf' %}">More on Waterborne Illnesses</a>.</p>
+            <h3>Marine Beach Criteria: Single Sample Maximum</h3>
+            <blockquote><h4><em>Enterococcus (“Entero”):</em> >= 104 cfu/100mL</h4></blockquote>
+            <p>Any sample that is equal to or greater than 104 Entero is considered unsafe for swimming and should result in a beach closure. Once closed, the beach should not be reopened until acceptably low bacterial counts have been restored.</p>
+            <h3>Marine Beach Criteria: Geometric Mean</h3>
+            <blockquote><h4><em>Enterococcus (“Entero”):</em> >= 35 cfu/100mL</h4></blockquote>
+            <p>A geometric mean is a weighted average used to track water quality overtime.  Beach managers typically track a rolling geometric mean average for each beach (each new sample updates the average, which is based on 5 samples). When a geometric mean is equal to or greater than 35 Entero that beach is considered unsafe for swimming and should be closed until the average returns to acceptable levels.</p>
+
+            <h3>Terms</h3>
+            <p><u>Colony-forming unit (CFU):</u> a unit used to estimate the number of viable bacteria in a sample. Usually measured as CFU per milliliter of water.</p>
+            <p><u>Enterococcus (“Entero”):</u> fecal-indicating bacteria that lives in the intestines of warm-blooded animals.</p>
+            <p><u>Fecal contamination:</u> water pollution that is the result of high concentration of fecal matter in the water. The source could be human or animal.</p>
+            <p><u>Pathogens:</u> disease-producing agents including viruses, bacteria, parasites, or other microorganisms.</p>
+
+            <h3>Grading Scale</h3>
+            <p>We developed the grading scale in consultation with scientists who study water quality in Long Island Sound. Our goal is to provide context for the bacteria failures by grading them relative to national averages and considering dry weather failures. We are employing an A-F scale since this is familiar to the public. It is our hope that all communities will work to achieving or maintaining an A!</p>
+            <ul>
+              <li>0 – 5% failure = A</li>
+              <li>6 – 11% failure = B (average failure rate for beaches nationwide is 8%<sup>2</sup>)</li>
+              <li>12 – 17% failure = C</li>
+              <li>18 – 23% failure = D (failures include dry weather days)</li>
+              <li>23 – 100% failure = F</li>
+            </ul>
+
+            <h3>Wet Weather vs. Dry Weather</h3>
+            <p>Wet weather sample = cumulative rain fall equal to or greater than 1/2" in prior 72 hours.</p>
+            <p>Dry weather sample = cumulative rain fall of less than 1/2" of rain in prior 72 hours.</p>
+            <br />
+
+            <hr>
+            <p><sup>1</sup> <small>In 2012 EPA issued updated Recreational Water Quality Criteria to guide beach monitoring and management practices: <a href="http://water.epa.gov/scitech/swguidance/standards/criteria/health/recreation/index.cfm">http://water.epa.gov/scitech/swguidance/<br />standards/criteria/health/recreation/index.cfm</a>. The new criteria have not been adopted yet by New York or Connecticut.</small></p>
+            <p><sup>2</sup> <small>NRDC’s “Testing the Waters” reports from 2011, 2012, 2013 (<a href="http://www.nrdc.org/water/oceans/ttw/">http://www.nrdc.org/<br />water/oceans/ttw/</a>).  Note: “Testing the Waters: 2014” uses the 2012 EPA Recreational Water Quality Criteria to derive a failure rate—a different criteria than the one used by New York, Connecticut and this website—so that revised failure rate is not used here.</small></p>
+
+            
+
+          </div><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module">
+            <h4>Learn More</h4>
+            <ol class="list-unstyled">
+              <li><a href="{% url 'about' %}">About</a></li>
+              <li><a href="{% url 'datasources' %}">Data Sources</a></li>
+              <li><a href="{% url 'criteriascoring' %}">Criteria & Scoring</a></li>
+              <li><a href="{% url 'findingssolutions' %}">Findings & Solutions</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4><a href="{% url 'index' %}">Back to the Sound Health Explorer</a></h4>
+          </div>
+
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+
+{% endblock %}
+
+
+{% block modal_block %}
+{% endblock %}
+
+{% block js_block %}
+{% endblock %}
+
+
+	
+	
+

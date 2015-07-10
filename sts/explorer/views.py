@@ -50,6 +50,7 @@ def beaconApi(request):
 	for beach in beaches:
 		#pull data based on date range selected
 		scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
+		alltimesamples = MonthlyScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
 		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).aggregate(Min('StartDate'), Max('StartDate'))
 		for score in scores:
 			if score['NumberOfSamples__sum'] > 0:
@@ -63,6 +64,7 @@ def beaconApi(request):
 				data['properties']['County'] = beach.County
 				data['properties']['StartDate'] = minMaxDate['StartDate__min']
 				data['properties']['EndDate'] = minMaxDate['StartDate__max']
+				data['properties']['AllTimeNumberOfSamples'] = alltimesamples['NumberOfSamples__sum']
 				data['properties']['NumberOfSamples'] = score['NumberOfSamples__sum']
 				data['properties']['TotalPassSamples'] = score['TotalPassSamples__sum']
 				data['properties']['TotalDryWeatherSamples'] = score['TotalDryWeatherSamples__sum']
@@ -89,10 +91,11 @@ def modalApi(request):
 	startDateparsed = dateutil.parser.parse(startDate)
 	startDateobject = startDateparsed.date()
 	endDateparsed = dateutil.parser.parse(endDate)
-	endDateobject = endDateparsed.date()
+	endDateplusone = endDateparsed.date()
+	endDateobject = endDateplusone + relativedelta(days=-1)
 
 	if startDateobject >= endDateobject:
-		endDateobject = startDateobject + relativedelta(months=1)
+		endDateobject = startDateobject + relativedelta(months=+1, days=-1)
 
 
 	#beach look up
@@ -144,3 +147,16 @@ def precipApi(request):
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
 
 	return render(request, 'explorer/precipVis.html', {'scores':scores, 'startDate':startDateobject, 'endDate':endDateobject, 'tab':tab})
+
+
+def about(request):
+	return render(request, 'explorer/about.html', {})
+
+def datasources(request):
+	return render(request, 'explorer/datasources.html', {})
+
+def criteriascoring(request):
+	return render(request, 'explorer/criteriascoring.html', {})
+
+def findingssolutions(request):
+	return render(request, 'explorer/findingssolutions.html', {})
