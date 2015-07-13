@@ -15,6 +15,9 @@ from dateutil.relativedelta import relativedelta
 # Sum
 from django.db.models import Sum, Min, Max, Avg
 
+#using scipy to calculae geomean
+from scipy.stats import gmean
+
 
 # Create your views here.
 def index(request):	
@@ -104,8 +107,11 @@ def modalApi(request):
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
 
+	#list got gmean
+	sampleList = []
+
 	# select all samples in the range
-	samples = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach)
+	samples = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).order_by('StartDate')
 	NumberOfSamples = len(samples)
 	if NumberOfSamples > 0:
 		for sample in samples:
@@ -116,6 +122,9 @@ def modalApi(request):
 				precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
 				sample.precipSum = precip['PrecipitationIn__sum']
 
+				# make list of sample values for gmean
+				sampleList.append(float(sample.ResultValue))
+
 
 	# select the most recent sample available
 	latestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).latest('StartDate')
@@ -125,8 +134,10 @@ def modalApi(request):
 	# calculate the min, max and mean
 	sampleAggregates = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(AvgValue=Avg('ResultValue'),MinValue=Min('ResultValue'),MaxValue=Max('ResultValue'))
 
+	#calculate the geometric mean
+	geomean = gmean(sampleList)
 
-	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates})
+	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean})
 
 
 def precipApi(request):	

@@ -844,12 +844,20 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 
 
 
-SoundExplorerMap.updateMapFromSlider = function (value){
+SoundExplorerMap.updateMapFromSlider = function (value, main){
 	// close popups
 	MY_MAP.map.closePopup();
 	// moment parses unix offsets and javascript date objects in the same way
-	var startDate = moment(value[0]).startOf('month').format("YYYY-MM-DD");
+	var startDate = moment(value[0]).startOf('month');
 	var endDate = moment(value[1]).endOf('month').format("YYYY-MM-DD");
+
+	var earliestDate = moment(new Date(2004,0,1));
+	if (startDate.isBefore(earliestDate)) {
+		startDate = earliestDate;
+	}
+
+	startDate = startDate.format("YYYY-MM-DD");
+
 
 	// update map
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
@@ -889,7 +897,10 @@ SoundExplorerMap.updateMapFromSlider = function (value){
 			MY_MAP.BEACON_POINTS.setStyle({radius: 24});
 		}
 
-		$("body").removeClass("loading");
+		if (main == true) {
+			$("body").removeClass("loading");
+		}
+		
 
 	});
 

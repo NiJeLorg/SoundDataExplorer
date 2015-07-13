@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <div class="modalDataWrapper">
 	<div class="legendModal pull-right">
 
@@ -69,14 +71,18 @@
 	            			<thead>
 	            				<th data-defaultsort="desc">Date</th>
 	            				<th>Type</th>
-	            				<th>Score</th>
+	            				<th >Score</th>
 	            				<th>Rainfall (In.)</th>
 	            			</thead>
 	            			<tbody>
 	            				{% for sample in samples %}
 	            					<tr>
 		            					<td data-dateformat="MM/DD/YYYY">{{ sample.StartDate|date:"m/d/Y" }}</td>
-		            					<td>{{ sample.CharacteristicName }}</td>
+		            					{% if sample.CharacteristicName == 'Enterococcus' %}
+			            					<td>Entero</td>
+		            					{% else %}	
+			            					<td>{{ sample.CharacteristicName }}</td>
+		            					{% endif %}
 		            					{% if sample.ResultValue >= 104 %}
 		            						<td class="danger">{{ sample.ResultValue|floatformat }}</td>
 		            					{% else %}
@@ -93,9 +99,10 @@
 	            				{% endfor %}         				
 	            			</tbody>
 	            		</table>
+	            		<p><u>Enterococcus ("Entero")</u>: fecal-indicating bacteria</p>
 	            	</div>          	
 	            	<div class="col-xs-3">
-	            			<p>Mean: </p>
+	            			<p data-toggle="tooltip" data-placement="top" title="A measure of central tendency (a weighted average) used by the EPA to assess water quality. The geometric mean is defined as the nth root (where n is the number of samples) of the product of n samples.">Geometric Mean: </p>
 	            			<p>Minimum: </p>
 	            			<p>Maximum: </p>
 	            			<p>Dry Samples: </p>
@@ -103,21 +110,22 @@
 	            			<p>Total Samples: </p>
 	            	</div>
 	            	<div class="col-xs-1">
+	            			<p>{{ geomean|floatformat|intcomma }}</p>
 	            		{% for sample in sampleAggregates %}
-	            			<p>{{ sample.AvgValue|floatformat }}</p>
-	            			<p>{{ sample.MinValue|floatformat }}</p>
-	            			<p>{{ sample.MaxValue|floatformat }}</p>
+	            			<p>{{ sample.MinValue|floatformat|intcomma }}</p>
+	            			<p>{{ sample.MaxValue|floatformat|intcomma }}</p>
 	            		{% endfor %}
 	            		{% for score in scores %}
-	            			<p>{{ score.TotalDryWeatherSamplesSum|floatformat }}</p>
-	            			<p>{{ score.TotalWetWeatherSamplesSum|floatformat }}</p>
-	            			<p>{{ score.NumberOfSamplesSum|floatformat }}</p>
+	            			<p>{{ score.TotalDryWeatherSamplesSum|floatformat|intcomma }}</p>
+	            			<p>{{ score.TotalWetWeatherSamplesSum|floatformat|intcomma }}</p>
+	            			<p>{{ score.NumberOfSamplesSum|floatformat|intcomma }}</p>
 						{% endfor %}
 	            	</div>
             	</div>            	
             </div>
             <div id="timeline" class="show">
             	<div id="timeSliderModal"></div>
+            	<div id="scatterPlotModal"></div>
             </div>
             <div class="clearfix"></div>
             <div class="container-fluid">
@@ -295,7 +303,7 @@
 			var start_date_selected = moment($( "#start_date option:selected" ).val()).startOf('month');
 			var end_date_selected = moment($( "#end_date option:selected" ).val()).endOf('month');
 
-			var minDate = moment('{{ earliestSample.StartDate|date:"c" }}');
+			var minDate = moment('{{ earliestSample.StartDate|date:"c" }}').startOf('month').subtract(1, 'days');
 			var earliestDate = moment(new Date(2003,11,31))
 			if (minDate.isBefore(earliestDate)) {
 				minDate = earliestDate;
@@ -492,6 +500,11 @@
 			var minDate = moment('{{ earliestSample.StartDate|date:"c" }}').startOf('month');
 			var maxDate = moment('{{ latestSample.StartDate|date:"c" }}').endOf('month');
 
+			var earliestDate = moment(new Date(2003,11,31));
+			if (minDate.isBefore(earliestDate)) {
+				minDate = earliestDate;
+			}
+
 			var start_date_selected = moment($( "#start_date option:selected" ).val());
 			var end_date_selected = moment($( "#end_date option:selected" ).val());
 
@@ -527,24 +540,155 @@
 							.on("slideend", function(evt, value) {
 								$("body").addClass("loading");
 								// run a function to update map layers with new dates
-								SoundExplorerMap.updateMapFromSlider(value);
+								SoundExplorerMap.updateMapFromSlider(value, false);
 								SoundExplorerModalMap.updateMapFromSlider(value);
+
 								// update combo boxes
-								var start_date = moment(value[0]).format('YYYY-MM');
-								start_date = start_date + '-01';
-								$( "#start_date" ).val(start_date);
-								$( "#start_date_modal" ).val(start_date);
-								var end_date = moment(value[1]).format('YYYY-MM');
-								end_date = end_date + '-01';
-								$( "#end_date" ).val(end_date);
-								$( "#end_date_modal" ).val(end_date);
+								var earliestDate = moment(new Date(2004,0,1));
+								var earliestSelected = moment(value[0]).startOf('month');
+								if (earliestSelected.isBefore(earliestDate)) {
+									var startDate = earliestDate.format("YYYY-MM-DD");
+								} else {
+									var startDate = earliestSelected.format("YYYY-MM-DD");									
+								}
+
+								$( "#start_date" ).val(startDate);
+								var endDate = moment(value[1]).startOf('month').format('YYYY-MM-DD');
+								$( "#end_date" ).val(endDate);
+								
 								// update modalData
-								updateModalData();
+								updateModalData(startDate, endDate);
+
 
 							});
 
 			d3.select('#timeSliderModal').call(mapSliderModal);
 
+		}
+
+		function drawScatterPlot () {
+			var samplesArray = [];
+			var parseDate = d3.time.format("%Y-%m-%d").parse;
+			{% for sample in samples %}
+				sampleDate = parseDate("{{ sample.StartDate|date:'Y-m-d' }}");
+				samplesArray.push({date: sampleDate, value: parseInt({{ sample.ResultValue }}) });
+			{% endfor %}
+
+			var minDate = moment('{{ earliestSample.StartDate|date:"c" }}').startOf('month');
+			var maxDate = parseDate(moment('{{ latestSample.StartDate|date:"c" }}').endOf('month').format("YYYY-MM-DD"));
+
+			var earliestDate = moment(new Date(2004,0,1));
+			if (minDate.isBefore(earliestDate)) {
+				minDate = earliestDate;
+			}
+
+			minDate = parseDate(minDate.format("YYYY-MM-DD"));
+
+
+
+			var div = d3.select('#scatterPlotModal');
+	        var width = parseInt(div.style("width"), 10) - 20;
+	        var margin = 50;
+	        var height = 60;
+
+			var svg = div.append("svg");
+			svg.style("margin-left", -margin + "px");
+
+			svg.attr({
+				width: (width + margin * 2),
+				height: margin * 1.8
+			});
+
+			var x = d3.time.scale()
+				.range([0, width])
+				.domain([minDate, maxDate]);
+
+			var y = d3.scale.linear()
+				.range([height, 6])
+				.domain(d3.extent(samplesArray, function(d) { return d.value; }));
+
+			var xAxis = d3.svg.axis()
+				.scale(x)
+				.orient("bottom")
+				.ticks(d3.time.years, 1);
+
+			var yAxis = d3.svg.axis()
+				.scale(y)
+				.orient("left")
+				.ticks(2);
+
+			var g = svg.append('g')
+				.attr("transform", "translate(" + margin + ",0)");
+
+			g.append("g")
+				.attr("class", "passArea")
+				.append("rect")
+				.attr("width", width)
+				.attr("height", height - y(104))
+				.attr("transform", "translate(0," + y(104) + ")")
+				.attr("fill", "#009444")
+				.attr("fill-opacity", 0.5);
+
+			g.append("g")
+				.attr("class", "failArea")
+				.append("rect")
+				.attr("width", width)
+				.attr("height", function(d) {
+					if (y(104) < 0) {
+						return 0;
+					} else {
+						return y(104);
+					}
+				})
+				.attr("transform", "translate(0,0)")
+				.attr("fill", "#be1e2d")
+				.attr("fill-opacity", 0.5);
+
+
+			g.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis)
+			   .selectAll(".tick text")
+			    .style("text-anchor", "start")
+			    .attr("x", 6)
+			    .attr("y", 6);
+
+			g.append("g")
+				.attr("class", "y axis")
+				.call(yAxis)
+				.append("text")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 6)
+				.attr("x", -6)
+				.attr("dy", ".51em")
+				.style("text-anchor", "end")
+				.text("Score");
+
+			g.selectAll("path")
+				.data(samplesArray)
+			   .enter().append("path")
+			   	.attr("transform", function(d) { return "translate(" + x(d.date) + "," + y(d.value) + ")"; })
+				.attr("d", d3.svg.symbol().type(function(d) {
+					if (d.value >= 104) {
+						return "triangle-down";
+					} else {
+						return "triangle-up";
+					}
+					
+				}))
+				.attr('fill-opacity', 0)
+				.attr('stroke',function(d){ 
+					if (d.value >= 104) {
+						return "#be1e2d";
+					} else {
+						return "#009444";
+					}				 
+				})
+				.attr('stroke-width',1);
+
+			
+			
 			// ensure the correct tabs are hidden and shown
 		    {% if tab == "precip" %}
 		    	$('#timeline').removeClass('show').addClass('hidden');
@@ -556,6 +700,10 @@
             	$('#precip').removeClass('show').addClass('hidden');
             {% endif %}
 
+
+            // remove loading class on body
+			$("body").removeClass("loading");
+
 		}
 
 
@@ -566,6 +714,7 @@
 		drawDropChart();
 		drawSunChart();
 		drawTimeSliderModal();
+		drawScatterPlot();
 		// to ensure tables will sort
 		$.bootstrapSortable();
 
@@ -629,7 +778,7 @@
 					.value( [ start_date, end_date ] )
 					.on("slideend", function(evt, value) {
 						// run a function to update map layers with new dates
-						SoundExplorerMap.updateMapFromSlider(value);
+						SoundExplorerMap.updateMapFromSlider(value, false);
 						// update combo boxes
 						var start_date = moment(value[0]).format('YYYY-MM');
 						start_date = start_date + '-01';
@@ -643,24 +792,22 @@
 
 			// update the map data on both the main map and the modal map
 			var value = [ start_date, end_date ];
-			SoundExplorerMap.updateMapFromSlider(value);
+			SoundExplorerMap.updateMapFromSlider(value, false);
 			SoundExplorerModalMap.updateMapFromSlider(value);
 
 			//update main map combo boxes
-			var start_date = moment($( "#start_date_modal option:selected" ).val()).format('YYYY-MM');
-			start_date = start_date + '-01';
 			$( "#start_date" ).val(start_date);
-			$( "#start_date_modal" ).val(start_date);
-			var end_date = moment($( "#end_date_modal option:selected" ).val()).format('YYYY-MM');
-			end_date = end_date + '-01';
 			$( "#end_date" ).val(end_date);
-			$( "#end_date_modal" ).val(end_date);
-			updateModalData();
-		}
 
-		function updateModalData() {
+			//update the modal right hand column
 			var startDate = moment($( "#start_date_modal option:selected" ).val()).format("YYYY-MM-DD");
 			var endDate = moment($( "#end_date_modal option:selected" ).val()).format("YYYY-MM-DD");
+
+			updateModalData(startDate, endDate);
+
+		}
+
+		function updateModalData(startDate, endDate) {
 			var beachid = "{{ beach.BeachID }}";
 
 			// which tab is open
@@ -680,11 +827,14 @@
 		        url:  'modalapi/?startDate=' + startDate + '&endDate=' + endDate + '&beachId=' + beachid + '&tab=' + tab,
 		        success: function(data){
 		        	$("#modalData").html(data);
-		        	$("body").removeClass("loading");
 		        }
 		    });
 
 		}
+
+
+		// ensure tooltips are ready for use
+		$('[data-toggle="tooltip"]').tooltip();
 
 		// ensure correct checked layers on page load
 		if ($('#beacon').prop('checked')) {

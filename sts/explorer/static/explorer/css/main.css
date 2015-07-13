@@ -95,6 +95,10 @@ body.loading .loading-modal {
   width: 1px;
 }
 
+.axis text {
+  font-size: 14px;
+}
+
 .grey-background {
   background: #d1d3d4;
   min-height: 240px;
@@ -398,33 +402,33 @@ tbody td, thead th {
 /*
 * Site View Modal
 */
-.modal{
+.modal-full {
   width: 100%; /* desired relative width */
   min-height:100%;
   height: auto;
 }
 
-.modal-content {
+.modal-full-content {
   min-height: 100%; 
   height: auto;
   border-radius: 0;
 }
 
-.modal-dialog {
+.modal-full-dialog {
   width: 100%;
   min-height: 100%; 
   height: auto;
   padding: 0;
-  margin-top: 0;
+  margin: 0;
 }
 
 @media (min-width: 768px) {
-  .modal-dialog {
+  .modal-full-dialog {
     width: 100%;
     min-height: 100%; 
     height: auto;
     padding: 0;
-    margin-top: 0;
+    margin: 0;
   }
 }
 
@@ -434,7 +438,6 @@ tbody td, thead th {
 }
 
 .modal-body {
-  min-height: 100%; 
   height: auto;
 }
 
@@ -472,4 +475,27 @@ tbody td, thead th {
   margin-bottom: 20px;
 }
 
+
+/*
+* CSS Phone size media query
+*/
+
+@media (max-width: 768px) {
+
+  .legend, .stsLogo, .logoBox, .legendModal {
+    display: none;
+  }
+
+  #modalMapWrapper {
+    margin-top: 70px;
+    margin-bottom: 20px;
+  }
+
+  #modalMap {
+    width: 200px;
+    height: 200px;
+  }
+
+
+}
 

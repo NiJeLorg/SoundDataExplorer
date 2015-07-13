@@ -110,7 +110,7 @@
               .on("slideend", function(evt, value) {
                 $("body").addClass("loading");
                 // run a function to update map layers with new dates
-                SoundExplorerMap.updateMapFromSlider(value);
+                SoundExplorerMap.updateMapFromSlider(value, true);
               });
 
       d3.select('#timeSlider').call(mapSlider);
@@ -166,7 +166,7 @@
           .on("slideend", function(evt, value) {
             $("body").addClass("loading");
             // run a function to update map layers with new dates
-            SoundExplorerMap.updateMapFromSlider(value);
+            SoundExplorerMap.updateMapFromSlider(value, true);
             // update combo boxes
             var start_date = moment(value[0]).format('YYYY-MM');
             start_date = start_date + '-01';
@@ -180,7 +180,7 @@
 
       // update the map data as well
       var value = [ start_date, end_date ];
-      SoundExplorerMap.updateMapFromSlider(value);
+      SoundExplorerMap.updateMapFromSlider(value, true);
 
     }
 

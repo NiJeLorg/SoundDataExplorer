@@ -103,7 +103,7 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 		});
 
 		if ($('#beacon').prop('checked')) {
-			thismap.BEACON_POINTS.addTo(thismap.map).bringToFront();
+			thismap.BEACON_POINTS.addTo(thismap.map);
 		}
 
 		// create the D3 layer for Beacon data, but don't add to map until we hit a specfic zoom level
@@ -670,7 +670,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 	});
 
 	if ($('#beacon').prop('checked')) {
-		thismap.BEACON_D3_POINTS.addTo(thismap.map).bringToFront();
+		thismap.BEACON_D3_POINTS.addTo(thismap.map);
 	}
 
 
@@ -681,8 +681,16 @@ SoundExplorerModalMap.updateMapFromSlider = function (value){
 	// close popups
 	MY_MAP_MODAL.map.closePopup();
 	// moment parses unix offsets and javascript date objects in the same way
-	var startDate = moment(value[0]).startOf('month').format("YYYY-MM-DD");
+	var startDate = moment(value[0]).startOf('month');
 	var endDate = moment(value[1]).endOf('month').format("YYYY-MM-DD");
+
+	var earliestDate = moment(new Date(2004,0,1));
+	if (startDate.isBefore(earliestDate)) {
+		startDate = earliestDate;
+	}
+
+	startDate = startDate.format("YYYY-MM-DD");
+
 
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;

@@ -1,5 +1,7 @@
 Django==1.8
 django-registration-redux==1.1
+numpy==1.9.2
 python-dateutil==2.4.2
+scipy==0.15.1
 six==1.9.0
 wsgiref==0.1.2
