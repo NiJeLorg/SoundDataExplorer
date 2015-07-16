@@ -71,8 +71,8 @@
 	            			<thead>
 	            				<th data-defaultsort="desc">Date</th>
 	            				<th>Type</th>
-	            				<th >Score</th>
-	            				<th>Rainfall (In.)</th>
+	            				<th data-toggle="tooltip" data-placement="top" title="The count of bacteria in each sample. For Enterococcus, a count greater than 104 is considered unsafe for swimming and should result in a beach closure.">Score</th>
+	            				<th data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 72 hours prior to the sample being taken.">Rainfall (In.)</th>
 	            			</thead>
 	            			<tbody>
 	            				{% for sample in samples %}
@@ -105,8 +105,8 @@
 	            			<p data-toggle="tooltip" data-placement="top" title="A measure of central tendency (a weighted average) used by the EPA to assess water quality. The geometric mean is defined as the nth root (where n is the number of samples) of the product of n samples.">Geometric Mean: </p>
 	            			<p>Minimum: </p>
 	            			<p>Maximum: </p>
-	            			<p>Dry Samples: </p>
-	            			<p>Wet Samples: </p>
+	            			<p data-toggle="tooltip" data-placement="top" title='The number of samples where cumulative rainfall was less than 1/2" of rain in prior 72 hours.'>Dry Samples: </p>
+	            			<p data-toggle="tooltip" data-placement="top" title='The number of samples where cumulative rainfall was equal to or greater than 1/2" of rain in prior 72 hours.'>Wet Samples: </p>
 	            			<p>Total Samples: </p>
 	            	</div>
 	            	<div class="col-xs-1">
@@ -144,6 +144,7 @@
 			                            Sampling Locations
 			                          </label>
 			                        </div>
+			                        <!--
 			                        <div class="checkbox">
 			                          <label>
       			                      <input type="checkbox" value="watershedsModal" id="watershedsModal">
@@ -153,6 +154,7 @@
 			                            Long Island Sound Regions
 			                          </label>
 			                        </div>
+			                        -->
 			                        <div class="checkbox">
 			                          <label>
 			                            <input type="checkbox" value="subwatershedsModal" id="subwatershedsModal">
@@ -162,6 +164,7 @@
 			                            Subwatersheds
 			                          </label>
 			                        </div>
+			                        <!--
 			                        <div class="checkbox">
 			                          <label>
 			                            <input type="checkbox" value="shellfishModal" id="shellfishModal">
@@ -171,6 +174,7 @@
 			                            Shellfishing Areas
 			                          </label>
 			                        </div>
+			                        -->
 			                        <div class="checkbox">
 			                          <label>
 			                            <input type="checkbox" value="boatlaunchModal" id="boatlaunchModal">
@@ -180,8 +184,6 @@
 			                            Boat Launch Sites
 			                          </label>
 			                        </div>
-			                    </div>
-			                    <div class="col-md-6">
 			                        <div class="checkbox">
 			                          <label>
 			                            <input type="checkbox" value="landuseModal" id="landuseModal">
@@ -191,6 +193,8 @@
 			                            Land Use & Land Cover
 			                          </label>
 			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
 			                        <div class="checkbox">
 			                          <label>
 			                            <input type="checkbox" value="imperviousModal" id="imperviousModal">

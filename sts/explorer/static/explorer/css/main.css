@@ -402,53 +402,20 @@ tbody td, thead th {
 /*
 * Site View Modal
 */
-.modal-full {
-  width: 100%; /* desired relative width */
-  min-height:100%;
-  height: auto;
-}
 
-.modal-full-content {
-  min-height: 100%; 
-  height: auto;
-  border-radius: 0;
-}
-
-.modal-full-dialog {
-  width: 100%;
-  min-height: 100%; 
-  height: auto;
-  padding: 0;
-  margin: 0;
-}
-
-@media (min-width: 768px) {
-  .modal-full-dialog {
-    width: 100%;
-    min-height: 100%; 
-    height: auto;
-    padding: 0;
-    margin: 0;
-  }
-}
-
-.modal-header {
-  border-bottom: 0;
-  margin-bottom: 20px;
-}
-
-.modal-body {
-  height: auto;
+.modal-95 {
+  width: 95%;
 }
 
 #modalMapWrapper {
-  margin-top: 200px;
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
 #modalMap {
-	width: 400px;
-	height: 400px;
+  margin-top: 20px;
+	width: 350px;
+	height: 350px;
   border: 1px solid #000;
 }
 

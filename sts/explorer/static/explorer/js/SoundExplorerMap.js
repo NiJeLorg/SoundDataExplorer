@@ -14,6 +14,7 @@ function SoundExplorerMap() {
     	center: this.center,
    	 	zoom: this.zoom,
    	 	zoomControl: false,
+   	 	zoomAnimation: false,
 	});
 
 	// add CartoDB tiles
@@ -69,6 +70,9 @@ function SoundExplorerMap() {
 	    SoundExplorerMap.checkZoomSwitchLayers();
 	});
 
+	//disable animation
+
+
 }
 
 
@@ -93,11 +97,11 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 	var sample_start_date = moment(feature.properties.StartDate).format('MMMM YYYY');
 	var sample_end_date = moment(feature.properties.EndDate).format('MMMM YYYY');
 
-	var pctFail = 100 - ((feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100).toFixed(0);
+	var pctFail = Math.ceil(100 - ((feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100));
 
-	var pctDryFail = 100 - ((feature.properties.DryWeatherPassSamples / feature.properties.TotalDryWeatherSamples) * 100).toFixed(0);
+	var pctDryFail = Math.ceil(100 - ((feature.properties.DryWeatherPassSamples / feature.properties.TotalDryWeatherSamples) * 100));
 
-	var pctWetFail = 100 - ((feature.properties.WetWeatherPassSamples / feature.properties.TotalWetWeatherSamples) * 100).toFixed(0);
+	var pctWetFail = Math.ceil(100 - ((feature.properties.WetWeatherPassSamples / feature.properties.TotalWetWeatherSamples) * 100));
 
 	layer.bindLabel("<span class='text-capitalize'>" + feature.properties.BeachName + "<br />" + feature.properties.County + "</span> County, " + feature.properties.State, { direction:'auto' });
 	
@@ -131,7 +135,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		if (feature.properties.NumberOfSamples < 12) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-backdrop='false' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
@@ -171,7 +175,7 @@ SoundExplorerMap.createRing = function (pctPassFail){
 
 	var pie = d3.layout.pie()
 		.sort(null)
-		.value(function(d) { return d.pct; });
+		.value(function(d) { return Math.ceil(d.pct); });
 
 	var ringSvg = d3.select('#ringSvgPopup').append('svg')
 		.attr('width', w)
@@ -198,7 +202,7 @@ SoundExplorerMap.createRing = function (pctPassFail){
 		})
 		.text(function(d) { 
 			if (d.data.name == "fail") {
-				return d.data.pct.toFixed(0) + "%";
+				return Math.ceil(d.data.pct) + "%";
 			}
 		});
 
@@ -836,7 +840,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 		beaconCircles.exit().remove();
 
 
-	});
+	}, {zoomAnimate: false, zoomHide: true});
 
 
 }

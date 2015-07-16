@@ -104,6 +104,8 @@
 
 		markGeocode: function(result) {
 			this._map.fitBounds(result.bbox);
+			// pan map up and to the left slightly
+			this._map.panBy([50, 200]);
 
 			if (this._geocodeMarker) {
 				this._map.removeLayer(this._geocodeMarker);

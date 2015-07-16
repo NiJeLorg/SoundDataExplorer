@@ -31,6 +31,7 @@ $( document ).ready(function() {
 
 	// listen for modal click
 	$('#siteView').on('show.bs.modal', function (event) {
+		$("body").addClass("loading");
 		var link = $(event.relatedTarget);
 		var beachid = link.data('beachid');
 		var lat = link.data('lat');
@@ -51,6 +52,7 @@ $( document ).ready(function() {
 	        url:  'modalapi/?startDate=' + startDate + '&endDate=' + endDate + '&beachId=' + beachid,
 	        success: function(data){
 	        	$("#modalData").html(data);
+	        	$("body").removeClass("loading");
 	        }
 	    });
 
