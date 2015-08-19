@@ -360,7 +360,7 @@ SoundExplorerModalMap.prototype.loadExtraLayers = function (){
 SoundExplorerModalMap.getStyleFor_BOATLAUNCH = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 3,
+		radius: 5,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
@@ -376,7 +376,7 @@ SoundExplorerModalMap.getStyleFor_BOATLAUNCH = function (feature, latlng){
 SoundExplorerModalMap.getStyleFor_CSOS = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 3,
+		radius: 5,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,

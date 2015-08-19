@@ -24,7 +24,7 @@ def index(request):
 	tab = "timeline"
 
 	# 5 year rolling window
-	endDate = datetime.date.today()
+	endDate = datetime.date(datetime.date.today().year, 1, 1)
 	startDate = endDate + relativedelta(years=-5)
 
 	#select the monthly scores for this beach in the dates requested

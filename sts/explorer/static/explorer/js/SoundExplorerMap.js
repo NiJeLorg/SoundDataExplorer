@@ -15,6 +15,7 @@ function SoundExplorerMap() {
    	 	zoom: this.zoom,
    	 	zoomControl: false,
    	 	zoomAnimation: false,
+   	 	touchZoom: false,
 	});
 
 	// add CartoDB tiles
@@ -519,7 +520,7 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 SoundExplorerMap.getStyleFor_BOATLAUNCH = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 3,
+		radius: 5,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
@@ -535,7 +536,7 @@ SoundExplorerMap.getStyleFor_BOATLAUNCH = function (feature, latlng){
 SoundExplorerMap.getStyleFor_CSOS = function (feature, latlng){
 
 	var pointMarker = L.circleMarker(latlng, {
-		radius: 3,
+		radius: 5,
 		color: '#bdbdbd',
 		weight: 1,
 		opacity: 1,
