@@ -151,5 +151,8 @@ $( document ).ready(function() {
 		}
 	});
 
+	// ensure that popovers are ready to go
+	$('[data-toggle="tooltip"]').tooltip();
+
 
 });

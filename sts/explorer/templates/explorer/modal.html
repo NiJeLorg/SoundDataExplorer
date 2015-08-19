@@ -8,9 +8,16 @@
     </div>
     <div class="clearfix"></div>
 	<h4 class='pull-left'>{{ beach.BeachName }}</h4>
-	<div class='pull-right'>
-		<small>Most Recent Sample: {{ latestSample.StartDate|date:"M j, Y" }} ({{ latestSample.CharacteristicName }})</small>
-		<span id="mostRecentSample"></span>
+	<div class='pull-right modalRecentSample'>
+		<span class='pull-left' id="mostRecentSample"></span>
+		<p class='pull-right'>Most Recent Sample: {{ latestSample.StartDate|date:"M j, Y" }}
+		<br />
+		{% if latestSample.CharacteristicName == "Enterococcus" %}
+			<small>Swim Criteria is &#8805;104 cfu/100mL Enterococcus</small>
+		{% else %}
+			<small>Swim Criteria is &#8805;1000 cfu/100mL Fecal Coliform</small>
+		{% endif %}
+		</p>
 	</div>
 	<div class="clearfix"></div>
 	<hr />
@@ -126,7 +133,18 @@
             <div id="timeline" class="show">
             	<div id="timeSliderModal"></div>
             	<div id="scatterPlotModal"></div>
-            </div>
+            	<p class="pull-left">
+            		<svg width='20' height='14'>
+	                  <path transform="translate(10,6)" d="M0,-5.26429605180997L6.078685485212741,5.26429605180997 -6.078685485212741,5.26429605180997Z" fill-opacity="0" stroke="#009444" stroke-width="1"></path>
+	                </svg>
+	                Passing Sample
+            		<svg width='20' height='14'>
+						<path transform="translate(10,6)" d="M0,5.26429605180997L6.078685485212741,-5.26429605180997 -6.078685485212741,-5.26429605180997Z" fill-opacity="0" stroke="#be1e2d" stroke-width="1"></path>
+	                </svg>
+	                Failing Sample
+	            </p>
+	            <p class="pull-right"><small>Swim Criteria is &#8805;104 cfu/100mL Enterococcus</small></p>
+	        </div>
             <div class="clearfix"></div>
             <div class="container-fluid">
             	<div class="row">
@@ -263,13 +281,14 @@
 	        var firstPoint = scale(value) + 10;
 	        var secondPoint = scale(value) + 20;
 	        var thirdPoint = scale(value) + 15;
+	        var one0four = scale(104) + 15;
 
 	        var points =  firstPoint + ",15 " + secondPoint + ",15 " + thirdPoint + ", 25";
 
 			var mostRecentSample = d3.select("#mostRecentSample")
 				.append('svg')
 				.attr('width', 130)
-				.attr('height', 26);
+				.attr('height', 40);
 
 			mostRecentSample.append('rect')
 				.attr('width', scale(200))
@@ -294,7 +313,14 @@
 				.attr("dx", thirdPoint)
 				.attr("dy", 13)
 				.attr('style', "font-size: 14px;")
-				.text(value);			
+				.text(value);
+
+			mostRecentSample.append("text")
+				.attr("text-anchor", "middle")
+				.attr("dx", one0four)
+				.attr("dy", 40)
+				.attr('style', "font-size: 14px;")
+				.text('104');			
 		}
 
 
@@ -593,14 +619,14 @@
 			var div = d3.select('#scatterPlotModal');
 	        var width = parseInt(div.style("width"), 10) - 20;
 	        var margin = 50;
-	        var height = 60;
+	        var height = 300;
 
 			var svg = div.append("svg");
 			svg.style("margin-left", -margin + "px");
 
 			svg.attr({
-				width: (width + margin * 2),
-				height: margin * 1.8
+				width: width + (margin * 2),
+				height: height + (margin * 0.5)
 			});
 
 			var x = d3.time.scale()
@@ -609,7 +635,7 @@
 
 			var y = d3.scale.linear()
 				.range([height, 6])
-				.domain(d3.extent(samplesArray, function(d) { return d.value; }));
+				.domain([0, d3.max(samplesArray, function(d) { return d.value; })]);
 
 			var xAxis = d3.svg.axis()
 				.scale(x)
@@ -618,8 +644,7 @@
 
 			var yAxis = d3.svg.axis()
 				.scale(y)
-				.orient("left")
-				.ticks(2);
+				.orient("left");
 
 			var g = svg.append('g')
 				.attr("transform", "translate(" + margin + ",0)");

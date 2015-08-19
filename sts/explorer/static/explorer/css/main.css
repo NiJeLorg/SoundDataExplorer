@@ -442,6 +442,10 @@ tbody td, thead th {
   margin-bottom: 20px;
 }
 
+.modalRecentSample {
+  margin-left: 20px;
+}
+
 
 /*
 * CSS Phone size media query
