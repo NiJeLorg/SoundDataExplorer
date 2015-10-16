@@ -54,7 +54,7 @@ def beaconApi(request):
 		#pull data based on date range selected
 		scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
 		alltimesamples = MonthlyScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
-		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).aggregate(Min('StartDate'), Max('StartDate'))
+		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").aggregate(Min('StartDate'), Max('StartDate'))
 		for score in scores:
 			if score['NumberOfSamples__sum'] > 0:
 				# parse dates into strings
@@ -111,28 +111,28 @@ def modalApi(request):
 	sampleList = []
 
 	# select all samples in the range
-	samples = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).order_by('StartDate')
+	samples = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").order_by('StartDate')
 	NumberOfSamples = len(samples)
 	if NumberOfSamples > 0:
 		for sample in samples:
-			#skip Total Coliform samples
-			if sample.CharacteristicName != 'Total Coliform':
-				today = sample.StartDate
-				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
-				precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-				sample.precipSum = precip['PrecipitationIn__sum']
+			today = sample.StartDate
+			threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+			precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+			sample.precipSum = precip['PrecipitationIn__sum']
 
-				# make list of sample values for gmean
+			# make list of sample values for gmean
+			# exclude Fecal Coliform from geomean
+			if sample.CharacteristicName != "Fecal Coliform":
 				sampleList.append(float(sample.ResultValue))
 
 
 	# select the most recent sample available
-	latestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).latest('StartDate')
+	latestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").latest('StartDate')
 	# earliest sample
-	earliestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).earliest('StartDate')
+	earliestSample = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").earliest('StartDate')
 
 	# calculate the min, max and mean
-	sampleAggregates = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(AvgValue=Avg('ResultValue'),MinValue=Min('ResultValue'),MaxValue=Max('ResultValue'))
+	sampleAggregates = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").values('BeachID').annotate(AvgValue=Avg('ResultValue'),MinValue=Min('ResultValue'),MaxValue=Max('ResultValue'))
 
 	#calculate the geometric mean
 	geomean = gmean(sampleList)

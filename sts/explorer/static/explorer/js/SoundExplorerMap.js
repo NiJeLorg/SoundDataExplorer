@@ -119,14 +119,14 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 
 		if (!isNaN(pctWetFail)) {
 			var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
-			var dropPrint = "<div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of the time after wet weather.</div></div><div class='clearfix'></div>";
+			var dropPrint = "<div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of samples after wet weather.</div></div><div class='clearfix'></div>";
 		} else {
 			var dropPrint = '';
 		}
 		
 		if (!isNaN(pctDryFail)) {
 			var sunSvg = SoundExplorerMap.createSun(pctDryFail);
-			var sunPrint = "<div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of the time after dry weather.</div></div><div class='clearfix'>";
+			var sunPrint = "<div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of samples after dry weather.</div></div><div class='clearfix'>";
 		} else {
 			var sunPrint = '';
 		}
@@ -136,7 +136,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		if (feature.properties.NumberOfSamples < 12) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the time.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
