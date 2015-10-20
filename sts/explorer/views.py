@@ -13,10 +13,19 @@ import dateutil.parser
 from dateutil.relativedelta import relativedelta
 
 # Sum
-from django.db.models import Sum, Min, Max, Avg
+from django.db.models import Sum, Min, Max, Avg, Count
 
 #using scipy to calculae geomean
 from scipy.stats import gmean
+
+#for csv tools
+import csv
+
+# path to media root for adding a CSV file 
+import time
+import os
+from django.conf import settings
+MEDIA_ROOT = settings.MEDIA_ROOT
 
 
 # Create your views here.
@@ -84,11 +93,21 @@ def beaconApi(request):
 	return JsonResponse(response)
 
 
-def modalApi(request):	
+def modalApi(request):
+
 	startDate = request.GET.get("startDate","2000-01-01")
 	endDate = request.GET.get("endDate","2100-01-01")
 	beachId = request.GET.get("beachId","")
 	tab = request.GET.get("tab","precip")
+
+	#setup for CSV files
+	ts = str(int(time.time()))
+	folder = "/csv_files/"+ beachId +"/"
+	filename_all = "SoundHealthExplorer_download_all_"+ beachId +".csv"
+	filename_filtered = "SoundHealthExplorer_download_filtered_"+ beachId +"_"+ ts +".csv"
+
+	if not os.path.exists(MEDIA_ROOT + folder):
+		os.makedirs(MEDIA_ROOT + folder)
 
 	# create data objects from start and end dates
 	startDateparsed = dateutil.parser.parse(startDate)
@@ -112,18 +131,98 @@ def modalApi(request):
 
 	# select all samples in the range
 	samples = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").order_by('StartDate')
-	NumberOfSamples = len(samples)
-	if NumberOfSamples > 0:
-		for sample in samples:
-			today = sample.StartDate
-			threeDaysAgo = sample.StartDate + relativedelta(days=-3)
-			precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-			sample.precipSum = precip['PrecipitationIn__sum']
 
-			# make list of sample values for gmean
-			# exclude Fecal Coliform from geomean
-			if sample.CharacteristicName != "Fecal Coliform":
-				sampleList.append(float(sample.ResultValue))
+	# write to CSV file as we're making the query
+	filtered_csv_path = os.path.join(MEDIA_ROOT + folder + filename_filtered)
+	with open(filtered_csv_path, 'wb') as f:
+		writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)', 'Weather Station ID']
+		writer.writerow(headerRow)
+
+		NumberOfSamples = len(samples)
+		if NumberOfSamples > 0:
+			for sample in samples:
+				today = sample.StartDate
+				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+				precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+				sample.precipSum = precip['PrecipitationIn__sum']
+				# look up Weather Station 
+				ws = WeatherStations.objects.filter(BeachID__exact=beach)
+				# for the time being, loop and find the ICAO code
+				icao = ''
+				for s in ws:
+					if s.Icao != '':
+						icao = s.Icao
+
+				# make list of sample values for gmean
+				# exclude Fecal Coliform from geomean
+				if sample.CharacteristicName != "Fecal Coliform":
+					sampleList.append(float(sample.ResultValue))
+
+				# add to CSV
+				#empty list for a row
+				row = ['','','','','','','','','','','','']
+				row[0] = beach.BeachID
+				row[1] = sample.BeachName
+				row[2] = sample.StationID
+				row[3] = sample.StationName
+				row[4] = sample.StateCode
+				row[5] = sample.CountyName
+				row[6] = sample.StartDate
+				row[7] = float(sample.ResultValue)
+				row[8] = sample.ResultMeasureUnit
+				row[9] = sample.CharacteristicName
+				row[10] = sample.precipSum
+				row[11] = icao
+				# write row to CSV
+				writer.writerow(row)
+
+
+	# write to CSV file for all data associated wiht this site
+
+	# select all samples in the range
+	allSamples = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").order_by('StartDate')
+
+	all_csv_path = os.path.join(MEDIA_ROOT + folder + filename_all)
+	with open(all_csv_path, 'wb') as f:
+		writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)', 'Weather Station ID']
+		writer.writerow(headerRow)
+
+		NumberOfSamples = len(samples)
+		if NumberOfSamples > 0:
+			for sample in allSamples:
+				today = sample.StartDate
+				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+				precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+				sample.precipSum = precip['PrecipitationIn__sum']
+				# look up Weather Station 
+				ws = WeatherStations.objects.filter(BeachID__exact=beach)
+				# for the time being, loop and find the ICAO code
+				icao = ''
+				for s in ws:
+					if s.Icao != '':
+						icao = s.Icao
+
+				# add to CSV
+				#empty list for a row
+				row = ['','','','','','','','','','','','']
+				row[0] = beach.BeachID
+				row[1] = sample.BeachName
+				row[2] = sample.StationID
+				row[3] = sample.StationName
+				row[4] = sample.StateCode
+				row[5] = sample.CountyName
+				row[6] = sample.StartDate
+				row[7] = float(sample.ResultValue)
+				row[8] = sample.ResultMeasureUnit
+				row[9] = sample.CharacteristicName
+				row[10] = sample.precipSum
+				row[11] = icao
+				# write row to CSV
+				writer.writerow(row)
+
+
 
 
 	# select the most recent sample available
@@ -137,7 +236,7 @@ def modalApi(request):
 	#calculate the geometric mean
 	geomean = gmean(sampleList)
 
-	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean})
+	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered })
 
 
 def precipApi(request):	

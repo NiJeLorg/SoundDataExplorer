@@ -73,61 +73,67 @@
             </div>
             <div id="spreadsheet" class="hidden">
             	<div class="container-fluid marginTopBottom20">
-	            	<div class="col-md-8">
-	            		<table class="table table-bordered table-condensed sortable">
-	            			<thead>
-	            				<th data-defaultsort="desc">Date</th>
-	            				<th>Type</th>
-	            				<th data-toggle="tooltip" data-placement="top" title="The count of bacteria in each sample. For Enterococcus, a count greater than 104 is considered unsafe for swimming and should result in a beach closure.">Score</th>
-	            				<th data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 72 hours prior to the sample being taken.">Rainfall (In.)</th>
-	            			</thead>
-	            			<tbody>
-	            				{% for sample in samples %}
-	            					<tr>
-		            					<td data-dateformat="MM/DD/YYYY">{{ sample.StartDate|date:"m/d/Y" }}</td>
-		            					{% if sample.CharacteristicName == 'Enterococcus' %}
-			            					<td>Entero</td>
-		            					{% else %}	
-			            					<td>{{ sample.CharacteristicName }}</td>
-		            					{% endif %}
-		            					{% if sample.ResultValue >= 104 %}
-		            						<td class="danger">{{ sample.ResultValue|floatformat }}</td>
-		            					{% else %}
-		            						<td class="success">{{ sample.ResultValue|floatformat }}</td>
-		            					{% endif %}
+            		<div class="row">
+		            	<div class="col-md-8">
+		            		<table class="table table-bordered table-condensed sortable">
+		            			<thead>
+		            				<th data-defaultsort="desc">Date</th>
+		            				<th>Type</th>
+		            				<th data-toggle="tooltip" data-placement="top" title="The count of bacteria in each sample. For Enterococcus, a count greater than 104 is considered unsafe for swimming and should result in a beach closure.">Score</th>
+		            				<th data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 72 hours prior to the sample being taken.">Rainfall (In.)</th>
+		            			</thead>
+		            			<tbody>
+		            				{% for sample in samples %}
+		            					<tr>
+			            					<td data-dateformat="MM/DD/YYYY">{{ sample.StartDate|date:"m/d/Y" }}</td>
+			            					{% if sample.CharacteristicName == 'Enterococcus' %}
+				            					<td>Entero</td>
+			            					{% else %}	
+				            					<td>{{ sample.CharacteristicName }}</td>
+			            					{% endif %}
+			            					{% if sample.ResultValue >= 104 %}
+			            						<td class="danger">{{ sample.ResultValue|floatformat }}</td>
+			            					{% else %}
+			            						<td class="success">{{ sample.ResultValue|floatformat }}</td>
+			            					{% endif %}
 
-		            					{% if sample.precipSum >= 0.5 %}
-		            						<td class="info">{{ sample.precipSum|floatformat }}</td>
-		            					{% else %}
-		            						<td class="warning">{{ sample.precipSum|floatformat }}</td>
-		            					{% endif %}
-		            					
-	            					</tr>
-	            				{% endfor %}         				
-	            			</tbody>
-	            		</table>
-	            		<p><u>Enterococcus ("Entero")</u>: fecal-indicating bacteria</p>
-	            	</div>          	
-	            	<div class="col-xs-3">
-	            			<p data-toggle="tooltip" data-placement="top" title="A measure of central tendency (a weighted average) used by the EPA to assess water quality. The geometric mean is defined as the nth root (where n is the number of samples) of the product of n samples.">Geometric Mean: </p>
-	            			<p>Minimum: </p>
-	            			<p>Maximum: </p>
-	            			<p data-toggle="tooltip" data-placement="top" title='The number of samples where cumulative rainfall was less than 1/2" of rain in prior 72 hours.'>Dry Samples: </p>
-	            			<p data-toggle="tooltip" data-placement="top" title='The number of samples where cumulative rainfall was equal to or greater than 1/2" of rain in prior 72 hours.'>Wet Samples: </p>
-	            			<p>Total Samples: </p>
-	            	</div>
-	            	<div class="col-xs-1">
-	            			<p>{{ geomean|floatformat|intcomma }}</p>
-	            		{% for sample in sampleAggregates %}
-	            			<p>{{ sample.MinValue|floatformat|intcomma }}</p>
-	            			<p>{{ sample.MaxValue|floatformat|intcomma }}</p>
-	            		{% endfor %}
-	            		{% for score in scores %}
-	            			<p>{{ score.TotalDryWeatherSamplesSum|floatformat|intcomma }}</p>
-	            			<p>{{ score.TotalWetWeatherSamplesSum|floatformat|intcomma }}</p>
-	            			<p>{{ score.NumberOfSamplesSum|floatformat|intcomma }}</p>
-						{% endfor %}
-	            	</div>
+			            					{% if sample.precipSum >= 0.5 %}
+			            						<td class="info">{{ sample.precipSum|floatformat }}</td>
+			            					{% else %}
+			            						<td class="warning">{{ sample.precipSum|floatformat }}</td>
+			            					{% endif %}
+			            					
+		            					</tr>
+		            				{% endfor %}         				
+		            			</tbody>
+		            		</table>
+		            		<p><u>Enterococcus ("Entero")</u>: fecal-indicating bacteria</p>
+		            	</div>         	
+		            	<div class="col-xs-3">
+		            			<p data-toggle="tooltip" data-placement="top" title="A measure of central tendency (a weighted average) used by the EPA to assess water quality. The geometric mean is defined as the nth root (where n is the number of samples) of the product of n samples.">Geometric Mean: </p>
+		            			<p>Minimum: </p>
+		            			<p>Maximum: </p>
+		            			<p data-toggle="tooltip" data-placement="top" title='The number of samples where cumulative rainfall was less than 1/2" of rain in prior 72 hours.'>Dry Samples: </p>
+		            			<p data-toggle="tooltip" data-placement="top" title='The number of samples where cumulative rainfall was equal to or greater than 1/2" of rain in prior 72 hours.'>Wet Samples: </p>
+		            			<p>Total Samples: </p>
+			        			<a class="btn btn-default" href="/media{{ folder }}{{ filename_all }}" role="button">Download All Data</a>
+			        			<br />
+			        			<a class="btn btn-default marginTopBottom20" href="/media{{ folder }}{{ filename_filtered }}" role="button">Download Filtered Data</a>
+
+		            	</div>
+		            	<div class="col-xs-1">
+		            			<p>{{ geomean|floatformat|intcomma }}</p>
+		            		{% for sample in sampleAggregates %}
+		            			<p>{{ sample.MinValue|floatformat|intcomma }}</p>
+		            			<p>{{ sample.MaxValue|floatformat|intcomma }}</p>
+		            		{% endfor %}
+		            		{% for score in scores %}
+		            			<p>{{ score.TotalDryWeatherSamplesSum|floatformat|intcomma }}</p>
+		            			<p>{{ score.TotalWetWeatherSamplesSum|floatformat|intcomma }}</p>
+		            			<p>{{ score.NumberOfSamplesSum|floatformat|intcomma }}</p>
+							{% endfor %}
+		            	</div>
+		        	</div> 
             	</div>            	
             </div>
             <div id="timeline" class="show">
