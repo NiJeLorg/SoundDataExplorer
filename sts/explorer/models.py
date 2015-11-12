@@ -45,15 +45,14 @@ class BeachWQSamples(models.Model):
 		return self.BeachName
 
 class WeatherStations(models.Model):
+	Icao = models.CharField(max_length=4, blank=True, null=True)
 	BeachID = models.ForeignKey(Beaches)
 	Neighborhood = models.CharField(max_length=200, blank=True, null=True)
 	City = models.CharField(max_length=200, blank=True, null=True)
 	State = models.CharField(max_length=200, blank=True, null=True)
 	Country = models.CharField(max_length=200, blank=True, null=True)
-	Icao = models.CharField(max_length=4, blank=True, null=True)
 	Lat = models.CharField(max_length=50, blank=True, null=True)
 	Lon = models.CharField(max_length=50, blank=True, null=True)
-	PwsId = models.CharField(max_length=20, blank=True, null=True)
 	DistanceKm = models.CharField(max_length=20, blank=True, null=True)
 	DistanceMi = models.CharField(max_length=20, blank=True, null=True)
 
@@ -62,6 +61,29 @@ class WeatherStations(models.Model):
 
 class WeatherData(models.Model):
 	Station = models.ForeignKey(WeatherStations)
+	Date = models.DateField()
+	PrecipitationIn = models.CharField(max_length=10, blank=True, null=True)
+
+	def __str__(self):
+		return self.PrecipitationIn
+
+class WeatherStationsPWS(models.Model):
+	PwsId = models.CharField(max_length=20, blank=True, null=True)
+	BeachID = models.ForeignKey(Beaches)
+	Neighborhood = models.CharField(max_length=200, blank=True, null=True)
+	City = models.CharField(max_length=200, blank=True, null=True)
+	State = models.CharField(max_length=200, blank=True, null=True)
+	Country = models.CharField(max_length=200, blank=True, null=True)
+	Lat = models.CharField(max_length=50, blank=True, null=True)
+	Lon = models.CharField(max_length=50, blank=True, null=True)
+	DistanceKm = models.CharField(max_length=20, blank=True, null=True)
+	DistanceMi = models.CharField(max_length=20, blank=True, null=True)
+
+	def __str__(self):
+		return self.Neighborhood
+
+class WeatherDataPWS(models.Model):
+	Station = models.ForeignKey(WeatherStationsPWS)
 	Date = models.DateField()
 	PrecipitationIn = models.CharField(max_length=10, blank=True, null=True)
 

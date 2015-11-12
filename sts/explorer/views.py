@@ -144,15 +144,31 @@ def modalApi(request):
 			for sample in samples:
 				today = sample.StartDate
 				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
-				precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+
+				# check to see if personal weather station data exist for this beach on these days
+				pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).count()
+				if pwscount > 0:
+					# get the nearest staion with data
+					stations = WeatherStationsPWS.objects.filter(BeachID__exact=beach).order_by('DistanceKm')
+					for station in stations:
+						# get count of precip objects
+						precipcount = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).count()
+						#if there are precip objects, then break the for loop
+						if precipcount > 0:
+							# pull precip data for next step
+							precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+							stationCode = station.PwsId
+							break
+
+
+				else:
+					# fall back to the airport precip data if no personal weather stations nearby
+					precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+					# look up Weather Station 
+					ws = WeatherStations.objects.get(BeachID__exact=beach)
+					stationCode = ws.Icao
+
 				sample.precipSum = precip['PrecipitationIn__sum']
-				# look up Weather Station 
-				ws = WeatherStations.objects.filter(BeachID__exact=beach)
-				# for the time being, loop and find the ICAO code
-				icao = ''
-				for s in ws:
-					if s.Icao != '':
-						icao = s.Icao
 
 				# make list of sample values for gmean
 				# exclude Fecal Coliform from geomean
@@ -173,7 +189,7 @@ def modalApi(request):
 				row[8] = sample.ResultMeasureUnit
 				row[9] = sample.CharacteristicName
 				row[10] = sample.precipSum
-				row[11] = icao
+				row[11] = stationCode
 				# write row to CSV
 				writer.writerow(row)
 
@@ -189,20 +205,41 @@ def modalApi(request):
 		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)', 'Weather Station ID']
 		writer.writerow(headerRow)
 
-		NumberOfSamples = len(samples)
+		NumberOfSamples = len(allSamples)
 		if NumberOfSamples > 0:
 			for sample in allSamples:
 				today = sample.StartDate
 				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
-				precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+
+				# check to see if personal weather station data exist for this beach on these days
+				pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).count()
+				if pwscount > 0:
+					# get the nearest staion with data
+					stations = WeatherStationsPWS.objects.filter(BeachID__exact=beach).order_by('DistanceKm')
+					for station in stations:
+						# get count of precip objects
+						precipcount = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).count()
+						#if there are precip objects, then break the for loop
+						if precipcount > 0:
+							# pull precip data for next step
+							precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+							stationCode = station.PwsId
+							break
+
+
+				else:
+					# fall back to the airport precip data if no personal weather stations nearby
+					precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+					# look up Weather Station 
+					ws = WeatherStations.objects.get(BeachID__exact=beach)
+					stationCode = ws.Icao
+
 				sample.precipSum = precip['PrecipitationIn__sum']
-				# look up Weather Station 
-				ws = WeatherStations.objects.filter(BeachID__exact=beach)
-				# for the time being, loop and find the ICAO code
-				icao = ''
-				for s in ws:
-					if s.Icao != '':
-						icao = s.Icao
+
+				# make list of sample values for gmean
+				# exclude Fecal Coliform from geomean
+				if sample.CharacteristicName != "Fecal Coliform":
+					sampleList.append(float(sample.ResultValue))
 
 				# add to CSV
 				#empty list for a row
@@ -218,11 +255,9 @@ def modalApi(request):
 				row[8] = sample.ResultMeasureUnit
 				row[9] = sample.CharacteristicName
 				row[10] = sample.precipSum
-				row[11] = icao
+				row[11] = stationCode
 				# write row to CSV
 				writer.writerow(row)
-
-
 
 
 	# select the most recent sample available
