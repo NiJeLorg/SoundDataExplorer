@@ -311,6 +311,8 @@
         var shellfish = "{% static 'explorer/data/shellfish_CT.topojson' %}";
         var wastewater_CT = "{% static 'explorer/data/wastewater_CT.topojson' %}";
         var wastewater_NY = "{% static 'explorer/data/wastewater_NY.topojson' %}";
+        var startDate = '{{ startDate|date:"c"}}';
+        var endDate = '{{ endDate|date:"c"}}';
     </script>
 	<script type="text/javascript" src="{% static 'explorer/js/d3.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/moment.min.js' %}"></script>

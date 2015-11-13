@@ -98,24 +98,19 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 	var sample_start_date = moment(feature.properties.StartDate).format('MMMM YYYY');
 	var sample_end_date = moment(feature.properties.EndDate).format('MMMM YYYY');
 
-	var pctFail = Math.ceil(100 - ((feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100));
+	var pctFail = Math.round(100 - ((feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100));
 
-	var pctDryFail = Math.ceil(100 - ((feature.properties.DryWeatherPassSamples / feature.properties.TotalDryWeatherSamples) * 100));
+	var pctDryFail = Math.round(100 - ((feature.properties.DryWeatherPassSamples / feature.properties.TotalDryWeatherSamples) * 100));
 
-	var pctWetFail = Math.ceil(100 - ((feature.properties.WetWeatherPassSamples / feature.properties.TotalWetWeatherSamples) * 100));
+	var pctWetFail = Math.round(100 - ((feature.properties.WetWeatherPassSamples / feature.properties.TotalWetWeatherSamples) * 100));
 
 	layer.bindLabel("<span class='text-capitalize'>" + feature.properties.BeachName + "<br />" + feature.properties.County + "</span> County, " + feature.properties.State, { direction:'auto' });
 	
     // onclick set content in bottom bar and open doc if not open already 
 	layer.on("click",function(ev){
 
-		if ($( ".popup-wrapper" ).hasClass( "popup-wrapper-open" )) {
-			// don't toggle classes
-		} else {
-			$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
-			$( ".map" ).toggleClass("map-popup-wrapper-open");
-			$( ".legend" ).toggleClass("legend-popup-wrapper-open");
-		}
+		console.log("Total Pass Samples: ", feature.properties.TotalPassSamples);
+		console.log("Total Samples: ", feature.properties.NumberOfSamples);
 
 		if (!isNaN(pctWetFail)) {
 			var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
@@ -176,7 +171,7 @@ SoundExplorerMap.createRing = function (pctPassFail){
 
 	var pie = d3.layout.pie()
 		.sort(null)
-		.value(function(d) { return Math.ceil(d.pct); });
+		.value(function(d) { return Math.round(d.pct); });
 
 	var ringSvg = d3.select('#ringSvgPopup').append('svg')
 		.attr('width', w)
@@ -203,7 +198,7 @@ SoundExplorerMap.createRing = function (pctPassFail){
 		})
 		.text(function(d) { 
 			if (d.data.name == "fail") {
-				return Math.ceil(d.data.pct) + "%";
+				return Math.round(d.data.pct) + "%";
 			}
 		});
 
@@ -279,9 +274,8 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 	// load points layers
 	var thismap = this;
 
-	// create date for today and for 5 years ago
-	var endDate = moment().endOf('month').add(1, 'days').format("YYYY-MM-DD");
-	var startDate = moment().subtract(5, 'years').startOf('month').format("YYYY-MM-DD");
+	startDate = moment(startDate).format("YYYY-MM-DD");
+	endDate = moment(endDate).format("YYYY-MM-DD");
 
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
@@ -290,8 +284,8 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 			d.properties.leafletId = 'layerID' + i;
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			d.properties.pctPass = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-			var pctFail = 100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
 			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
 		});
 
@@ -872,8 +866,8 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 			d.properties.leafletId = 'layerID' + i;
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			d.properties.pctPass = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-			var pctFail = 100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
 			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
 		});
 

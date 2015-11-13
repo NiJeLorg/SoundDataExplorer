@@ -381,7 +381,7 @@
 				var NumberOfSamplesSum = {{ score.NumberOfSamplesSum }};
 			{% endfor %}
 
-			var pctPass = ((TotalPassSamplesSum / NumberOfSamplesSum) * 100);
+			var pctPass = Math.round(((TotalPassSamplesSum / NumberOfSamplesSum) * 100));
 			var pctFail = 100 - pctPass;
 
 			var pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: pctPass}];
@@ -460,7 +460,7 @@
 				var TotalWetWeatherSamplesSum = {{ score.TotalWetWeatherSamplesSum }};
 			{% endfor %}
 
-			var pctWetFail = 100 - ((WetWeatherPassSamplesSum / TotalWetWeatherSamplesSum) * 100).toFixed(0);
+			var pctWetFail = Math.round(100 - ((WetWeatherPassSamplesSum / TotalWetWeatherSamplesSum) * 100));
 
 			var dropSvg = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="53.771" height="59.867249" id="svg2" xml:space="preserve"><g transform="matrix(1.25,0,0,-1.25,0,59.86725)" id="g10"><g transform="translate(9.4551,8.6643)"id="g20"><path d="m 0,0 c 6.529,-6.529 17.116,-6.53 23.643,-0.002 6.528,6.528 6.527,17.114 -0.002,23.643 L 11.82,35.462 0,23.642 C -6.528,17.114 -6.528,6.528 0,0" id="path22" style="fill:#c1e5e6;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g><g transform="translate(9.4551,8.6643)" id="g24"><path d="m 0,0 c 6.529,-6.529 17.116,-6.53 23.643,-0.002 6.528,6.528 6.527,17.114 -0.002,23.643 L 11.82,35.462 0,23.642 C -6.528,17.114 -6.528,6.528 0,0 z" id="path26" style="fill:none;stroke:#0a8ba7;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" /></g></g>';
 
@@ -499,7 +499,7 @@
 				var TotalDryWeatherSamplesSum = {{ score.TotalDryWeatherSamplesSum }};
 			{% endfor %}
 
-				var pctDryFail = 100 - ((DryWeatherPassSamplesSum / TotalDryWeatherSamplesSum) * 100).toFixed(0);
+				var pctDryFail = Math.round(100 - ((DryWeatherPassSamplesSum / TotalDryWeatherSamplesSum) * 100));
 
 			var sunSvg = '<svg width="78.911" height="78.212"><g transform="matrix(1.25 0 0 -1.25 0 78.21)"><path d="M46.63 30.497c0-8.034-6.512-14.546-14.545-14.546-8.034 0-14.546 6.513-14.546 14.547s6.51 14.546 14.545 14.546c8.033 0 14.546-6.512 14.546-14.546" fill="#ee4137"/><path d="M46.63 30.497c0-8.034-6.512-14.546-14.545-14.546-8.034 0-14.546 6.513-14.546 14.547s6.51 14.546 14.545 14.546c8.033 0 14.546-6.512 14.546-14.546z" fill="none" stroke="#f79420" stroke-width="3" stroke-miterlimit="10"/><path d="M52.164 30.497h6.84M46.283 44.695l4.836 4.836M32.085 50.576v6.84M17.886 44.695L13.05 49.53M17.886 16.298l-3.842-3.842M32.123 10.726v-6.84M46.283 16.298l4.836-4.836M4.207 30.497h6.84" fill="none" stroke="#faaf41" stroke-width="5" stroke-linecap="round" stroke-miterlimit="10"/></g>';
 
