@@ -205,6 +205,10 @@ body.loading .loading-modal {
   background-color: transparent;
 }
 
+.navbar-brand {
+  padding-top: 15px;
+}
+
 hr {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -363,7 +367,7 @@ tbody td, thead th {
   position: absolute;
   top: 0px;
   left: 5px;
-  height: 193px;
+  height: 107px;
   width: 145px;
   background: #fff;
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
