@@ -16,13 +16,13 @@ class Command(BaseCommand):
 	
 	def export_beaches_pass_fail(self):
 		__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-		with open(os.path.join(__location__, 'pass_fail_by_site.csv'), 'wb') as f:
+		with open(os.path.join(__location__, 'pass_fail_by_site_2010_2015.csv'), 'wb') as f:
 			writer = csv.writer(f, quoting=csv.QUOTE_ALL)
 			#header row
 			headerRow = ['SiteID', 'Site Name', 'State', 'County', 'Total Number of Passing Samples', 'Number of Samples', 'Percent Pass All Samples', 'Grade All Samples', 'Dry Weather Passing Samples', 'Total Dry Weather Samples', 'Percent Pass Dry Samples', 'Grade Dry Samples', 'Wet Weather Passing Samples', 'Total Wet Weather Samples', 'Percent Pass Wet Samples', 'Grade Wet Samples']
 			writer.writerow(headerRow)
 			# 5 year rolling window
-			endDate = datetime(2014, 12, 31)
+			endDate = datetime(2015, 12, 31)
 			startDate = endDate + relativedelta(years=-5)
 
 			beaches = Beaches.objects.all()
