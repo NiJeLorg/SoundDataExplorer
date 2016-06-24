@@ -285,6 +285,7 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
 			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
 			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
 			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
 		});
@@ -318,7 +319,7 @@ SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 			color: '#636363',
 			weight: 1,
 			opacity: 1,
-			fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.pctPass),
+			fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.pctPassNotRounded),
 			fillOpacity: 1
 		});		
 	}
@@ -747,7 +748,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 					if (d.properties.NumberOfSamples < 12) {
 						return "#ccc";
 					} else {
-						return SoundExplorerMap.SDEPctPassColor(d.properties.pctPass);
+						return SoundExplorerMap.SDEPctPassColor(d.properties.pctPassNotRounded);
 					}
 					
 				})
@@ -782,7 +783,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 					if (d.properties.NumberOfSamples < 12) {
 						return 'N/A';
 					} else {
-						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPass);	
+						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
 					}
 					 
 
@@ -867,6 +868,7 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
 			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
 			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
 			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
 		});
