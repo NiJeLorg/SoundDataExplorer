@@ -506,14 +506,19 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 	}
 	*/
 
-	thismap.WASTEWATER_NY = L.esri.featureLayer("http://services.arcgis.com/jDGuO8tYggdCCnUJ/ArcGIS/rest/services/Municipal_wastewater_discharge_facilities_in_NYS/FeatureServer/0", {
-			pointToLayer: SoundExplorerMap.getStyleFor_WASTEWATER,
-			onEachFeature: SoundExplorerMap.onEachFeature_WASTEWATER_NY
+	thismap.WASTEWATER_NY = L.esri.featureLayer({
+		url: "http://services.arcgis.com/jDGuO8tYggdCCnUJ/ArcGIS/rest/services/Municipal_wastewater_discharge_facilities_in_NYS/FeatureServer/0",
+		pointToLayer: SoundExplorerMap.getStyleFor_WASTEWATER,
+		onEachFeature: SoundExplorerMap.onEachFeature_WASTEWATER_NY
 	});
 
-	thismap.LANDUSE = L.esri.dynamicMapLayer("http://gis1.usgs.gov/arcgis/rest/services/gap/GAP_Land_Cover_NVC_Class_Landuse/MapServer", {
-		  opacity : 0.5
-		});
+	thismap.LANDUSE = L.esri.dynamicMapLayer({
+	    url: 'http://gis1.usgs.gov/arcgis/rest/services/gap/GAP_Land_Cover_NVC_Class_Landuse/MapServer',
+	    opacity: 0.5,
+	    useCors: false
+	});
+
+	
 
 	thismap.LANDUSE.on('load', function(e){
 	  $("body").removeClass("loading");
