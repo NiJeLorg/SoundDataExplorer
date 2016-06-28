@@ -100,6 +100,17 @@ def modalApi(request):
 	beachId = request.GET.get("beachId","")
 	tab = request.GET.get("tab","precip")
 
+	# Create beach story link if beach story exists
+	if beachId == 'CT872506':
+		beachStory = "https://greencitiesbluewaters.wordpress.com/2016/06/24/byram-beach/"
+	elif beachId == 'CT001209':
+		beachStory = "https://greencitiesbluewaters.wordpress.com/2016/06/24/branford-point-beach/"
+	elif beachId == 'CT409818':
+		beachStory = "https://greencitiesbluewaters.wordpress.com/2016/06/24/clark-avenue-beach/"
+	else:
+		beachStory = ""
+	
+
 	#setup for CSV files
 	ts = str(int(time.time()))
 	folder = "/csv_files/"+ beachId +"/"
@@ -126,7 +137,7 @@ def modalApi(request):
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
 
-	#list got gmean
+	#list of values to calulate gmean
 	sampleList = []
 
 	# select all samples in the range
@@ -173,7 +184,10 @@ def modalApi(request):
 				# make list of sample values for gmean
 				# exclude Fecal Coliform from geomean
 				if sample.CharacteristicName != "Fecal Coliform":
-					sampleList.append(float(sample.ResultValue))
+					if sample.ResultValue > 0:
+						sampleList.append(float(sample.ResultValue))
+					else:
+						sampleList.append(0.1)
 
 				# add to CSV
 				#empty list for a row
@@ -239,7 +253,10 @@ def modalApi(request):
 				# make list of sample values for gmean
 				# exclude Fecal Coliform from geomean
 				if sample.CharacteristicName != "Fecal Coliform":
-					sampleList.append(float(sample.ResultValue))
+					if sample.ResultValue > 0:
+						sampleList.append(float(sample.ResultValue))
+					else:
+						sampleList.append(0.1)
 
 				# add to CSV
 				#empty list for a row
@@ -271,7 +288,7 @@ def modalApi(request):
 	#calculate the geometric mean
 	geomean = gmean(sampleList)
 
-	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered })
+	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered, 'beachStory':beachStory })
 
 
 def precipApi(request):	

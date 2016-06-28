@@ -109,8 +109,19 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
     // onclick set content in bottom bar and open doc if not open already 
 	layer.on("click",function(ev){
 
-		console.log("Total Pass Samples: ", feature.properties.TotalPassSamples);
-		console.log("Total Samples: ", feature.properties.NumberOfSamples);
+		// create beach story links for certain sites
+		if (feature.properties.BeachID == 'CT872506') {
+			var beachStory = "<br /><a href='https://greencitiesbluewaters.wordpress.com/2016/06/24/byram-beach/' target='_blank'>Read this beach story.</a>";
+		} else if (feature.properties.BeachID == 'CT001209') {
+			var beachStory = "<br /><a href='https://greencitiesbluewaters.wordpress.com/2016/06/24/branford-point-beach/' target='_blank'>Read this beach story.</a>";
+		} else if (feature.properties.BeachID == 'CT409818') {
+			var beachStory = "<br /><a href='https://greencitiesbluewaters.wordpress.com/2016/06/24/clark-avenue-beach/' target='_blank'>Read this beach story.</a>";
+		} else {
+			var beachStory = "";
+		}
+
+		//console.log("Total Pass Samples: ", feature.properties.TotalPassSamples);
+		//console.log("Total Samples: ", feature.properties.NumberOfSamples);
 
 		if (!isNaN(pctWetFail)) {
 			var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
@@ -131,7 +142,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		if (feature.properties.NumberOfSamples < 12) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a><br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
