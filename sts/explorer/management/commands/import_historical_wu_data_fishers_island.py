@@ -14,7 +14,7 @@ class Command(BaseCommand):
 	def get_precip_data(self):
 		#build url to pass to WU
 		base_url = "http://www.wunderground.com/";
-		stations = WeatherStations.objects.all()
+		stations = WeatherStations.objects.filter(id__in=[1394,1395,1396,1397])
 		#between today and 2004
 		today = datetime.today()
 		earliest = datetime(2004, 1, 1)
