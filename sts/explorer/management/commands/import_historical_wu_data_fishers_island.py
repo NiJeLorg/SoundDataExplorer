@@ -17,7 +17,7 @@ class Command(BaseCommand):
 		stations = WeatherStations.objects.filter(id__in=[1394,1395,1396,1397])
 		#between today and 2004
 		today = datetime.today()
-		earliest = datetime(2004, 1, 1)
+		earliest = datetime(2008, 3, 1)
 		counter = 0
 
 		for dateEval in rrule(MONTHLY, dtstart=earliest, until=today):
