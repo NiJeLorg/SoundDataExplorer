@@ -51,16 +51,11 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url 'about' %}">About</a></li>
-            <li><a href="{% url 'datasources' %}">Data Sources</a></li>
-            <li><a href="{% url 'criteriascoring' %}">Criteria & Scoring</a></li>
-            <li><a href="{% url 'findingssolutions' %}">Findings & Solutions</a></li>
-            <li><a href="#" data-toggle="modal" data-target="#tutorial">Tutorial</a></li>
-          {% if user.is_authenticated %}
-            <li><a href="{% url 'auth_logout' %}">Logout</a></li>
-          {% else %}
-            <!--<li><a href="#">Login</a></li>-->
-          {% endif %}               
+            <li><a href="/pages/about/">About</a></li>
+            <li><a href="/pages/data-sources/">Data Sources</a></li>
+            <li><a href="/pages/criteria-sources/">Criteria & Scoring</a></li>
+            <li><a href="/pages/findings-solutions/">Findings & Solutions</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#tutorial">Tutorial</a></li>              
           </ul>
         </div><!--/.nav-collapse -->
       </div>

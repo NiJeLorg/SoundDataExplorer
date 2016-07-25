@@ -1,6 +1,4 @@
 from django.conf.urls import include, url
-from django.conf import settings
-from django.conf.urls.static import static
 from explorer import views
 
 urlpatterns = [
@@ -13,4 +11,4 @@ urlpatterns = [
     url(r'^criteriascoring/$', views.criteriascoring, name='criteriascoring'),
     url(r'^findingssolutions/$', views.findingssolutions, name='findingssolutions'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

@@ -1,5 +1,12 @@
 from django.db import models
 
+# import for the CMS
+from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from wagtail.wagtailsearch import index
+
 # StS Models Below
 class Beaches(models.Model):
 	State = models.CharField(max_length=2)
@@ -103,4 +110,37 @@ class MonthlyScores(models.Model):
 
 	def __str__(self):
 		return self.NumberOfSamples
+
+
+# models for the CMS below
+class HomePage(Page):
+    body = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('body', classname="full")
+    ]
+
+class WebsitePage(Page):
+
+    # Database fields
+    body = RichTextField()
+
+    # Search index configuraiton
+    search_fields = Page.search_fields + [
+        index.SearchField('body'),
+    ]
+
+    # Editor panels configuration
+    content_panels = Page.content_panels + [
+        FieldPanel('body', classname="full"),
+    ]
+
+    promote_panels = [
+        MultiFieldPanel(Page.promote_panels, "Common page configuration"),
+    ]
+
+    # Parent page / subpage type rules
+    parent_page_types = ['explorer.HomePage']
+    subpage_types = []
+
 

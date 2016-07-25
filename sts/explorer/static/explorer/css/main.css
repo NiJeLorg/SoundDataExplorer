@@ -35,6 +35,27 @@ body.loading .loading-modal {
     background-color: #fff;
 }
 
+/* full screen background image */
+#background, #background li { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  opacity: 0.8;
+  background: url('images/sound.jpg');
+  background-color: transparent; 
+  background-size: cover; 
+  background-position: center bottom; 
+  background-repeat: no-repeat; 
+}
+
+#background { 
+  z-index: -1;
+  margin: 0; 
+  padding: 0; 
+}
+
 /*
 * general css
 */
@@ -240,6 +261,12 @@ tbody td, thead th {
     float: left;
 }
 
+.container-fluid .jumbotron {
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-bottom: 60px;
+}
+
 /*
 * map legend css
 */
@@ -435,6 +462,10 @@ tbody td, thead th {
 .marginTopBottom20 {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.marginTop40 {
+  margin-top: 80px;
 }
 
 .legendModal{
