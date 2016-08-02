@@ -71,9 +71,6 @@ function SoundExplorerMap() {
 	    SoundExplorerMap.checkZoomSwitchLayers();
 	});
 
-	//disable animation
-
-
 }
 
 
@@ -108,12 +105,12 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 	
     // onclick set content in bottom bar and open doc if not open already 
 	layer.on("click",function(ev){
+
 		if (feature.properties.BeachStory) {
 			var beachStory = "<br /><a href='"+ feature.properties.BeachStory +"' target='_blank'>Read this beach story.</a>";			
 		} else {
 			var beachStory = "";
 		}
-
 
 		//console.log("Total Pass Samples: ", feature.properties.TotalPassSamples);
 		//console.log("Total Samples: ", feature.properties.NumberOfSamples);
@@ -132,7 +129,6 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 			var sunPrint = '';
 		}
 		
-
 		MY_MAP.popup.setLatLng(ev.target._latlng);
 		if (feature.properties.NumberOfSamples < 12) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");

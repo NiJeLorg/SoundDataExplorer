@@ -32,14 +32,20 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 def index(request):	
 	tab = "timeline"
 
-	# 5 year rolling window
+	beachId = request.GET.get("beach","")
+
 	endDate = datetime.date(datetime.date.today().year, 1, 1)
 	startDate = endDate + relativedelta(years=-5)
+
+	try:
+		beach = Beaches.objects.get(BeachID__exact=beachId)
+	except Exception, e:
+		beach = None
 
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDate,endDate]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
 
-	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab})
+	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab, 'beachId':beachId, 'beach':beach})
 
 def beaconApi(request):
 	response = {}

@@ -270,36 +270,9 @@
     <script type="text/javascript">
       //add loading class to body
       $("body").addClass("loading");
-      // remove when widdow is fully loaded
-      window.onload = function() {
-        $("body").removeClass("loading");
-      }
     </script>
     <script type="text/javascript" src="{% static 'explorer/js/jquery.cookie.js' %}"></script>
     <!-- open introductory modal on page load -->
-    <script type="text/javascript">
-      $( document ).ready(function() {
-        if (!$.cookie('noIntro')) {
-          $('#introduction').modal('show');
-          // close if button clicked
-          $('#closeIntroModal').click(function() {
-            $('#introduction').modal('hide');
-          });
-          $('#siteTutorialModal').click(function() {
-            $('#introduction').modal('hide');
-            $('.carousel').carousel();
-          });          
-          // set cookie if don't show this message is checked
-          $('#toggleIntroCookie').change(function() {
-            if($(this).is(":checked")) {
-              $.cookie('noIntro', 'noIntro', { expires: 365, path: '/' });
-            } else {
-              $.removeCookie('noIntro', { path: '/' });
-            }
-          });
-        }
-      });
-    </script>
     <script type="text/javascript">
         var boatlaunch = "{% static 'explorer/data/boatlaunch_ny_ct.topojson' %}";
         var csos = "{% static 'explorer/data/CSO_locations_NY_Sound.topojson' %}";
@@ -311,6 +284,9 @@
         var wastewater_NY = "{% static 'explorer/data/wastewater_NY.topojson' %}";
         var startDate = '{{ startDate|date:"c"}}';
         var endDate = '{{ endDate|date:"c"}}';
+        var beachId = '{{ beachId }}';
+        var beachLat = '{{ beach.StartLatitude }}';
+        var beachLon = '{{ beach.StartLongitude }}';
     </script>
 	<script type="text/javascript" src="{% static 'explorer/js/d3.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'explorer/js/moment.min.js' %}"></script>

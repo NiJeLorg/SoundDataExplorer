@@ -5,6 +5,29 @@
 
 
 $( document ).ready(function() {
+	// remove loading class
+	$("body").removeClass("loading");
+
+	if (!$.cookie('noIntro') && !beachId && !beachLat && !beachLon) {
+		$('#introduction').modal('show');
+		$("body").removeClass("loading");
+		// close if button clicked
+		$('#closeIntroModal').click(function() {
+			$('#introduction').modal('hide');
+		});
+		$('#siteTutorialModal').click(function() {
+			$('#introduction').modal('hide');
+			$('.carousel').carousel();
+		});          
+		// set cookie if don't show this message is checked
+		$('#toggleIntroCookie').change(function() {
+			if($(this).is(":checked")) {
+				$.cookie('noIntro', 'noIntro', { expires: 365, path: '/' });
+			} else {
+				$.removeCookie('noIntro', { path: '/' });
+			}
+		});
+	}
 
 	// open the bottom area on page load
 	$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
@@ -28,6 +51,38 @@ $( document ).ready(function() {
 		$( ".legend" ).removeClass("hidden");
 		$( "#legendOpen" ).addClass("hidden");		
 	});
+
+	// open modal on page load if url passed with beach id
+	if (beachId && beachLat && beachLon) {
+		// loading
+		$("body").addClass("loading");
+		// open the modal
+		$('#siteView').modal('show');
+		// load the data
+		var modalMap = new SoundExplorerModalMap(parseFloat(beachLat), parseFloat(beachLon));
+		modalMap.loadPointLayers();
+		modalMap.loadExtraLayers();
+		setTimeout(function() {
+			modalMap.map.invalidateSize();		
+		}, 10);
+		MY_MAP_MODAL = modalMap;
+		// ajax call to WQ samples api 
+		var startDate = moment($( "#start_date option:selected" ).val()).format("YYYY-MM-DD");
+		var endDate = moment($( "#end_date option:selected" ).val()).format("YYYY-MM-DD");
+
+	    $.ajax({
+	        type: 'GET',
+	        url:  'modalapi/?startDate=' + startDate + '&endDate=' + endDate + '&beachId=' + beachId,
+	        success: function(data){
+	        	$("#modalData").html(data);
+	        	$("body").removeClass("loading");
+			    //zoom main map on modal open
+			    SoundExplorerMap.modalZoom(parseFloat(beachLat), parseFloat(beachLon));
+	        }
+	    });
+
+
+	}
 
 	// listen for modal click
 	$('#siteView').on('show.bs.modal', function (event) {
@@ -53,21 +108,26 @@ $( document ).ready(function() {
 	        success: function(data){
 	        	$("#modalData").html(data);
 	        	$("body").removeClass("loading");
+			    //zoom main map on modal open
+			    SoundExplorerMap.modalZoom(lat, lon);
 	        }
 	    });
 
-	    //zoom main map on modal open
-	    SoundExplorerMap.modalZoom(lat, lon);
+	   	// create url parameters 
+		window.history.pushState( {} , '', '?beach=' + beachid );
+
 
 	});
 
 	$('#siteView').on('hidden.bs.modal', function (event) {
 		// destroy old map container and create a new one
-		modalMap.remove();
+		$('#modalMap').remove();
 		$( "#modalMapWrapper" ).append( '<div id="modalMap"></div>' );
 		// clear modal data areas
 		$("#modalData").html('');
 
+	   	// create url parameters 
+		window.history.pushState( {} , '', '/' );
 		
 	});
 
