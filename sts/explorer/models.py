@@ -1,11 +1,15 @@
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 # import for the CMS
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.wagtailimages.models import Image, AbstractImage, AbstractRendition
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
+
 
 # StS Models Below
 class Beaches(models.Model):
@@ -116,6 +120,38 @@ class MonthlyScores(models.Model):
 
 
 # models for the CMS below
+# custom image model for Wagtail
+class CustomImage(AbstractImage):
+    # adding a caption field:
+    caption = models.CharField(max_length=255, blank=True)
+
+    admin_form_fields = Image.admin_form_fields + (
+        # adding the caption field name to the image form
+        'caption',
+    )
+
+
+class CustomRendition(AbstractRendition):
+    image = models.ForeignKey(CustomImage, related_name='renditions')
+
+    class Meta:
+        unique_together = (
+            ('image', 'filter', 'focal_point_key'),
+        )
+
+
+# Delete the source image file when an image is deleted
+@receiver(pre_delete, sender=CustomImage)
+def image_delete(sender, instance, **kwargs):
+    instance.file.delete(False)
+
+
+# Delete the rendition image file when a rendition is deleted
+@receiver(pre_delete, sender=CustomRendition)
+def rendition_delete(sender, instance, **kwargs):
+    instance.file.delete(False)
+
+
 class HomePage(Page):
     body = RichTextField(blank=True)
 
@@ -153,7 +189,7 @@ class BeachStoryPage(Page):
     beach = models.ForeignKey(Beaches, on_delete=models.PROTECT)
     body = RichTextField()
     image = models.ForeignKey(
-        'wagtailimages.Image',
+        CustomImage,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -181,5 +217,8 @@ class BeachStoryPage(Page):
     # Parent page / subpage type rules
     parent_page_types = ['explorer.HomePage']
     subpage_types = []
+
+
+
 
 

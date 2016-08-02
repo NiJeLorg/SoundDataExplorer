@@ -83,6 +83,14 @@
   color: #999;
 }
 
+/*
+ * image area
+ */
+
+.blog-image {
+  margin-bottom: 20px;
+}
+
 
 /*
 * CSS Phone size media query

@@ -25,9 +25,10 @@
 
         <div class="col-sm-8 blog-main">
 
-          <div class="blog-post">
+          <div class="blog-image">
             {% image page.image original as tmp_image %}
             <img src="{{ tmp_image.url }}" alt="{{ tmp_image.alt }}" class="img-responsive" />
+            <p class="text-center"><small>{{ page.image.caption }}</small></p>
           </div><!-- /.blog-post -->
 
         </div><!-- /.blog-main -->
