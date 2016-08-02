@@ -64,6 +64,13 @@ def beaconApi(request):
 		scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
 		alltimesamples = MonthlyScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
 		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").aggregate(Min('StartDate'), Max('StartDate'))
+		# pull beach stories 
+		try:
+			beachStory = BeachStoryPage.objects.get(beach__exact=beach)
+		except Exception, e:
+			beachStory = lambda: None
+			beachStory.url = ''
+		
 		for score in scores:
 			if score['NumberOfSamples__sum'] > 0:
 				# parse dates into strings
@@ -83,6 +90,7 @@ def beaconApi(request):
 				data['properties']['DryWeatherPassSamples'] = score['DryWeatherPassSamples__sum']
 				data['properties']['TotalWetWeatherSamples'] = score['TotalWetWeatherSamples__sum']
 				data['properties']['WetWeatherPassSamples'] = score['WetWeatherPassSamples__sum']
+				data['properties']['BeachStory'] = beachStory.url
 				data['geometry'] = {}
 				data['geometry']['type'] = 'Point'
 				data['geometry']['coordinates'] = [beach.StartLongitude, beach.StartLatitude]
@@ -99,17 +107,6 @@ def modalApi(request):
 	endDate = request.GET.get("endDate","2100-01-01")
 	beachId = request.GET.get("beachId","")
 	tab = request.GET.get("tab","precip")
-
-	# Create beach story link if beach story exists
-	if beachId == 'CT872506':
-		beachStory = "https://greencitiesbluewaters.wordpress.com/2016/06/24/byram-beach/"
-	elif beachId == 'CT001209':
-		beachStory = "https://greencitiesbluewaters.wordpress.com/2016/06/24/branford-point-beach/"
-	elif beachId == 'CT409818':
-		beachStory = "https://greencitiesbluewaters.wordpress.com/2016/06/24/clark-avenue-beach/"
-	else:
-		beachStory = ""
-	
 
 	#setup for CSV files
 	ts = str(int(time.time()))
@@ -133,6 +130,13 @@ def modalApi(request):
 
 	#beach look up
 	beach = Beaches.objects.get(BeachID__exact=beachId)
+
+	# pull beach stories 
+	try:
+		beachStory = BeachStoryPage.objects.get(beach__exact=beach)
+	except Exception, e:
+		beachStory = lambda: None
+		beachStory.url = ''	
 
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))

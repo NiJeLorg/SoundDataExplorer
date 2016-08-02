@@ -21,6 +21,9 @@ class Beaches(models.Model):
 	EndLatitude = models.FloatField()
 	EndLongitude = models.FloatField()
 
+	class Meta:
+		ordering = ["BeachName"]
+
 	def __str__(self):
 		return self.BeachName
 
@@ -133,6 +136,42 @@ class WebsitePage(Page):
     # Editor panels configuration
     content_panels = Page.content_panels + [
         FieldPanel('body', classname="full"),
+    ]
+
+    promote_panels = [
+        MultiFieldPanel(Page.promote_panels, "Common page configuration"),
+    ]
+
+    # Parent page / subpage type rules
+    parent_page_types = ['explorer.HomePage']
+    subpage_types = []
+
+class BeachStoryPage(Page):
+
+    # Database fields
+    date = models.DateField("Updated On")
+    beach = models.ForeignKey(Beaches, on_delete=models.PROTECT)
+    body = RichTextField()
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    # Search index configuraiton
+    search_fields = Page.search_fields + [
+        index.SearchField('body'),
+        index.FilterField('date'),
+    ]
+
+    # Editor panels configuration
+    content_panels = Page.content_panels + [
+    	FieldPanel('beach'),
+    	ImageChooserPanel('image'),
+        FieldPanel('body', classname="full"),
+    	FieldPanel('date'),
     ]
 
     promote_panels = [

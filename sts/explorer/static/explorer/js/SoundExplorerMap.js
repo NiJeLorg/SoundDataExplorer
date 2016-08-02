@@ -108,17 +108,12 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 	
     // onclick set content in bottom bar and open doc if not open already 
 	layer.on("click",function(ev){
-
-		// create beach story links for certain sites
-		if (feature.properties.BeachID == 'CT872506') {
-			var beachStory = "<br /><a href='https://greencitiesbluewaters.wordpress.com/2016/06/24/byram-beach/' target='_blank'>Read this beach story.</a>";
-		} else if (feature.properties.BeachID == 'CT001209') {
-			var beachStory = "<br /><a href='https://greencitiesbluewaters.wordpress.com/2016/06/24/branford-point-beach/' target='_blank'>Read this beach story.</a>";
-		} else if (feature.properties.BeachID == 'CT409818') {
-			var beachStory = "<br /><a href='https://greencitiesbluewaters.wordpress.com/2016/06/24/clark-avenue-beach/' target='_blank'>Read this beach story.</a>";
+		if (feature.properties.BeachStory) {
+			var beachStory = "<br /><a href='"+ feature.properties.BeachStory +"' target='_blank'>Read this beach story.</a>";			
 		} else {
 			var beachStory = "";
 		}
+
 
 		//console.log("Total Pass Samples: ", feature.properties.TotalPassSamples);
 		//console.log("Total Samples: ", feature.properties.NumberOfSamples);
