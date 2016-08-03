@@ -75,7 +75,7 @@ def beaconApi(request):
 			beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
 		except Exception, e:
 			beachStory = lambda: None
-			beachStory.url = ''
+			beachStory.slug = ''
 		
 		for score in scores:
 			if score['NumberOfSamples__sum'] > 0:
@@ -96,7 +96,7 @@ def beaconApi(request):
 				data['properties']['DryWeatherPassSamples'] = score['DryWeatherPassSamples__sum']
 				data['properties']['TotalWetWeatherSamples'] = score['TotalWetWeatherSamples__sum']
 				data['properties']['WetWeatherPassSamples'] = score['WetWeatherPassSamples__sum']
-				data['properties']['BeachStory'] = beachStory.url
+				data['properties']['BeachStory'] = beachStory.slug
 				data['geometry'] = {}
 				data['geometry']['type'] = 'Point'
 				data['geometry']['coordinates'] = [beach.StartLongitude, beach.StartLatitude]
@@ -142,7 +142,7 @@ def modalApi(request):
 		beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
 	except Exception, e:
 		beachStory = lambda: None
-		beachStory.url = ''	
+		beachStory.slug = ''	
 
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
