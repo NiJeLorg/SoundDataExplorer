@@ -72,7 +72,7 @@ def beaconApi(request):
 		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").aggregate(Min('StartDate'), Max('StartDate'))
 		# pull beach stories 
 		try:
-			beachStory = BeachStoryPage.objects.get(beach__exact=beach).live()
+			beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
 		except Exception, e:
 			beachStory = lambda: None
 			beachStory.url = ''
@@ -139,7 +139,7 @@ def modalApi(request):
 
 	# pull beach stories 
 	try:
-		beachStory = BeachStoryPage.objects.get(beach__exact=beach).live()
+		beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
 	except Exception, e:
 		beachStory = lambda: None
 		beachStory.url = ''	
