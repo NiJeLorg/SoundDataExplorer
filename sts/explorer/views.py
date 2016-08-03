@@ -71,12 +71,14 @@ def beaconApi(request):
 		alltimesamples = MonthlyScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
 		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").aggregate(Min('StartDate'), Max('StartDate'))
 		# pull beach stories 
-		try:
-			beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
-		except Exception, e:
-			beachStory = lambda: None
-			beachStory.slug = ''
-		
+		story = {}
+		story['url'] = ''
+		beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
+		for bs in beachStory:
+			story['url'] = bs.url
+			
+
+
 		for score in scores:
 			if score['NumberOfSamples__sum'] > 0:
 				# parse dates into strings
@@ -96,7 +98,7 @@ def beaconApi(request):
 				data['properties']['DryWeatherPassSamples'] = score['DryWeatherPassSamples__sum']
 				data['properties']['TotalWetWeatherSamples'] = score['TotalWetWeatherSamples__sum']
 				data['properties']['WetWeatherPassSamples'] = score['WetWeatherPassSamples__sum']
-				data['properties']['BeachStory'] = beachStory.slug
+				data['properties']['BeachStory'] = story['url']
 				data['geometry'] = {}
 				data['geometry']['type'] = 'Point'
 				data['geometry']['coordinates'] = [beach.StartLongitude, beach.StartLatitude]
@@ -138,11 +140,11 @@ def modalApi(request):
 	beach = Beaches.objects.get(BeachID__exact=beachId)
 
 	# pull beach stories 
-	try:
-		beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
-	except Exception, e:
-		beachStory = lambda: None
-		beachStory.slug = ''	
+	story = {}
+	story['url'] = ''
+	beachStory = BeachStoryPage.objects.filter(beach__exact=beach).live().public()
+	for bs in beachStory:
+		story['url'] = bs.url	
 
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
@@ -298,7 +300,7 @@ def modalApi(request):
 	#calculate the geometric mean
 	geomean = gmean(sampleList)
 
-	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered, 'beachStory':beachStory })
+	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered, 'beachStory': story['url']})
 
 
 def precipApi(request):	
