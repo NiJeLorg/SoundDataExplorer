@@ -45,6 +45,7 @@ def index(request):
 	#select the monthly scores for this beach in the dates requested
 	scores = MonthlyScores.objects.filter(MonthYear__range=[startDate,endDate]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
 
+
 	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab, 'beachId':beachId, 'beach':beach})
 
 def beaconApi(request):
@@ -80,7 +81,7 @@ def beaconApi(request):
 
 
 		for score in scores:
-			if score['NumberOfSamples__sum'] > 0:
+			if score['NumberOfSamples__sum'] >= 0:
 				# parse dates into strings
 				data = {}
 				data['type'] = 'Feature'
