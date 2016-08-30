@@ -34,7 +34,7 @@ function SoundExplorerMap() {
 	this.map.addControl(L.control.zoom({ position: 'topright' }));
 	
 	//load geocoder control
-	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Address Search', geocoder:new L.Control.Geocoder.Google()}));
+	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Google()}));
 	
 	//load scale bars
 	this.map.addControl(L.control.scale());
@@ -86,8 +86,6 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
         weight: 1,
         color: '#636363'
 	};
-
-
 
 	var start_date = moment($( "#start_date option:selected" ).val()).format('MMMM YYYY');
 	var end_date = moment($( "#end_date option:selected" ).val()).format('MMMM YYYY');

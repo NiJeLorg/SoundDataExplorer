@@ -111,12 +111,23 @@
 				this._map.removeLayer(this._geocodeMarker);
 			}
 
-			this._geocodeMarker = new L.Marker(result.center)
-				//.bindPopup(result.html || result.name)
-				.addTo(this._map)
-				.openPopup();
+			if (typeof result.beach != 'undefined') {
+				// 
 
-			return this;
+				this._geocodeMarker = new L.Marker([0, 0])
+					.addTo(this._map);
+
+				return this;				
+
+			} else {
+				this._geocodeMarker = new L.Marker(result.center)
+					//.bindPopup(result.html || result.name)
+					.addTo(this._map)
+					.openPopup();
+
+				return this;				
+			}
+
 		},
 
 		_geocode: function(event) {
@@ -679,36 +690,73 @@
 		},
 
 		geocode: function(query, cb, context) {
-			var bounds = "40.324299,-74.517517|41.193898,-73.251343";
-			var params = {
-				address: query,
-				bounds: bounds
-			};
-			if(this._key && this._key.length)
-			{
-				params['key'] = this._key
+			// create custom database query via ajax to search for a specific beach 
+
+			var matched = false;
+			var results = [];
+
+			MY_MAP.BEACON_POINTS.eachLayer(function (layer) {
+			    var BeachName = layer.feature.properties.BeachName;
+			    if (BeachName.toLowerCase().indexOf(query) != -1){
+			    	matched = true;
+			    	var north = layer.feature.geometry.coordinates[1] + 0.02;
+			    	var east = layer.feature.geometry.coordinates[0] + 0.02;
+			    	var south = layer.feature.geometry.coordinates[1] - 0.02;
+			    	var west = layer.feature.geometry.coordinates[0] - 0.02;
+
+			    	results[0] = {
+						name: BeachName,
+						bbox: L.latLngBounds(L.latLng(north, east), L.latLng(south, west)),
+						center: L.latLng(layer.feature.geometry.coordinates[1], layer.feature.geometry.coordinates[0]),
+						beach: true,
+					};
+
+					layer.showLabel();
+									    
+				}
+			});
+
+			if (matched) {
+
+				cb.call(context, results);
+
+			} else {
+
+				var bounds = "40.324299,-74.517517|41.193898,-73.251343";
+				var params = {
+					address: query,
+					bounds: bounds
+				};
+				if(this._key && this._key.length)
+				{
+					params['key'] = this._key
+				}
+
+				L.Control.Geocoder.getJSON(this.options.service_url, params, function(data) {
+						var results = [],
+								loc,
+								latLng,
+								latLngBounds;
+						if (data.results && data.results.length) {
+							for (var i = 0; i <= data.results.length - 1; i++) {
+								loc = data.results[i];
+								latLng = L.latLng(loc.geometry.location);
+								latLngBounds = L.latLngBounds(L.latLng(loc.geometry.viewport.northeast), L.latLng(loc.geometry.viewport.southwest));
+								results[i] = {
+										name: loc.formatted_address,
+										bbox: latLngBounds,
+										center: latLng
+								};
+							}
+						}
+console.log(results);
+						cb.call(context, results);
+				});
+
+
 			}
 
-			L.Control.Geocoder.getJSON(this.options.service_url, params, function(data) {
-					var results = [],
-							loc,
-							latLng,
-							latLngBounds;
-					if (data.results && data.results.length) {
-						for (var i = 0; i <= data.results.length - 1; i++) {
-							loc = data.results[i];
-							latLng = L.latLng(loc.geometry.location);
-							latLngBounds = L.latLngBounds(L.latLng(loc.geometry.viewport.northeast), L.latLng(loc.geometry.viewport.southwest));
-							results[i] = {
-									name: loc.formatted_address,
-									bbox: latLngBounds,
-									center: latLng
-							};
-						}
-					}
 
-					cb.call(context, results);
-			});
 		},
 
 		reverse: function(location, scale, cb, context) {
