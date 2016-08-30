@@ -112,7 +112,8 @@
 			}
 
 			if (typeof result.beach != 'undefined') {
-				// 
+				// show this label
+				result.layer.showLabel();
 
 				this._geocodeMarker = new L.Marker([0, 0])
 					.addTo(this._map);
@@ -696,6 +697,8 @@
 			var results = [];
 
 			MY_MAP.BEACON_POINTS.eachLayer(function (layer) {
+				// hide all labels
+				layer.hideLabel();
 			    var BeachName = layer.feature.properties.BeachName;
 			    if (BeachName.toLowerCase().indexOf(query) != -1){
 			    	matched = true;
@@ -709,9 +712,8 @@
 						bbox: L.latLngBounds(L.latLng(north, east), L.latLng(south, west)),
 						center: L.latLng(layer.feature.geometry.coordinates[1], layer.feature.geometry.coordinates[0]),
 						beach: true,
+						layer: layer,
 					};
-
-					layer.showLabel();
 									    
 				}
 			});
