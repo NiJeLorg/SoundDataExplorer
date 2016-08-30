@@ -107,7 +107,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 	layer.on("click",function(ev){
 
 		if (feature.properties.BeachStory) {
-			var beachStory = "<br /><a href='"+ feature.properties.BeachStory +"' target='_blank'>Read this beach story.</a>";			
+			var beachStory = "<br /><a href='"+ feature.properties.BeachStory +"' target='_blank'>Read this Beach Story</a>";			
 		} else {
 			var beachStory = "";
 		}

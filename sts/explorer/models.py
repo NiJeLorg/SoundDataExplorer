@@ -94,7 +94,7 @@ class WeatherStationsPWS(models.Model):
 	DistanceMi = models.CharField(max_length=20, blank=True, null=True)
 
 	def __str__(self):
-		return self.Neighborhood
+		return self.PwsId
 
 class WeatherDataPWS(models.Model):
 	Station = models.ForeignKey(WeatherStationsPWS)
