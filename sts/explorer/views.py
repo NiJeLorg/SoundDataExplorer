@@ -67,10 +67,19 @@ def beaconApi(request):
 	#select all the beaches and loop through them
 	beaches = Beaches.objects.all()
 	for beach in beaches:
+		# for certain BeachID, set end data to last day of sampling regardless of what end data the user chose
+		if beach.BeachID == 'CT303091':
+			# set end date to last day of year for last season
+			endDatefilter = datetime.date(2010, 12, 31)
+		else:
+			endDatefilter = endDateobject
+
 		#pull data based on date range selected
-		scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
+		scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDatefilter],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
+
 		alltimesamples = MonthlyScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
 		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").aggregate(Min('StartDate'), Max('StartDate'))
+
 		# pull beach stories 
 		story = {}
 		story['url'] = ''
