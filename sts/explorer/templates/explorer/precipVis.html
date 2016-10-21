@@ -15,8 +15,8 @@
   -->
   <div class="form-group">
     <label for="start_date">Select Data Between: </label>
-    <select class="form-control" name="start_date" id="start_date"></select>
-    <select class="form-control" name="end_date" id="end_date"></select>
+    <select class="form-control noResize" name="start_date" id="start_date"></select>
+    <select class="form-control noResize" name="end_date" id="end_date"></select>
   </div>
 </form>
 <div class="clearfix"></div>
@@ -42,10 +42,10 @@
   <div id="timeSlider"></div>  
 </div>
 
-
 <script type="text/javascript">
 
   $( document ).ready(function() {
+    console.log(bodyWidth);
 
     function createStartEndCombos() {
       // create start and end date combo boxes
@@ -89,7 +89,13 @@
       var maxDate = moment().toDate();
       var start_date_selected = moment('{{ startDate|date:"c"}}').startOf('month').toDate();
       var end_date_selected = moment('{{ endDate|date:"c"}}').endOf('month').toDate();
-
+      if (bodyWidth <= 768) {
+        var ticks = 3; 
+      } else if (bodyWidth <= 1200) {
+        var ticks = 6; 
+      } else {
+        var ticks = d3.time.years; 
+      }
       var mapSlider = d3.slider()
               .axis(
                 d3.svg.axis()
@@ -98,7 +104,7 @@
                     d3.time.scale()
                       .domain([minDate, maxDate])
                   )
-                  .ticks(d3.time.years)
+                  .ticks(ticks)
                   .tickSize(24, 0)
                   .tickFormat(d3.time.format("%Y"))
               )

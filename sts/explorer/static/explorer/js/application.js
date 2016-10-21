@@ -22,6 +22,7 @@ var LANDUSE = null;
 var MY_MAP = null;
 var MY_MAP_MODAL = null;
 var mapSlider = null;
+var bodyWidth = null;
 
 $().ready(new function(){
     var myMap = new SoundExplorerMap();

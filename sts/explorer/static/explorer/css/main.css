@@ -108,6 +108,18 @@ body.loading .loading-modal {
     display: block;	
 }
 
+.dialPad {
+  padding-top: 8px;
+}
+
+.rainPad {
+  padding-top: 5px;
+}
+
+.sunPad {
+  margin-left: -10px;
+}
+
 .axis line,
 .axis path {
   fill: none;
@@ -143,12 +155,20 @@ body.loading .loading-modal {
 	padding-bottom: 10px;
 }
 
+.margin-left-10 {
+  margin-left: 10px;
+}
+
+.margin-top-0 {
+  margin-top: 0px;
+}
+
 #timeSlider {
   margin: 30px 30px;
 }
 
 #timeSliderModal {
-  margin: 50px 20px 30px 0px;
+  margin: 50px 20px 30px 20px;
 }
 
 /*
@@ -162,6 +182,10 @@ body.loading .loading-modal {
 
 .leaflet-popup-content-wrapper {
 	border-radius: 0;
+}
+
+.leaflet-popup-content {
+  max-width: 250px;
 }
 
 .leaflet-container .leaflet-control-attribution, .leaflet-container .leaflet-control-scale {
@@ -226,6 +250,10 @@ body.loading .loading-modal {
   background-color: transparent;
 }
 
+.nav-tabs > li > a > h4 {
+  margin: 0;
+}
+
 hr {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -233,39 +261,72 @@ hr {
   border-top: 1px solid #eeeeee;
 }
 
-table {
+.spreadsheetTable {
    width: 100%;
+   margin-bottom: 5px;
 }
 
-thead, tbody, tr, td, th { display: block; }
+.spreadsheetTable thead, tbody, tr { display: block; }
+.spreadsheetTable td, th { 
+  display: inline-block; 
+}
 
-tr:after {
+.spreadsheetTable tr:after {
     content: ' ';
     display: block;
     visibility: hidden;
     clear: both;
 }
 
-tbody {
+.spreadsheetTable tbody {
     height: 300px;
-    overflow: auto;
+    overflow-y: scroll;
 }
 
-thead {
-    /* fallback */
+.spreadsheetTable thead {
+    overflow-y: scroll;
+}
+
+.spreadsheetTable th.date, td.date {
+  width: 40%;
+}
+
+.spreadsheetTable th.other, td.other {
+  width: 20%;
+  margin-left: -6px;
 }
 
 
-tbody td, thead th {
-    width: 25%;
-    float: left;
-}
+
+
+
+
+
+
+
 
 .container-fluid .jumbotron {
     padding-left: 60px;
     padding-right: 60px;
     padding-bottom: 60px;
 }
+
+.noResize {
+  display: inline-block;
+  width: auto;
+  vertical-align: middle;
+}
+
+.form-group > label {
+  display: block;
+}
+
+@media (min-width: 768px) { 
+  .form-group > label {
+    display: inline-block;
+  }
+}
+
 
 /*
 * map legend css
@@ -441,9 +502,9 @@ tbody td, thead th {
 
 #modalMap {
   margin-top: 20px;
-	width: 350px;
+	width: 100%;
 	height: 350px;
-  border: 1px solid #000;
+  border: 1px solid #098ca8;
 }
 
 #portholeDiv {
@@ -484,20 +545,33 @@ tbody td, thead th {
 
 @media (max-width: 768px) {
 
-  .legend, .stsLogo, .logoBox, .legendModal {
+  .legend, .stsLogo, .logoBox, .legendModal, .pointsOfInterest, .methods {
     display: none;
   }
 
   #modalMapWrapper {
-    margin-top: 70px;
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 
   #modalMap {
-    width: 200px;
     height: 200px;
   }
 
+  .modalRecentSample {
+    margin: 0;
+  }
+
+  .margin-left-10 {
+    margin-left: 0;
+  }
 
 }
+
+@media (max-width: 991px) {
+  .pull-right {
+    float: left !important;
+  } 
+}
+
 

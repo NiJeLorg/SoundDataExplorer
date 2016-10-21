@@ -724,7 +724,7 @@
 
 			} else {
 
-				var bounds = "40.324299,-74.517517|41.193898,-73.251343";
+				var bounds = "40.759074,-73.860741|41.380351,-71.832733";
 				var params = {
 					address: query,
 					bounds: bounds

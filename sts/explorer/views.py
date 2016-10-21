@@ -111,7 +111,18 @@ def beaconApi(request):
 				data['properties']['BeachStory'] = story['url']
 				data['geometry'] = {}
 				data['geometry']['type'] = 'Point'
-				data['geometry']['coordinates'] = [beach.StartLongitude, beach.StartLatitude]
+				# average the start and end lat lons
+				if beach.EndLongitude:
+					lon = (float(beach.StartLongitude) + float(beach.EndLongitude)) / 2
+				else:
+					lon = float(beach.StartLongitude)
+
+				if beach.EndLatitude:
+					lat = (float(beach.StartLatitude) + float(beach.EndLatitude)) / 2
+				else:
+					lat = float(beach.StartLatitude)
+					
+				data['geometry']['coordinates'] = [lon, lat]
 				response['features'].append(data)
 
 

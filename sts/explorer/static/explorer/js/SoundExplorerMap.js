@@ -5,8 +5,17 @@
 // initialize map
 function SoundExplorerMap() {
 	// set zoom and center for this map	
-    this.center = [40.735551, -72.932739];
-    this.zoom = 9;
+    this.center = [41.008338, -72.887421];
+
+    // set body width
+    bodyWidth = $('body').width();
+
+    // set zoom 9 on desktop and 8 on mobile
+    if (bodyWidth <= 768) {
+    	this.zoom = 8;
+    } else {
+    	this.zoom = 9;
+    }
 
     this.map = new L.Map('map', {
 		minZoom:8,
@@ -16,6 +25,19 @@ function SoundExplorerMap() {
    	 	zoomControl: false,
    	 	zoomAnimation: false,
    	 	touchZoom: false,
+	});
+
+	// locate visitor on map
+	this.map.locate();
+
+	var that = this;
+	this.map.on('locationfound', function(e) {
+		var southWest = L.latLng(40.759074, -73.860741),
+    		northEast = L.latLng(41.380351, -71.832733),
+    		bounds = L.latLngBounds(southWest, northEast);
+    	if (bounds.contains(e.latlng)) {
+			that.map.setView(e.latlng, 15);
+    	} 
 	});
 
 	// add CartoDB tiles
@@ -63,7 +85,7 @@ function SoundExplorerMap() {
 		minWidth: 100, 
 		minHeight: 30, 
 		closeButton:true,
-		autoPanPaddingTopLeft: L.point(0, 35)
+		autoPanPaddingTopLeft: L.point(10, 35)
 	});
 
 	// subscribe to zoomend event to show
@@ -87,8 +109,8 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
         color: '#636363'
 	};
 
-	var start_date = moment($( "#start_date option:selected" ).val()).format('MMMM YYYY');
-	var end_date = moment($( "#end_date option:selected" ).val()).format('MMMM YYYY');
+	var start_date = moment($( "#start_date option:selected" ).val()).format('MMM YYYY');
+	var end_date = moment($( "#end_date option:selected" ).val()).format('MMM YYYY');
 
 	var sample_start_date = moment(feature.properties.StartDate).format('MMMM YYYY');
 	var sample_end_date = moment(feature.properties.EndDate).format('MMMM YYYY');
@@ -115,23 +137,33 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 
 		if (!isNaN(pctWetFail)) {
 			var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
-			var dropPrint = "<div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of samples after wet weather.</div></div><div class='clearfix'></div>";
+			if (bodyWidth <= 768) {
+				var dropPrint = "<div class='col-xs-4 text-center rainPad'>" + dropSvg + "</div>";
+			} else {
+				var dropPrint = "<div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of samples after wet weather.</div></div><div class='clearfix'></div>";
+			}
 		} else {
 			var dropPrint = '';
 		}
 		
 		if (!isNaN(pctDryFail)) {
 			var sunSvg = SoundExplorerMap.createSun(pctDryFail);
-			var sunPrint = "<div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of samples after dry weather.</div></div><div class='clearfix'>";
+			if (bodyWidth <= 768) {
+				var sunPrint = "<div class='col-xs-4 text-center sunPad'>" + sunSvg + "</div>";
+			} else {
+				var sunPrint = "<div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of samples after dry weather.</div></div><div class='clearfix'>";
+			}
 		} else {
 			var sunPrint = '';
 		}
 		
 		MY_MAP.popup.setLatLng(ev.target._latlng);
 		if (feature.properties.NumberOfSamples < 12) {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
+		} else if (bodyWidth <= 768) {
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='continer-fluid'><div class='row'><div class='col-xs-4 text-center dialPad'><div id='ringSvgPopup'></div></div>" + dropPrint + sunPrint + "</div><div class='row'><div class='col-xs-4 text-center'>All</div><div class='col-xs-4 text-center'>Wet</div><div class='col-xs-4 text-center'>Dry</div></div></div>");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ start_date + " to " + end_date + ": " + feature.properties.NumberOfSamples + " samples taken.</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
@@ -147,7 +179,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		layer.setStyle(highlight);
 
 		if (!L.Browser.ie && !L.Browser.opera) {
-	        layer.bringToFront();
+	        //layer.bringToFront();
 	    }
 
     });
@@ -284,10 +316,17 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 			d.properties.leafletId = 'layerID' + i;
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
+			if (d.properties.NumberOfSamples > 0) {
+				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+				d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
+				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			} else {
+				d.properties.pctPass = 100;
+				d.properties.pctPassNotRounded = 100;
+				d.properties.pctFail = 0;
+				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			}
 		});
 
 		thismap.BEACON_POINTS = L.geoJson(geojsonData, {
@@ -755,7 +794,6 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 					} else {
 						return SoundExplorerMap.SDEPctPassColor(d.properties.pctPassNotRounded);
 					}
-					
 				})
 				.attr('stroke', 'white')
 				.attr('stroke-width', circleStroke/scale);
@@ -790,8 +828,6 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 					} else {
 						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
 					}
-					 
-
 				});
 
 		}
@@ -872,10 +908,17 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 			d.properties.leafletId = 'layerID' + i;
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
+			if (d.properties.NumberOfSamples > 0) {
+				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+				d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
+				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail},{name: "pass", pct: d.properties.pctPass}];
+			} else {
+				d.properties.pctPass = 100;
+				d.properties.pctPassNotRounded = 100;
+				d.properties.pctFail = 0;
+				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail},{name: "pass", pct: d.properties.pctPass}];
+			}
 		});
 
 		// clear layer
@@ -934,7 +977,7 @@ SoundExplorerMap.checkZoomSwitchLayers = function (){
 	// if zoom level is small, show the small dots on the map, otherwise show the big dots with scores
 	// only if checked 
 	if ($( "#beacon" ).prop('checked')) {
-		if (MY_MAP.map.getZoom() < 14) {
+		if (MY_MAP.map.getZoom() < 13) {
 			//check for existance of layers, then add or remove
 			if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 				MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
@@ -955,8 +998,8 @@ SoundExplorerMap.modalZoom = function (lat, lon){
 	MY_MAP.map.closePopup();
 	// when a user opens a modal, have the main map zoom to the dot
 	MY_MAP.map.panTo([lat,lon]);
-	MY_MAP.map.setZoom(16);
-	MY_MAP.map.panBy([0, 200]);
+	MY_MAP.map.setZoom(15);
+	MY_MAP.map.panBy([50, 100]);
 
 }
 

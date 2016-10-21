@@ -34,10 +34,10 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="bacteria">
-            <form class="form-inline padding-top-5 padding-bottom-10">
-              <div class="form-group">
+            <form class="form-inline padding-top-5">
+              <div class="form-group padding-bottom-10">
                 <label for="vdaModal">View Data As: </label>
-                <select class="form-control" id="vdaModal">
+                <select class="form-control noResize" id="vdaModal">
                 {% if tab == "precip" %}
                   <option value="precip" selected>Precipitation Information</option>
                   <option value="spreadsheet">Interactive Spreadsheet</option>
@@ -53,10 +53,10 @@
                 {% endif %}
                 </select>
               </div>
-              <div class="form-group pull-right">
+              <div class="form-group padding-top-5 padding-bottom-10">
                 <label for="start_date">Select Data Between: </label>
-                <select class="form-control" name="start_date_modal" id="start_date_modal"></select>
-                <select class="form-control" name="end_date_modal" id="end_date_modal"></select>
+                <select class="form-control noResize" name="start_date_modal" id="start_date_modal"></select>
+                <select class="form-control noResize" name="end_date_modal" id="end_date_modal"></select>
               </div>
             </form>
             <div class="clearfix"></div>
@@ -80,41 +80,42 @@
             	<div class="container-fluid marginTopBottom20">
             		<div class="row">
 		            	<div class="col-md-8">
-		            		<table class="table table-bordered table-condensed sortable">
+		            		<table class="table table-bordered table-condensed sortable spreadsheetTable">
 		            			<thead>
-		            				<th data-defaultsort="desc">Date</th>
-		            				<th>Type</th>
-		            				<th data-toggle="tooltip" data-placement="top" title="The count of bacteria in each sample. For Enterococcus, a count greater than 104 is considered unsafe for swimming and should result in a beach closure.">Score</th>
-		            				<th data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 72 hours prior to the sample being taken.">Rainfall (In.)</th>
+		            				<th class="date" data-defaultsort="desc">Date</th>
+		            				<th class="other" data-toggle="tooltip" data-placement="top" title='Enterococcus ("Entero") is a fecal-indicating bacteria, as is fecal coliform.'>Type</th>
+		            				<th class="other" data-toggle="tooltip" data-placement="top" title="The count of bacteria in each sample. For Enterococcus, a count greater than 104 is considered unsafe for swimming and should result in a beach closure.">Score</th>
+		            				<th class="other" data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 72 hours prior to the sample being taken.">Rainfall (In.)</th>
 		            			</thead>
 		            			<tbody>
 		            				{% for sample in samples %}
 		            					<tr>
-			            					<td data-dateformat="MM/DD/YYYY">{{ sample.StartDate|date:"m/d/Y" }}</td>
+			            					<td class="date" data-dateformat="MM/DD/YYYY">{{ sample.StartDate|date:"m/d/Y" }}</td>
 			            					{% if sample.CharacteristicName == 'Enterococcus' %}
-				            					<td>Entero</td>
+				            					<td class="other">Entero</td>
 			            					{% else %}	
-				            					<td>{{ sample.CharacteristicName }}</td>
+				            					<td class="other">{{ sample.CharacteristicName }}</td>
 			            					{% endif %}
 			            					{% if sample.ResultValue >= 104 %}
-			            						<td class="danger">{{ sample.ResultValue|floatformat }}</td>
+			            						<td class="other danger">{{ sample.ResultValue|floatformat }}</td>
 			            					{% else %}
-			            						<td class="success">{{ sample.ResultValue|floatformat }}</td>
+			            						<td class="other success">{{ sample.ResultValue|floatformat }}</td>
 			            					{% endif %}
 
 			            					{% if sample.precipSum >= 0.5 %}
-			            						<td class="info">{{ sample.precipSum|floatformat }}</td>
+			            						<td class="other info">{{ sample.precipSum|floatformat }}</td>
 			            					{% else %}
-			            						<td class="warning">{{ sample.precipSum|floatformat }}</td>
+			            						<td class="other warning">{{ sample.precipSum|floatformat }}</td>
 			            					{% endif %}
 			            					
 		            					</tr>
 		            				{% endfor %}         				
 		            			</tbody>
 		            		</table>
-		            		<p><u>Enterococcus ("Entero")</u>: fecal-indicating bacteria</p>
+		            		<h1 class="text-center margin-top-0" data-toggle="tooltip" data-placement="top" title="Scroll down inside table to see more samples."><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></h1>
+
 		            	</div>         	
-		            	<div class="col-xs-3">
+		            	<div class="col-sm-3 col-xs-6">
 		            			<p data-toggle="tooltip" data-placement="top" title="A measure of central tendency (a weighted average) used by the EPA to assess water quality. The geometric mean is defined as the nth root (where n is the number of samples) of the product of n samples.">Geometric Mean: </p>
 		            			<p>Minimum: </p>
 		            			<p>Maximum: </p>
@@ -126,7 +127,7 @@
 			        			<a class="btn btn-default marginTopBottom20" href="/media{{ folder }}{{ filename_filtered }}" role="button">Download Filtered Data</a>
 
 		            	</div>
-		            	<div class="col-xs-1">
+		            	<div class="col-sm-1 col-xs-6">
 		            			<p>{{ geomean|floatformat|intcomma }}</p>
 		            		{% for sample in sampleAggregates %}
 		            			<p>{{ sample.MinValue|floatformat|intcomma }}</p>
@@ -154,10 +155,10 @@
 	                </svg>
 	                Failing Sample
 	            </p>
-	            <p class="pull-right"><small>Swim Criteria is &#8805;104 cfu/100mL Enterococcus</small></p>
+	            <p class="pull-right margin-left-10"><small>Swim Criteria is &#8805;104 cfu/100mL Enterococcus</small></p>
 	        </div>
             <div class="clearfix"></div>
-            <div class="container-fluid">
+            <div class="container-fluid pointsOfInterest">
             	<div class="row">
             		<div class="col-md-12 grey-background-modal">
                         <h4 class="padding-top-5">Points of Interest</h4>
@@ -173,17 +174,6 @@
 			                            Sampling Locations
 			                          </label>
 			                        </div>
-			                        <!--
-			                        <div class="checkbox">
-			                          <label>
-      			                      <input type="checkbox" value="watershedsModal" id="watershedsModal">
-                                  <svg width='14' height='14'>
-                                    <rect x="0" y="0" width="14" height="14" rx="2" ry="2" style="fill: #08519c; stroke: grey; stroke-width: 2;" />                            
-                                  </svg>
-			                            Long Island Sound Regions
-			                          </label>
-			                        </div>
-			                        -->
 			                        <div class="checkbox">
 			                          <label>
 			                            <input type="checkbox" value="subwatershedsModal" id="subwatershedsModal">
@@ -259,8 +249,9 @@
             	</div>
             </div>
 
-            <hr />
-            <small>
+            
+            <small class="methods">
+            	<hr />
             	These data were sourced from the EPA STORET and Beacon2 databases. Learn more about these data on our <a href="/pages/data-sources/">Data Sources</a> page. This bacteria data is scored based on the US EPA criteria for safe primary contact (swimming). More information on <a href="/pages/criteria-scoring/">Criteria & Scoring</a>. 
             </small>
 
@@ -289,10 +280,10 @@
 	            .domain([0, 200])
 	            .range([0, 100]);
 
-	        var firstPoint = scale(value) + 10;
-	        var secondPoint = scale(value) + 20;
-	        var thirdPoint = scale(value) + 15;
-	        var one0four = scale(104) + 15;
+	        var firstPoint = scale(value) + 5;
+	        var secondPoint = scale(value) + 15;
+	        var thirdPoint = scale(value) + 10;
+	        var one0four = scale(104) + 10;
 
 	        var points =  firstPoint + ",15 " + secondPoint + ",15 " + thirdPoint + ", 25";
 
@@ -304,14 +295,14 @@
 			mostRecentSample.append('rect')
 				.attr('width', scale(200))
 				.attr('height', 6)
-				.attr('x', 15)
+				.attr('x', 10)
 				.attr('y', 20)
 				.attr('style', 'fill: #be1e2d');
 
 			mostRecentSample.append('rect')
 				.attr('width', scale(104))
 				.attr('height', 6)
-				.attr('x', 15)
+				.attr('x', 10)
 				.attr('y', 20)
 				.attr('style', 'fill: #009444');
 
@@ -560,6 +551,13 @@
 			maxDate = maxDate.toDate();
 			start_date_selected = start_date_selected.toDate();
 			end_date_selected = end_date_selected.toDate();
+			if (bodyWidth <= 768) {
+				var ticks = 3; 
+			} else if (bodyWidth <= 1200) {
+				var ticks = 6; 
+			} else {
+				var ticks = d3.time.years; 
+			}
 
 			var mapSliderModal = d3.slider()
 							.axis(
@@ -569,7 +567,7 @@
 										d3.time.scale()
 											.domain([minDate, maxDate])
 									)
-									.ticks(d3.time.years)
+									.ticks(ticks)
 									.tickSize(24, 0)
 									.tickFormat(d3.time.format("%Y"))
 							)
@@ -625,11 +623,10 @@
 
 			minDate = parseDate(minDate.format("YYYY-MM-DD"));
 
-
-
 			var div = d3.select('#scatterPlotModal');
-	        var width = parseInt(div.style("width"), 10) - 20;
+	        var width = parseInt(div.style("width"), 10) - 40;
 	        var margin = 50;
+	        var translate = margin + 20;
 	        var height = 300;
 
 			var svg = div.append("svg");
@@ -648,17 +645,25 @@
 				.range([height, 6])
 				.domain([0, d3.max(samplesArray, function(d) { return d.value; })]);
 
+			if (bodyWidth <= 768) {
+				var ticks = 3; 
+			} else if (bodyWidth <= 1200) {
+				var ticks = 6; 
+			} else {
+				var ticks = d3.time.years; 
+			}
+
 			var xAxis = d3.svg.axis()
 				.scale(x)
 				.orient("bottom")
-				.ticks(d3.time.years, 1);
+				.ticks(ticks);
 
 			var yAxis = d3.svg.axis()
 				.scale(y)
 				.orient("left");
 
 			var g = svg.append('g')
-				.attr("transform", "translate(" + margin + ",0)");
+				.attr("transform", "translate(" + translate + ",0)");
 
 			g.append("g")
 				.attr("class", "passArea")
@@ -874,7 +879,9 @@
 
 
 		// ensure tooltips are ready for use
-		$('[data-toggle="tooltip"]').tooltip();
+		$('[data-toggle="tooltip"]').tooltip({
+			container : 'body'
+		});
 
 		// ensure correct checked layers on page load
 		if ($('#beacon').prop('checked')) {

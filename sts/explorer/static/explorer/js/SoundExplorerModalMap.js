@@ -92,10 +92,18 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 			d.properties.leafletId = 'layerModalID' + i;
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
+			if (d.properties.NumberOfSamples > 0) {
+				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+				d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
+				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			} else {
+				d.properties.pctPass = 100;
+				d.properties.pctPassNotRounded = 100;
+				d.properties.pctFail = 0;
+				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			}
+
 		});
 
 		thismap.BEACON_POINTS = L.geoJson(geojsonData, {
@@ -116,14 +124,26 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 
 
 SoundExplorerModalMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
-	var marker = L.circleMarker(latlng, {
-		radius: 24,
-		color: '#bdbdbd',
-		weight: 1,
-		opacity: 1,
-		fillColor: SoundExplorerModalMap.SDEPctPassColor(feature.properties.pctPassNotRounded),
-		fillOpacity: 1
-	});
+	if (feature.properties.NumberOfSamples < 12) {
+		var marker = L.circleMarker(latlng, {
+			radius: 5,
+			color: '#636363',
+			weight: 1,
+			opacity: 1,
+			fillColor: "#ccc",
+			fillOpacity: 1
+		});		
+	} else {
+		var marker = L.circleMarker(latlng, {
+			radius: 5,
+			color: '#636363',
+			weight: 1,
+			opacity: 1,
+			fillColor: SoundExplorerModalMap.SDEPctPassColor(feature.properties.pctPassNotRounded),
+			fillOpacity: 1
+		});		
+	}
+
 	
 	return marker;
 	
@@ -591,8 +611,12 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr('r', circleRadius/scale)
 				.attr('cx',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr('cy',function(d){return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
-				.attr('fill', function(d){ 
-					return SoundExplorerModalMap.SDEPctPassColor(d.properties.pctPassNotRounded);
+				.attr('fill', function(d){
+					if (d.properties.NumberOfSamples < 12) {
+						return "#ccc";
+					} else {
+						return SoundExplorerModalMap.SDEPctPassColor(d.properties.pctPassNotRounded);
+					}
 				})
 				.attr('stroke', 'white')
 				.attr('stroke-width', circleStroke/scale);
@@ -621,7 +645,13 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("dx", function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; })
 				.attr('style', "font-size: "+ 24/scale +"px;")
-				.text(function(d) { return SoundExplorerModalMap.SDEPctPassGrade(d.properties.pctPassNotRounded); });
+				.text(function(d) { 
+					if (d.properties.NumberOfSamples < 12) {
+						return 'N/A';
+					} else {
+						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
+					}
+				});
 
 		}
 
