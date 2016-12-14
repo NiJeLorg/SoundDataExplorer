@@ -24,7 +24,7 @@ function SoundExplorerMap() {
    	 	zoom: this.zoom,
    	 	zoomControl: false,
    	 	zoomAnimation: true,
-   	 	touchZoom: false,
+   	 	touchZoom: true,
 	});
 
 	// locate visitor on map
@@ -345,7 +345,7 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 	if (feature.properties.NumberOfSamples < 12) {
 		var marker = L.circleMarker(latlng, {
-			radius: 5,
+			radius: 6,
 			color: '#636363',
 			weight: 1,
 			opacity: 1,
@@ -354,7 +354,7 @@ SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 		});		
 	} else {
 		var marker = L.circleMarker(latlng, {
-			radius: 5,
+			radius: 6,
 			color: '#636363',
 			weight: 1,
 			opacity: 1,
@@ -860,12 +860,6 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 		// entering new stuff
 		var bcEnter = beaconCircles.enter().append("g")
 			.attr("class", "beaconCircles");
-			// .on('mouseover', function(d){ 
-			// 	beaconCircles.sort(function (a, b) { 
-			// 		if (a.id != d.id) return -1;
-			// 		else return 1;
-			// 	});
-			// });
 
 		bcEnter.append('circle');
 		bcEnter.append('text');
@@ -936,7 +930,7 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 			if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 				MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
 			}
-			MY_MAP.BEACON_POINTS.setStyle({radius: 5});
+			MY_MAP.BEACON_POINTS.setStyle({radius: 6});
 		} else {
 			//check for existance of layers, then add or remove
 			if (!MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
@@ -976,12 +970,12 @@ SoundExplorerMap.checkZoomSwitchLayers = function (){
 	// if zoom level is small, show the small dots on the map, otherwise show the big dots with scores
 	// only if checked 
 	if ($( "#beacon" ).prop('checked')) {
-		if (MY_MAP.map.getZoom() < 13) {
+		if (MY_MAP.map.getZoom() < 12) {
 			//check for existance of layers, then add or remove
 			if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 				MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
 			}
-			MY_MAP.BEACON_POINTS.setStyle({radius: 5});
+			MY_MAP.BEACON_POINTS.setStyle({radius: 6});
 		} else {
 			//check for existance of layers, then add or remove
 			if (!MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {

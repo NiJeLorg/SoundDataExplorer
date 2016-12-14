@@ -34,8 +34,8 @@ def index(request):
 
 	beachId = request.GET.get("beach","")
 
-	endDate = datetime.date(datetime.date.today().year, 1, 1)
-	startDate = endDate + relativedelta(years=-5)
+	endDate = datetime.date(2015, 12, 31)
+	startDate = endDate + relativedelta(years=-5, days=+1)
 
 	try:
 		beach = Beaches.objects.get(BeachID__exact=beachId)

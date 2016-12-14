@@ -29,10 +29,10 @@ body.loading .loading-modal {
     height:     100%;
     width:      100%;
     opacity:  .7;
-    background: url('images/spinner.gif') 
+    background: url('images/ripple.gif') 
                 50% 50% 
                 no-repeat;
-    background-color: #fff;
+    background-color: #000;
 }
 
 /* full screen background image */
@@ -566,6 +566,11 @@ hr {
 
   .margin-left-10 {
     margin-left: 0;
+  }
+
+  .textRingPopup {
+    height: 83px;
+    padding-left: 7px;
   }
 
 }

@@ -382,10 +382,21 @@
 
 			var pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: pctPass}];
 
-			var w = 150;
-			var h = 150;
-			var innerRadius = 65;
-			var outerRadius = 75;
+			if ($('body').width() >= 768) {
+				var w = 150;
+				var h = 150;
+				var innerRadius = 65;
+				var outerRadius = 75;
+				var translateDown = 12;
+			} else {
+				var w = 75;
+				var h = 75;
+				var innerRadius = 30;
+				var outerRadius = 35;
+				var translateDown = 6;
+			}
+
+
 
 			var arc = d3.svg.arc()
 			    .outerRadius(outerRadius)
@@ -406,14 +417,18 @@
 
 			ringSvg.enter().append('text')
 				.attr("text-anchor", "middle")
-				.attr("transform", "translate(0,12)")
+				.attr("transform", "translate(0,"+translateDown+")")
 				.attr('style', function(d) { 
 					if (d.data.name == "fail") {
 						var pctNum = +d.data.pct;
-						if (pctNum == 100) {
-							var fontSize = 42;
+						if ($('body').width() >= 768) {
+							if (pctNum == 100) {
+								var fontSize = 42;
+							} else {
+								var fontSize = 50;
+							}
 						} else {
-							var fontSize = 50;
+							var fontSize = 20;
 						}				
 						return "font-size: "+ fontSize +"px; stroke: #be1e2d; font-family:'Print Clearly';}"
 					} 
