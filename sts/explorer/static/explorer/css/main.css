@@ -573,6 +573,14 @@ hr {
     padding-left: 7px;
   }
 
+  .map-popup-wrapper-open {
+    bottom: 150px;
+  }
+
+  .popup-wrapper-open {
+    height: 150px;
+  }
+
 }
 
 @media (max-width: 991px) {
