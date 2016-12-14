@@ -23,7 +23,7 @@ function SoundExplorerMap() {
     	center: this.center,
    	 	zoom: this.zoom,
    	 	zoomControl: false,
-   	 	zoomAnimation: false,
+   	 	zoomAnimation: true,
    	 	touchZoom: false,
 	});
 
@@ -859,14 +859,13 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 
 		// entering new stuff
 		var bcEnter = beaconCircles.enter().append("g")
-			.attr("class", "beaconCircles")
-			.on('mouseover', function(d){ 
-				console.log('hello');
-				beaconCircles.sort(function (a, b) { 
-					if (a.id != d.id) return -1;
-					else return 1;
-				});
-			});
+			.attr("class", "beaconCircles");
+			// .on('mouseover', function(d){ 
+			// 	beaconCircles.sort(function (a, b) { 
+			// 		if (a.id != d.id) return -1;
+			// 		else return 1;
+			// 	});
+			// });
 
 		bcEnter.append('circle');
 		bcEnter.append('text');
@@ -877,7 +876,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 		beaconCircles.exit().remove();
 
 
-	}, {zoomAnimate: false, zoomHide: true});
+	}, {zoomAnimate: true, zoomHide: false});
 
 
 }

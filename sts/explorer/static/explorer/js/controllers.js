@@ -29,18 +29,6 @@ $( document ).ready(function() {
 		});
 	}
 
-	// open the bottom area on page load
-/*	$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
-	$( ".map" ).toggleClass("map-popup-wrapper-open");
-	$( ".legend" ).toggleClass("legend-popup-wrapper-open");
-*/
-	// close popup tray
-	$('#popup-close').click(function() {
-		$( ".popup-wrapper" ).toggleClass("popup-wrapper-open");
-		$( ".map" ).toggleClass("map-popup-wrapper-open");
-		$( ".legend" ).toggleClass("legend-popup-wrapper-open");
-	});
-
 	// open and close the legend
 	$('#legendClose').click(function() {
 		$( ".legend" ).addClass("hidden");
