@@ -586,7 +586,7 @@ hr {
     height: 46px;
     display: flex;
     justify-content: center; 
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5);
+    /*box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5);*/
 }
 .social-media-icons-modal .icon-holder a {
     color: #fff;
