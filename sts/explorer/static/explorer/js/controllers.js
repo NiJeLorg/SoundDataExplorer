@@ -29,6 +29,14 @@ $( document ).ready(function() {
 		});
 	}
 
+	// swap out mobile images and desktop images when tutorial modal is loaded if mobile screen size
+	$('#tutorial').on('show.bs.modal', function (e) {
+		if ($("body").width() < 768) {
+			$('.slide_image').addClass('hidden');
+			$('.slide_image_mobile').removeClass('hidden');			
+		}
+	});
+
 	// open and close the legend
 	$('#legendClose').click(function() {
 		$( ".legend" ).addClass("hidden");
@@ -41,7 +49,7 @@ $( document ).ready(function() {
 	});
 
 	// open modal on page load if url passed with beach id
-	if (beachId && beachLat && beachLon) {
+	if (beachId && beachName && beachLat && beachLon) {
 		// loading
 		$("body").addClass("loading");
 		// open the modal
@@ -69,6 +77,9 @@ $( document ).ready(function() {
 	        }
 	    });
 
+	    // update facebook and twitter share urls
+		updateSocialButtons(beachId, beachName);
+
 
 	}
 
@@ -77,6 +88,7 @@ $( document ).ready(function() {
 		$("body").addClass("loading");
 		var link = $(event.relatedTarget);
 		var beachid = link.data('beachid');
+		var beachname = link.data('beachname');
 		var lat = link.data('lat');
 		var lon = link.data('lon');
 		var modalMap = new SoundExplorerModalMap(lat, lon);
@@ -103,6 +115,9 @@ $( document ).ready(function() {
 
 	   	// create url parameters 
 		window.history.pushState( {} , '', '?beach=' + beachid );
+
+		// update facebook and twitter share urls
+		updateSocialButtons(beachid, beachname);
 
 
 	});
@@ -201,6 +216,51 @@ $( document ).ready(function() {
 
 	// ensure that popovers are ready to go
 	$('[data-toggle="tooltip"]').tooltip();
+
+
+	// update share buttons
+    // set up twitter and facebook URLs for main map
+    var app_id = '1737867593200968';
+    var fbdescription = "Interested in seeing how your Long Island Sound beach stacks up against neighboring beaches? Come check out our grades on the Sound Health Explorer!";
+    var fblink = "http://soundhealthexplorer.org/";
+    var fbpicture = "http://soundhealthexplorer.org/static/website/css/images/fbshare.png";
+    var fbname = "Sound Health Explorer, a project of Save the Sound";
+    var fbcaption = "Save The Sound";
+    var fbUrl = 'https://www.facebook.com/dialog/feed?app_id=' + app_id + '&display=popup&description=' + encodeURIComponent(fbdescription) + '&link=' + encodeURIComponent(fblink) + '&redirect_uri=' + encodeURIComponent(fblink) + '&name=' + encodeURIComponent(fbname) + '&caption=' + encodeURIComponent(fbcaption) + '&picture=' + encodeURIComponent(fbpicture);
+    var fbOnclick = 'window.open("' + fbUrl + '","facebook-share-dialog","width=626,height=436");return false;';
+    $('#showShareFB').attr("onclick", fbOnclick);
+
+
+    var twitterlink = "http://soundhealthexplorer.org/";
+    var via = 'SavetheSound';
+    var twittercaption = "How does your #LongIslandSound beach stack up against other beaches? Check out our grades here:";
+    var twitterUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(twitterlink) + '&via=' + encodeURIComponent(via) + '&text=' + encodeURIComponent(twittercaption);
+    var twitterOnclick = 'window.open("' + twitterUrl + '","twitter-share-dialog","width=626,height=436");return false;';
+    $('#showShareTwitter').attr("onclick", twitterOnclick);
+
+    function updateSocialButtons(beach_id, beach_name) {
+    	console.log(beach_name);
+		// update share buttons
+	    // set up twitter and facebook URLs for main map
+	    var app_id = '1737867593200968';
+	    var fbdescription = "Here's the how my Long Island Sound beach, " + beach_name + ", is doing. Check out and compare your beach here!";
+	    var fblink = "http://soundhealthexplorer.org/beach=" + beach_id;
+	    var fbpicture = "http://soundhealthexplorer.org/static/website/css/images/fbshare.png";
+	    var fbname = "Sound Health Explorer, a project of Save the Sound";
+	    var fbcaption = "Save The Sound";
+	    var fbUrl = 'https://www.facebook.com/dialog/feed?app_id=' + app_id + '&display=popup&description=' + encodeURIComponent(fbdescription) + '&link=' + encodeURIComponent(fblink) + '&redirect_uri=' + encodeURIComponent(fblink) + '&name=' + encodeURIComponent(fbname) + '&caption=' + encodeURIComponent(fbcaption) + '&picture=' + encodeURIComponent(fbpicture);
+	    var fbOnclick = 'window.open("' + fbUrl + '","facebook-share-dialog","width=626,height=436");return false;';
+	    $('#showShareFBModal').attr("onclick", fbOnclick);
+
+
+	    var twitterlink = "http://soundhealthexplorer.org/beach=" + beach_id;
+	    var via = 'SavetheSound';
+	    var twittercaption = "Here's the how my #LongIslandSound beach, " + beach_name + ", is doing. Check out yours here!";
+	    var twitterUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(twitterlink) + '&via=' + encodeURIComponent(via) + '&text=' + encodeURIComponent(twittercaption);
+	    var twitterOnclick = 'window.open("' + twitterUrl + '","twitter-share-dialog","width=626,height=436");return false;';
+	    $('#showShareTwitterModal').attr("onclick", twitterOnclick);    	
+
+    }
 
 
 });

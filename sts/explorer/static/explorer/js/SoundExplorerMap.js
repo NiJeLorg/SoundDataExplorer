@@ -161,9 +161,9 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		if (feature.properties.NumberOfSamples < 12) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.");
 		} else if (bodyWidth <= 768) {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='continer-fluid'><div class='row'><div class='col-xs-4 text-center dialPad'><div id='ringSvgPopup'></div></div>" + dropPrint + sunPrint + "</div><div class='row'><div class='col-xs-4 text-center'>All</div><div class='col-xs-4 text-center'>Wet</div><div class='col-xs-4 text-center'>Dry</div></div></div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='continer-fluid'><div class='row'><div class='col-xs-4 text-center dialPad'><div id='ringSvgPopup'></div></div>" + dropPrint + sunPrint + "</div><div class='row'><div class='col-xs-4 text-center'>All</div><div class='col-xs-4 text-center'>Wet</div><div class='col-xs-4 text-center'>Dry</div></div></div>");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
@@ -663,13 +663,13 @@ SoundExplorerMap.addLayers = function (layer){
 		MY_MAP.CSOS_CT.addTo(MY_MAP.map);
 	}
 	if (layer == "impervious") {
-		MY_MAP.IMPERVIOUS.addTo(MY_MAP.map);
+		MY_MAP.IMPERVIOUS.addTo(MY_MAP.map).bringToBack();
 	}
 	if (layer == "watersheds") {
-		MY_MAP.WATERSHEDS.addTo(MY_MAP.map);
+		MY_MAP.WATERSHEDS.addTo(MY_MAP.map).bringToBack();;
 	}
 	if (layer == "subwatersheds") {
-		MY_MAP.SUBWATERSHEDS.addTo(MY_MAP.map);
+		MY_MAP.SUBWATERSHEDS.addTo(MY_MAP.map).bringToBack();
 	}
 	if (layer == "shellfish") {
 		MY_MAP.SHELLFISH.addTo(MY_MAP.map);
@@ -680,10 +680,6 @@ SoundExplorerMap.addLayers = function (layer){
 	}
 	if (layer == "landuse") {
 		MY_MAP.LANDUSE.addTo(MY_MAP.map).bringToBack();
-	}
-
-	if (MY_MAP.map.hasLayer(MY_MAP.BEACON_POINTS)) {
-		MY_MAP.BEACON_POINTS.bringToFront();
 	}
 
 }
