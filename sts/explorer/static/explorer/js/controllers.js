@@ -223,7 +223,7 @@ $( document ).ready(function() {
     var app_id = '1737867593200968';
     var fbdescription = "Interested in seeing how your Long Island Sound beach stacks up against neighboring beaches? Come check out our grades on the Sound Health Explorer!";
     var fblink = "http://soundhealthexplorer.org/";
-    var fbpicture = "http://soundhealthexplorer.org/static/website/css/images/fbshare.png";
+    var fbpicture = "http://soundhealthexplorer.org/static/explorer/css/images/fbshare.png";
     var fbname = "Sound Health Explorer, a project of Save the Sound";
     var fbcaption = "Save The Sound";
     var fbUrl = 'https://www.facebook.com/dialog/feed?app_id=' + app_id + '&display=popup&description=' + encodeURIComponent(fbdescription) + '&link=' + encodeURIComponent(fblink) + '&redirect_uri=' + encodeURIComponent(fblink) + '&name=' + encodeURIComponent(fbname) + '&caption=' + encodeURIComponent(fbcaption) + '&picture=' + encodeURIComponent(fbpicture);
@@ -245,7 +245,7 @@ $( document ).ready(function() {
 	    var app_id = '1737867593200968';
 	    var fbdescription = "Here's the how my Long Island Sound beach, " + beach_name + ", is doing. Check out and compare your beach here!";
 	    var fblink = "http://soundhealthexplorer.org/beach=" + beach_id;
-	    var fbpicture = "http://soundhealthexplorer.org/static/website/css/images/fbshare.png";
+	    var fbpicture = "http://soundhealthexplorer.org/static/explorer/css/images/fbshare.png";
 	    var fbname = "Sound Health Explorer, a project of Save the Sound";
 	    var fbcaption = "Save The Sound";
 	    var fbUrl = 'https://www.facebook.com/dialog/feed?app_id=' + app_id + '&display=popup&description=' + encodeURIComponent(fbdescription) + '&link=' + encodeURIComponent(fblink) + '&redirect_uri=' + encodeURIComponent(fblink) + '&name=' + encodeURIComponent(fbname) + '&caption=' + encodeURIComponent(fbcaption) + '&picture=' + encodeURIComponent(fbpicture);
