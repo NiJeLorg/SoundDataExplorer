@@ -651,7 +651,7 @@ SoundExplorerMap.getStyleFor_WASTEWATER = function (feature, latlng){
 SoundExplorerMap.addLayers = function (layer){
 	if (layer == "beacon") {
 		MY_MAP.BEACON_POINTS.addTo(MY_MAP.map);
-		if (MY_MAP.map.getZoom() >= 14) {
+		if (MY_MAP.map.getZoom() >= 12) {
 			MY_MAP.BEACON_D3_POINTS.addTo(MY_MAP.map);
 		}
 	}
@@ -921,7 +921,7 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 		SoundExplorerMap.createBEACON_D3_POINTS(geojsonData.features, MY_MAP);
 
 		// if zoom level is small, show the small dots on the map, otherwise show the big dots with scores
-		if (MY_MAP.map.getZoom() < 14) {
+		if (MY_MAP.map.getZoom() < 12) {
 			//check for existance of layers, then add or remove
 			if (MY_MAP.map.hasLayer(MY_MAP.BEACON_D3_POINTS)) {
 				MY_MAP.map.removeLayer(MY_MAP.BEACON_D3_POINTS);
