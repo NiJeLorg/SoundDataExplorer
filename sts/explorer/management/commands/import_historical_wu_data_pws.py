@@ -17,7 +17,7 @@ class Command(BaseCommand):
 		stations = WeatherStationsPWS.objects.all()
 		#between today and 2004
 		today = datetime.today()
-		earliest = datetime(2004, 1, 1)
+		earliest = datetime(2015, 12, 1)
 		counter = 0
 
 		for dateEval in rrule(YEARLY, dtstart=earliest, until=today):
