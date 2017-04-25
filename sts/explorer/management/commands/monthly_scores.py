@@ -51,14 +51,14 @@ class Command(BaseCommand):
 									#if there are precip objects, then break the for loop
 									if precipcount > 0:
 										print station
-										print sample
+										print sample.BeachID
 										print precip['PrecipitationIn__sum']
 										break
 
 							else:
 								# fall back to the airport precip data if no personal weather stations nearby
 								precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-								print sample
+								print sample.BeachID
 								print precip['PrecipitationIn__sum']
 
 							# do some counting
