@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def load_BEACON_data(self):
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         # open LIS_Beacon_Beach_WQdata.csv and dump into BeachWQSamples table
-        with open(os.path.join(__location__, 'Storet_All_Sound_Data_2016_part.csv'), 'rb') as f:
+        with open(os.path.join(__location__, 'Storet_All_Sound_Data_2016.csv'), 'rb') as f:
             reader = csv.reader(f)
             for row in reader:
                 if row[0] != 'StateCode': # Ignore the header row, import everything else
