@@ -34,7 +34,7 @@ def index(request):
 
 	beachId = request.GET.get("beach","")
 
-	endDate = datetime.date(2015, 12, 31)
+	endDate = datetime.date(2016, 12, 31)
 	startDate = endDate + relativedelta(years=-5, days=+1)
 
 	try:
