@@ -44,9 +44,9 @@ class Command(BaseCommand):
 						wd.save()
 
 				#sleep code for 60 seconds ever 200 "API" calls to limit attention to ourselves
-				if counter % 50 == 0:
-					print "Sleeping at counter " + str(counter)
-					time.sleep(60)
+				# if counter % 50 == 0:
+				# 	print "Sleeping at counter " + str(counter)
+				# 	time.sleep(60)
 
 
 	def handle(self, *args, **options):
