@@ -53,14 +53,15 @@ class Command(BaseCommand):
 									precipcount_under5 = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).exclude(PrecipitationIn__gt=5).count()
 
 									if precip_check['PrecipitationIn__sum'] > 0 and precipcount_under5 > 0:
-										used_stations += 1
 										# pull precip data for next step
 										precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
 										#if there are precip objects and the sum of precip is > 0, then break the for loop
-										print station
-										print sample.BeachID
-										print precip['PrecipitationIn__sum']
-										break
+										if precip['PrecipitationIn__sum'] is not None:
+											used_stations += 1
+											print station
+											print sample.BeachID
+											print precip['PrecipitationIn__sum']
+											break
 
 								if used_stations == 0:
 									# fall back to the airport precip data if no personal weather stations with usable data
