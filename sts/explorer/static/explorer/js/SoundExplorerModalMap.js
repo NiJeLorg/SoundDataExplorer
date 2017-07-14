@@ -124,7 +124,7 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 
 
 SoundExplorerModalMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
-	if (feature.properties.NumberOfSamples < 12) {
+	if (feature.properties.NumberOfSamples < 9) {
 		var marker = L.circleMarker(latlng, {
 			radius: 5,
 			color: '#636363',

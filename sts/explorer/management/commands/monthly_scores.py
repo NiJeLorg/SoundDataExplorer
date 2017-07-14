@@ -37,27 +37,41 @@ class Command(BaseCommand):
 						if sample.CharacteristicName != 'Total Coliform':
 							today = sample.StartDate
 							threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+							oneYearAgo = sample.StartDate + relativedelta(years=-1)
 
 							# check to see if personal weather station data exist for this beach on these days
 							pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).count()
 							if pwscount > 0:
 								# get the nearest staion with data
 								stations = WeatherStationsPWS.objects.filter(BeachID__exact=beach).order_by('DistanceKm')
+								used_stations = 0
 								for station in stations:
-									# get count of precip objects
-									precipcount = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).count()
-									# pull precip data for next step
-									precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-									#if there are precip objects, then break the for loop
-									if precipcount > 0:
+
+									# check to see if the station has 0 precipitation within the last year -- if so skip this station
+									precip_check = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=oneYearAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+									# get count of precip objects excluding any that have a daily value greater than 5 inches and skip if there are none
+									precipcount_under5 = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).exclude(PrecipitationIn__gt=5).count()
+
+									if precip_check['PrecipitationIn__sum'] > 0 and precipcount_under5 > 0:
+										used_stations += 1
+										# pull precip data for next step
+										precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+										#if there are precip objects and the sum of precip is > 0, then break the for loop
 										print station
 										print sample.BeachID
 										print precip['PrecipitationIn__sum']
 										break
 
+								if used_stations == 0:
+									# fall back to the airport precip data if no personal weather stations with usable data
+									precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+									print sample.BeachID
+									print precip['PrecipitationIn__sum']
+
 							else:
 								# fall back to the airport precip data if no personal weather stations nearby
 								precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+
 								print sample.BeachID
 								print precip['PrecipitationIn__sum']
 

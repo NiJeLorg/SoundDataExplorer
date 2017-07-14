@@ -73,7 +73,10 @@ $( document ).ready(function() {
 	        	$("#modalData").html(data);
 	        	$("body").removeClass("loading");
 			    //zoom main map on modal open
-			    SoundExplorerMap.modalZoom(parseFloat(beachLat), parseFloat(beachLon));
+	    		setTimeout(function() {
+					SoundExplorerMap.modalZoom(parseFloat(beachLat), parseFloat(beachLon));		
+				}, 2000);
+			    
 	        }
 	    });
 
@@ -239,7 +242,6 @@ $( document ).ready(function() {
     $('#showShareTwitter').attr("onclick", twitterOnclick);
 
     function updateSocialButtons(beach_id, beach_name) {
-    	console.log(beach_name);
 		// update share buttons
 	    // set up twitter and facebook URLs for main map
 	    var app_id = '1737867593200968';

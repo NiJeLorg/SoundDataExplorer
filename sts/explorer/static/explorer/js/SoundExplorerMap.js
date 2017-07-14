@@ -158,7 +158,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		}
 		
 		MY_MAP.popup.setLatLng(ev.target._latlng);
-		if (feature.properties.NumberOfSamples < 12) {
+		if (feature.properties.NumberOfSamples < 9) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.<br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>");
 		} else if (bodyWidth <= 768) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='continer-fluid'><div class='row'><div class='col-xs-4 text-center dialPad'><div id='ringSvgPopup'></div></div>" + dropPrint + sunPrint + "</div><div class='row'><div class='col-xs-4 text-center'>All</div><div class='col-xs-4 text-center'>Wet</div><div class='col-xs-4 text-center'>Dry</div></div></div>");
@@ -343,7 +343,7 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 
 
 SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
-	if (feature.properties.NumberOfSamples < 12) {
+	if (feature.properties.NumberOfSamples < 9) {
 		var marker = L.circleMarker(latlng, {
 			radius: 6,
 			color: '#636363',

@@ -767,17 +767,18 @@
 		}
 
 
-		// run functions
+		// run functions if data are avialable
 		drawIndicatorBar();
 		createStartEndCombos();
-		drawRingChart();
-		drawDropChart();
-		drawSunChart();
-		drawTimeSliderModal();
-		drawScatterPlot();
-		// to ensure tables will sort
-		$.bootstrapSortable();
-
+		{% if samples %}
+			drawRingChart();
+			drawDropChart();
+			drawSunChart();
+			drawTimeSliderModal();
+			drawScatterPlot();
+			// to ensure tables will sort
+			$.bootstrapSortable();
+		{% endif %}
 
 
 		// on change listener for combo box
