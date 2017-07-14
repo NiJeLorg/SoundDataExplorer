@@ -748,7 +748,7 @@ SoundExplorerModalMap.updateMapFromSlider = function (value){
 		MY_MAP_MODAL.map.removeLayer(MY_MAP_MODAL.BEACON_D3_POINTS);
 		// recreate new D3 layer
 		SoundExplorerModalMap.createBEACON_D3_POINTS(geojsonData.features, MY_MAP_MODAL);
-		MY_MAP_MODAL.BEACON_D3_POINTS.addTo(MY_MAP_MODAL.map);
+		//MY_MAP_MODAL.BEACON_D3_POINTS.addTo(MY_MAP_MODAL.map);
 		
 	});
 

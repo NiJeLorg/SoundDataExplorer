@@ -209,17 +209,15 @@ def modalApi(request):
 							#if there are precip objects and the sum of precip is > 0, then break the for loop
 							if precip['PrecipitationIn__sum'] is not None:
 								used_stations += 1
-								print station
-								print sample.BeachID
-								print precip['PrecipitationIn__sum']
+								stationCode = station
 								break
 
 					if used_stations == 0:
 						# fall back to the airport precip data if no personal weather stations with usable data
 						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-						print sample.BeachID
-						print precip['PrecipitationIn__sum']
-
+						# look up Weather Station 
+						ws = WeatherStations.objects.get(BeachID__exact=beach)
+						stationCode = ws.Icao
 
 				else:
 					# fall back to the airport precip data if no personal weather stations nearby
@@ -294,16 +292,16 @@ def modalApi(request):
 							#if there are precip objects and the sum of precip is > 0, then break the for loop
 							if precip['PrecipitationIn__sum'] is not None:
 								used_stations += 1
-								print station
-								print sample.BeachID
-								print precip['PrecipitationIn__sum']
+								stationCode = station
 								break
 
 					if used_stations == 0:
 						# fall back to the airport precip data if no personal weather stations with usable data
 						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
-						print sample.BeachID
-						print precip['PrecipitationIn__sum']
+						# look up Weather Station 
+						ws = WeatherStations.objects.get(BeachID__exact=beach)
+						stationCode = ws.Icao
+
 
 				else:
 					# fall back to the airport precip data if no personal weather stations nearby
