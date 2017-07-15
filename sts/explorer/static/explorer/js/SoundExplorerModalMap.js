@@ -612,7 +612,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr('cx',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr('cy',function(d){return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
 				.attr('fill', function(d){
-					if (d.properties.NumberOfSamples < 12) {
+					if (d.properties.NumberOfSamples < 9) {
 						return "#ccc";
 					} else {
 						return SoundExplorerModalMap.SDEPctPassColor(d.properties.pctPassNotRounded);
@@ -646,7 +646,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; })
 				.attr('style', "font-size: "+ 24/scale +"px;")
 				.text(function(d) { 
-					if (d.properties.NumberOfSamples < 12) {
+					if (d.properties.NumberOfSamples < 9) {
 						return 'N/A';
 					} else {
 						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
@@ -704,6 +704,7 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 	});
 
 	if ($('#beacon').prop('checked')) {
+		console.log(thismap.BEACON_D3_POINTS);
 		thismap.BEACON_D3_POINTS.addTo(thismap.map);
 	}
 
@@ -733,10 +734,19 @@ SoundExplorerModalMap.updateMapFromSlider = function (value){
 			d.properties.leafletId = 'layerID' + i;
 			// create coordiantes with latLon instead of lonLat for use with D3 later
 			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-			var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-			d.properties.pctPassFail = [{name: "fail", pct: pctFail},{name: "pass", pct: d.properties.pctPass}];
+
+			if (d.properties.NumberOfSamples > 0) {
+				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+				var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
+				d.properties.pctPassFail = [{name: "fail", pct: pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			} else {
+				d.properties.pctPass = 100;
+				d.properties.pctPassNotRounded = 100;
+				var pctFail = 0;
+				d.properties.pctPassFail = [{name: "fail", pct: pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			}
+
 		});
 
 		// clear layer
@@ -748,7 +758,6 @@ SoundExplorerModalMap.updateMapFromSlider = function (value){
 		MY_MAP_MODAL.map.removeLayer(MY_MAP_MODAL.BEACON_D3_POINTS);
 		// recreate new D3 layer
 		SoundExplorerModalMap.createBEACON_D3_POINTS(geojsonData.features, MY_MAP_MODAL);
-		//MY_MAP_MODAL.BEACON_D3_POINTS.addTo(MY_MAP_MODAL.map);
 		
 	});
 

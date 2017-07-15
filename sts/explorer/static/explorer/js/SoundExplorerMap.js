@@ -785,7 +785,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr('cx',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
 				.attr('cy',function(d){return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
 				.attr('fill', function(d){
-					if (d.properties.NumberOfSamples < 12) {
+					if (d.properties.NumberOfSamples < 9) {
 						return "#ccc";
 					} else {
 						return SoundExplorerMap.SDEPctPassColor(d.properties.pctPassNotRounded);
@@ -819,7 +819,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("dy", function(d){return (proj.latLngToLayerPoint(d.properties.latLonCoordinates).y) + 8/scale; })
 				.attr('style', "font-size: "+ 24/scale +"px;")
 				.text(function(d) { 
-					if (d.properties.NumberOfSamples < 12) {
+					if (d.properties.NumberOfSamples < 9) {
 						return 'N/A';
 					} else {
 						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
