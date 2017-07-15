@@ -869,11 +869,6 @@
 
 			d3.select('#timeSlider').call(mapSlider);
 
-			// update the map data on both the main map and the modal map
-			var value = [ start_date, end_date ];
-			SoundExplorerMap.updateMapFromSlider(value, false);
-			SoundExplorerModalMap.updateMapFromSlider(value);
-
 			//update main map combo boxes
 			console.log(start_date);
 			$( "#start_date" ).val(start_date);
@@ -882,6 +877,11 @@
 			//update the modal right hand column
 			var startDate = moment($( "#start_date_modal option:selected" ).val()).format("YYYY-MM-DD");
 			var endDate = moment($( "#end_date_modal option:selected" ).val()).format("YYYY-MM-DD");
+
+			// update the map data on both the main map and the modal map
+			var value = [ start_date, end_date ];
+			SoundExplorerMap.updateMapFromSlider(value, false);
+			SoundExplorerModalMap.updateMapFromSlider(value);
 
 			updateModalData(startDate, endDate);
 
