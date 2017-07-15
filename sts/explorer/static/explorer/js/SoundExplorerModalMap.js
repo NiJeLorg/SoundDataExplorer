@@ -704,7 +704,6 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 	});
 
 	if ($('#beacon').prop('checked')) {
-		console.log(thismap.BEACON_D3_POINTS);
 		thismap.BEACON_D3_POINTS.addTo(thismap.map);
 	}
 
