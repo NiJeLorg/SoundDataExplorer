@@ -1,0 +1,2 @@
+StateCode,BeachID,BeachName,StationID,StationName,CountyName,Identifier,StartDate,StartTime,ZoneCode,ActivityTypeCode,CharacteristicName,ResultValue,ResultMeasureUnit,ResultComment,ActivityDepthValue,ActivityDepthUnitCode,SampleCollectionMethodIdentifier,SampleCollectionMethodName,FieldGear,AnalysisDateTime,DetectionQuantitationLimit
+CT,,,,,,,,,,,,,,,,,,,,,
