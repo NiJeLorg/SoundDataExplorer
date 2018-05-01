@@ -15,12 +15,11 @@ class Command(BaseCommand):
 		#build url to pass to WU
 		base_url = "http://www.wunderground.com/";
 		stations = WeatherStationsPWS.objects.all()
-		#between today and 2004
-		today = datetime.today()
-		earliest = datetime(2015, 1, 1)
+		latest = datetime(2016, 12, 31)
+		earliest = datetime(2016, 4, 24)
 		counter = 0
 
-		for dateEval in rrule(YEARLY, dtstart=earliest, until=today):
+		for dateEval in rrule(YEARLY, dtstart=earliest, until=latest):
 			print dateEval.strftime("%Y/%m/%d")
 
 			for station in stations:
