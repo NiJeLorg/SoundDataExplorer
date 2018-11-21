@@ -44,8 +44,8 @@ class Command(BaseCommand):
 					wd.Date = dateEval
 					wd.PrecipitationIn = data['precip24Hour']					
 
-				except IOError as ioe:
-					print ioe
+				except Exception as e:
+					print e
 					time.sleep(60)
 					pass
 
@@ -84,8 +84,8 @@ class Command(BaseCommand):
 					wd.Date = dateEval
 					wd.PrecipitationIn = data['precip24Hour']
 
-				except IOError as ioe:
-					print ioe
+				except Exception as e:
+					print e
 					time.sleep(60)
 					pass
 
