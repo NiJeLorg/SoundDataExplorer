@@ -105,6 +105,16 @@ class WeatherDataPWS(models.Model):
 		return self.PrecipitationIn
 
 
+# For weather data for the 2016 season and beyond
+class WeatherDataHistoryAPI(models.Model):
+	BeachID = models.ForeignKey(Beaches)
+	DateTime = models.DateTimeField()
+	PrecipitationIn = models.CharField(max_length=10, blank=True, null=True)
+
+	def __str__(self):
+		return self.PrecipitationIn
+
+
 class MonthlyScores(models.Model):
 	BeachID = models.ForeignKey(Beaches)
 	MonthYear = models.DateField()

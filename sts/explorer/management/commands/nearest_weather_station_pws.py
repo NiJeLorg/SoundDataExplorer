@@ -13,7 +13,7 @@ class Command(BaseCommand):
 	def personal_weather_station_lookup(self):
 		#build url to pass to WU
 		key = '1b508ea9e71ea36f'
-		base_url = "http://api.wunderground.com/api/" + key + "/geolookup/q/";
+		base_url = "http://api.wunderground.com/api/" + key + "/geolookup/q/"
 		beaches = Beaches.objects.all()
 		for counter, beach in enumerate(beaches):
 			lat = beach.StartLatitude
