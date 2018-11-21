@@ -29,18 +29,26 @@ class Command(BaseCommand):
 			for station in stations:
 				counter += 1
 				print station.Icao
-				# specified in format 'YYYYMMDDHHmm'
-				stringToday = dateEval.strftime('%Y%m%d%H%M')
-				#https://api.weather.com/v3/wx/hod/conditions/historical/point?pointType=weighted&geocode=39.86,-104.67&startDateTime=201712071520&endDateTime=201712071520&units=e&format=json&apiKey=yourApiKey 
-				url = base_url + '?pointType=weighted&geocode=' + station.Lat + ',' + station.Lon + '&startDateTime=' + stringToday + '&endDateTime=' + stringToday + '&units=e&format=json&apiKey=' + settings.WEATHER_API_KEY
 
-				response = urllib.urlopen(url)
-				data = json.loads(response.read())
+				try:
+					# specified in format 'YYYYMMDDHHmm'
+					stringToday = dateEval.strftime('%Y%m%d%H%M')
+					#https://api.weather.com/v3/wx/hod/conditions/historical/point?pointType=weighted&geocode=39.86,-104.67&startDateTime=201712071520&endDateTime=201712071520&units=e&format=json&apiKey=yourApiKey 
+					url = base_url + '?pointType=weighted&geocode=' + station.Lat + ',' + station.Lon + '&startDateTime=' + stringToday + '&endDateTime=' + stringToday + '&units=e&format=json&apiKey=' + settings.WEATHER_API_KEY
 
-				wd = WeatherData()
-				wd.Station = station
-				wd.Date = dateEval
-				wd.PrecipitationIn = data['precip24Hour']
+					response = urllib.urlopen(url)
+					data = json.loads(response.read())
+
+					wd = WeatherData()
+					wd.Station = station
+					wd.Date = dateEval
+					wd.PrecipitationIn = data['precip24Hour']					
+
+				except IOError as ioe:
+					print ioe
+					time.sleep(60)
+					pass
+
 
 				#sleep code for 6 seconds every 100 API calls to keep from exceeding bandwidth
 				if counter % 100 == 0:
@@ -61,18 +69,26 @@ class Command(BaseCommand):
 			for station in stations:
 				print station.BeachID
 				counter += 1
-				# specified in format 'YYYYMMDDHHmm'
-				stringToday = dateEval.strftime('%Y%m%d%H%M')
-				#https://api.weather.com/v3/wx/hod/conditions/historical/point?pointType=weighted&geocode=39.86,-104.67&startDateTime=201712071520&endDateTime=201712071520&units=e&format=json&apiKey=yourApiKey 
-				url = base_url + '?pointType=weighted&geocode=' + str(station.BeachID.StartLatitude) + ',' + str(station.BeachID.StartLongitude) + '&startDateTime=' + stringToday + '&endDateTime=' + stringToday + '&units=e&format=json&apiKey=' + settings.WEATHER_API_KEY
 
-				response = urllib.urlopen(url)
-				data = json.loads(response.read())
+				try:
+					# specified in format 'YYYYMMDDHHmm'
+					stringToday = dateEval.strftime('%Y%m%d%H%M')
+					#https://api.weather.com/v3/wx/hod/conditions/historical/point?pointType=weighted&geocode=39.86,-104.67&startDateTime=201712071520&endDateTime=201712071520&units=e&format=json&apiKey=yourApiKey 
+					url = base_url + '?pointType=weighted&geocode=' + str(station.BeachID.StartLatitude) + ',' + str(station.BeachID.StartLongitude) + '&startDateTime=' + stringToday + '&endDateTime=' + stringToday + '&units=e&format=json&apiKey=' + settings.WEATHER_API_KEY
 
-				wd = WeatherDataPWS()
-				wd.Station = station
-				wd.Date = dateEval
-				wd.PrecipitationIn = data['precip24Hour']
+					response = urllib.urlopen(url)
+					data = json.loads(response.read())
+
+					wd = WeatherDataPWS()
+					wd.Station = station
+					wd.Date = dateEval
+					wd.PrecipitationIn = data['precip24Hour']
+
+				except IOError as ioe:
+					print ioe
+					time.sleep(60)
+					pass
+
 
 				#sleep code for 6 seconds every 100 API calls to keep from exceeding bandwidth
 				if counter % 100 == 0:
