@@ -42,7 +42,8 @@ class Command(BaseCommand):
 					wd = WeatherData()
 					wd.Station = station
 					wd.Date = dateEval
-					wd.PrecipitationIn = data['precip24Hour']					
+					wd.PrecipitationIn = data['precip24Hour']
+					wd.save()				
 
 				except Exception as e:
 					print e
@@ -83,6 +84,7 @@ class Command(BaseCommand):
 					wd.Station = station
 					wd.Date = dateEval
 					wd.PrecipitationIn = data['precip24Hour']
+					wd.save()
 
 				except Exception as e:
 					print e
