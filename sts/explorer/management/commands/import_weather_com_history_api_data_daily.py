@@ -19,12 +19,12 @@ class Command(BaseCommand):
 		#build url to pass to WU
 		base_url = "https://api.weather.com/v3/wx/hod/conditions/historical/point"
 		stations = WeatherStations.objects.all()
-		latest = datetime(2018, 10, 31)
-		earliest = datetime(2017, 1, 1)
+		latest = datetime(2018, 10, 31, 10, 00)
+		earliest = datetime(2016, 1, 1, 10, 00)
 		counter = 0
 
 		for dateEval in rrule(DAILY, dtstart=earliest, until=latest):
-			print dateEval.strftime("%Y/%m/%d")
+			print dateEval.strftime("%Y%m%d%H%M")
 
 			for station in stations:
 				counter += 1
@@ -60,8 +60,8 @@ class Command(BaseCommand):
 		#build url to pass to WU
 		base_url = "https://api.weather.com/v3/wx/hod/conditions/historical/point"
 		stations = WeatherStationsPWS.objects.all()
-		latest = datetime(2018, 10, 31)
-		earliest = datetime(2017, 1, 1)
+		latest = datetime(2018, 10, 31, 10, 00)
+		earliest = datetime(2016, 1, 1, 10, 00)
 		counter = 0
 
 		for dateEval in rrule(DAILY, dtstart=earliest, until=latest):
