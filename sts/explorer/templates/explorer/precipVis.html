@@ -85,7 +85,7 @@
 
     function drawTimeSlider() {
       var minDate = new Date(2004,0,1);
-      var maxDate = moment().toDate();
+      var maxDate = new Date(2018,0,1);
       var start_date_selected = moment('{{ startDate|date:"c"}}').startOf('month').toDate();
       var end_date_selected = moment('{{ endDate|date:"c"}}').endOf('month').toDate();
       if (bodyWidth <= 768) {
@@ -143,7 +143,7 @@
       $("body").addClass("loading");
 
       var minDate = new Date(2004,0,1);
-      var maxDate = moment().toDate();
+      var maxDate = new Date(2018,0,1);
       var start_date = moment($( "#start_date option:selected" ).val()).toDate();
       var end_date = moment($( "#end_date option:selected" ).val()).toDate();
 
