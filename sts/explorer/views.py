@@ -34,7 +34,7 @@ def index(request):
 
 	beachId = request.GET.get("beach","")
 
-	endDate = datetime.date(2016, 12, 31)
+	endDate = datetime.date(2017, 12, 31)
 	startDate = endDate + relativedelta(years=-5, days=+1)
 
 	try:
@@ -70,7 +70,7 @@ def beaconApi(request):
 		# for certain BeachID, set end data to last day of sampling regardless of what end data the user chose
 		if beach.BeachID == 'CT303091':
 			# set end date to last day of year for last season
-			endDatefilter = datetime.date(2010, 12, 31)
+			endDatefilter = datetime.date(2012, 12, 31)
 		else:
 			endDatefilter = endDateobject
 
