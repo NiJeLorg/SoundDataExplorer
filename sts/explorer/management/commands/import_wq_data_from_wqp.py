@@ -33,7 +33,12 @@ class Command(BaseCommand):
                     SDparsed = dateutil.parser.parse(row[6])
                     SDObject = SDparsed.date()
                     # get Beaches object to pass
-                    beach_id = row[20].split(';')[1]
+                    ProjectIdentifier = row[20].split(';')
+                    if ProjectIdentifier[0] !== "EPABEACH":
+                        beach_id = ProjectIdentifier[0]
+                    else:
+                        beach_id = ProjectIdentifier[1]
+
                     print beach_id
                     beach = Beaches.objects.get(BeachID=beach_id)
 
