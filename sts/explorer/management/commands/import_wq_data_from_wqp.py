@@ -15,7 +15,7 @@ import dateutil.parser
 class Command(BaseCommand):
     
     def load_BEACON_data(self, params):
-        base_url = 'https://www.waterqualitydata.us/data/Result/search'
+        base_url = 'https://www.waterqualitydata.us/data/Result/search?'
         year = '2018'
         
         full_url = base_url + params + '&startDateLo=01-01-'+ year +'&startDateHi=12-31-' + year
