@@ -69,7 +69,8 @@ class Command(BaseCommand):
         # CT
         self.load_BEACON_data('siteType=Ocean&organization=1CTDPHBM&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=yes&dataProfile=biological')
         # Northern Long Island Watershed -- 02030201
-        self.load_BEACON_data('countrycode=US&siteType=Ocean&huc=02030201&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')# Fisher’s Island
+        self.load_BEACON_data('countrycode=US&siteType=Ocean&huc=02030201&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')
+        # Fisher's Island
         self.load_BEACON_data('bBox=-72.00%2C41.235834%2C-71.912088%2C41.298513&siteType=Ocean&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')        
         print "Done."
 
