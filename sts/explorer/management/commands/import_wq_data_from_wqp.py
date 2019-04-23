@@ -28,39 +28,36 @@ class Command(BaseCommand):
             cr = csv.reader(decoded_content.splitlines(), delimiter=',')
             my_list = list(cr)
             for row in my_list:
-                print(row)
                 if row[0] != 'OrganizationIdentifier': # Ignore the header row, import everything else
                     # parse dates
-                    # SDparsed = dateutil.parser.parse(row[7])
-                    # SDObject = SDparsed.date()
+                    SDparsed = dateutil.parser.parse(row[6])
+                    SDObject = SDparsed.date()
                     # get Beaches object to pass
                     beach_id = row[20].split(';')[1]
                     print beach_id
-                    # beach = Beaches.objects.get(BeachID=row[1])
+                    beach = Beaches.objects.get(BeachID=beach_id)
 
-                    # sample = BeachWQSamples()
-                    # sample.StateCode = row[0]
-                    # sample.BeachID = beach
-                    # sample.BeachName = row[2]
-                    # sample.StationID = row[3]
-                    # sample.StationName = row[4]
-                    # sample.CountyName = row[5]
-                    # sample.Identifier = row[6]
-                    # sample.StartDate = SDObject
-                    # sample.StartTime = row[8]
-                    # sample.ZoneCode = row[9]
-                    # sample.ActivityTypeCode = row[10]
-                    # sample.CharacteristicName = row[11]
-                    # sample.ResultValue = row[12]
-                    # sample.ResultMeasureUnit = row[13]
-                    # sample.ResultComment = row[14]
-                    # sample.ActivityDepthValue = row[15]
-                    # sample.ActivityDepthUnitCode = row[16]
-                    # sample.SampleCollectionMethodIdentifier = row[17]
-                    # sample.SampleCollectionMethodName = row[18]
-                    # sample.FieldGear = row[19]
-                    # sample.AnalysisDateTime = row[20]
-                    # sample.DetectionQuantitationLimit = row[21]
+                    sample = BeachWQSamples()
+                    sample.BeachID = beach
+                    sample.BeachName = beach.BeachName
+                    sample.StationID = row[22]
+                    sample.Identifier = row[0]
+                    sample.StartDate = SDObject
+                    sample.StartTime = row[7]
+                    sample.ZoneCode = row[8]
+                    sample.ActivityTypeCode = row[3]
+                    sample.CharacteristicName = row[74]
+                    sample.ResultValue = row[76]
+                    sample.ResultMeasureUnit = row[77]
+                    sample.ResultComment = row[91]
+                    sample.ActivityDepthValue = row[13]
+                    sample.ActivityDepthUnitCode = row[14]
+                    sample.SampleCollectionMethodIdentifier = row[54]
+                    sample.SampleCollectionMethodName = row[55]
+                    sample.FieldGear = row[59]
+                    sample.AnalysisDateTime = row[129]
+                    sample.DetectionQuantitationLimit = row[136]
+                    print sample
                     # sample.save()
 
 
