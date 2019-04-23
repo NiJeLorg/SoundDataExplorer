@@ -48,7 +48,7 @@ class Command(BaseCommand):
                     sample.StationID = row[22]
                     sample.Identifier = row[0]
                     sample.StartDate = SDObject
-                    sample.StartTime = row[7]
+                    sample.StartTime = time
                     sample.ZoneCode = row[8]
                     sample.ActivityTypeCode = row[3]
                     sample.CharacteristicName = row[74]
