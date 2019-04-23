@@ -22,6 +22,7 @@ class Command(BaseCommand):
         response = requests.get(full_url)
         reader = csv.reader(response)
         for row in reader:
+            print row
             if row[0] != 'OrganizationIdentifier': # Ignore the header row, import everything else
                 # parse dates
                 # SDparsed = dateutil.parser.parse(row[7])
