@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 # SDparsed = dateutil.parser.parse(row[7])
                 # SDObject = SDparsed.date()
                 # get Beaches object to pass
-                beach_id = row[20].split(';')[1]
+                beach_id = row[20].split(';')
                 print beach_id
                 # beach = Beaches.objects.get(BeachID=row[1])
 
