@@ -28,13 +28,6 @@ class Command(BaseCommand):
                     # get Beaches object to pass
                     beach = Beaches.objects.get(BeachID=row[1])
 
-                    if row[8]:
-                        time = row[8]
-                    else:
-                        time = '00:00:00'
-                    
-                    print time
-
                     sample = BeachWQSamples()
                     sample.StateCode = row[0]
                     sample.BeachID = beach
@@ -44,7 +37,7 @@ class Command(BaseCommand):
                     sample.CountyName = row[5]
                     sample.Identifier = row[6]
                     sample.StartDate = SDObject
-                    sample.StartTime = time
+                    sample.StartTime = row[8]
                     sample.ZoneCode = row[9]
                     sample.ActivityTypeCode = row[10]
                     sample.CharacteristicName = row[11]

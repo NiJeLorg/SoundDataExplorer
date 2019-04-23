@@ -37,6 +37,11 @@ class Command(BaseCommand):
                     print beach_id
                     beach = Beaches.objects.get(BeachID=beach_id)
 
+                    if row[7]:
+                        time = row[7]
+                    else:
+                        time = '00:00:00'
+
                     sample = BeachWQSamples()
                     sample.BeachID = beach
                     sample.BeachName = beach.BeachName
