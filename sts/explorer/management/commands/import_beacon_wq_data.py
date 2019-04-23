@@ -32,6 +32,8 @@ class Command(BaseCommand):
                         time = row[8]
                     else:
                         time = '00:00:00'
+                    
+                    print time
 
                     sample = BeachWQSamples()
                     sample.StateCode = row[0]
