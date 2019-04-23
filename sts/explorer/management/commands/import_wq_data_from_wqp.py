@@ -40,41 +40,45 @@ class Command(BaseCommand):
                         beach_id = ProjectIdentifier[1]
 
                     print beach_id
-                    beach = Beaches.objects.get(BeachID=beach_id)
+                    try: 
+                        beach = Beaches.objects.get(BeachID=beach_id)
+                        if row[7]:
+                            time = row[7]
+                        else:
+                            time = '00:00:00'
 
-                    if row[7]:
-                        time = row[7]
-                    else:
-                        time = '00:00:00'
+                        if row[72] == "Present Below Quantification Limit":
+                            result_value = 0
+                        elif row[72] == "Present Above Quantification Limit":
+                            result_value = row[137]
+                        else:
+                            result_value = row[76]
 
-                    if row[72] == "Present Below Quantification Limit":
-                        result_value = 0
-                    elif row[72] == "Present Above Quantification Limit":
-                        result_value = row[137]
-                    else:
-                        result_value = row[76]
+                        sample = BeachWQSamples()
+                        sample.BeachID = beach
+                        sample.BeachName = beach.BeachName
+                        sample.StationID = row[22]
+                        sample.Identifier = row[0]
+                        sample.StartDate = SDObject
+                        sample.StartTime = time
+                        sample.ZoneCode = row[8]
+                        sample.ActivityTypeCode = row[3]
+                        sample.CharacteristicName = row[74]
+                        sample.ResultValue = result_value
+                        sample.ResultMeasureUnit = row[77]
+                        sample.ResultComment = row[91]
+                        sample.ActivityDepthValue = row[13]
+                        sample.ActivityDepthUnitCode = row[14]
+                        sample.SampleCollectionMethodIdentifier = row[54]
+                        sample.SampleCollectionMethodName = row[55]
+                        sample.FieldGear = row[59]
+                        sample.AnalysisDateTime = row[129]
+                        sample.DetectionQuantitationLimit = row[137]
+                        sample.save()
 
-                    sample = BeachWQSamples()
-                    sample.BeachID = beach
-                    sample.BeachName = beach.BeachName
-                    sample.StationID = row[22]
-                    sample.Identifier = row[0]
-                    sample.StartDate = SDObject
-                    sample.StartTime = time
-                    sample.ZoneCode = row[8]
-                    sample.ActivityTypeCode = row[3]
-                    sample.CharacteristicName = row[74]
-                    sample.ResultValue = result_value
-                    sample.ResultMeasureUnit = row[77]
-                    sample.ResultComment = row[91]
-                    sample.ActivityDepthValue = row[13]
-                    sample.ActivityDepthUnitCode = row[14]
-                    sample.SampleCollectionMethodIdentifier = row[54]
-                    sample.SampleCollectionMethodName = row[55]
-                    sample.FieldGear = row[59]
-                    sample.AnalysisDateTime = row[129]
-                    sample.DetectionQuantitationLimit = row[137]
-                    sample.save()
+                    except:
+                        pass
+
 
 
     def handle(self, *args, **options):
