@@ -45,7 +45,7 @@ class Command(BaseCommand):
                     if row[72] == "Present Below Quantification Limit":
                         result_value = 0
                     elif row[72] == "Present Above Quantification Limit":
-                        result_value = row[136]
+                        result_value = row[137]
                     else:
                         result_value = row[76]
 
@@ -68,7 +68,7 @@ class Command(BaseCommand):
                     sample.SampleCollectionMethodName = row[55]
                     sample.FieldGear = row[59]
                     sample.AnalysisDateTime = row[129]
-                    sample.DetectionQuantitationLimit = row[136]
+                    sample.DetectionQuantitationLimit = row[137]
                     sample.save()
 
 
