@@ -79,7 +79,7 @@ class Command(BaseCommand):
         # Bronx County
         self.load_BEACON_data('countrycode=US&statecode=US%3A36&countycode=US%3A36%3A005&siteType=Ocean&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')
         # CT
-        self.load_BEACON_data('siteType=Ocean&organization=1CTDPHBM&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=yes&dataProfile=biological')
+        self.load_BEACON_data('siteType=Ocean&organization=1CTDPHBM&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')
         # Northern Long Island Watershed -- 02030201
         self.load_BEACON_data('countrycode=US&siteType=Ocean&huc=02030201&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')
         # Fisher's Island
