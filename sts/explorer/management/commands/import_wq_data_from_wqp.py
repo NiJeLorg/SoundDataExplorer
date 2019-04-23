@@ -42,6 +42,13 @@ class Command(BaseCommand):
                     else:
                         time = '00:00:00'
 
+                    if row[72] == "Present Below Quantification Limit":
+                        result_value = 0
+                    elif row[72] == "Present Above Quantification Limit":
+                        result_value = row[136]
+                    else:
+                        result_value = row[76]
+
                     sample = BeachWQSamples()
                     sample.BeachID = beach
                     sample.BeachName = beach.BeachName
@@ -52,7 +59,7 @@ class Command(BaseCommand):
                     sample.ZoneCode = row[8]
                     sample.ActivityTypeCode = row[3]
                     sample.CharacteristicName = row[74]
-                    sample.ResultValue = row[76]
+                    sample.ResultValue = result_value
                     sample.ResultMeasureUnit = row[77]
                     sample.ResultComment = row[91]
                     sample.ActivityDepthValue = row[13]
