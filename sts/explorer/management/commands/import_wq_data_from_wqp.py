@@ -57,13 +57,20 @@ class Command(BaseCommand):
                     sample.FieldGear = row[59]
                     sample.AnalysisDateTime = row[129]
                     sample.DetectionQuantitationLimit = row[136]
-                    print sample
-                    # sample.save()
+                    sample.save()
 
 
     def handle(self, *args, **options):
         print "Loading BEACON Data...."
+        # Westchester County
         self.load_BEACON_data('countrycode=US&statecode=US%3A36&countycode=US%3A36%3A119&siteType=Ocean&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')
+        # Bronx County
+        self.load_BEACON_data('countrycode=US&statecode=US%3A36&countycode=US%3A36%3A005&siteType=Ocean&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')
+        # CT
+        self.load_BEACON_data('siteType=Ocean&organization=1CTDPHBM&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=yes&dataProfile=biological')
+        # Northern Long Island Watershed -- 02030201
+        self.load_BEACON_data('countrycode=US&siteType=Ocean&huc=02030201&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')# Fisher’s Island
+        self.load_BEACON_data('bBox=-72.00%2C41.235834%2C-71.912088%2C41.298513&siteType=Ocean&sampleMedia=Water&characteristicType=Microbiological&providers=STORET&mimeType=csv&zip=no&dataProfile=biological')        
         print "Done."
 
 
