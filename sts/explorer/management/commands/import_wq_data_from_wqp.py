@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     SDObject = SDparsed.date()
                     # get Beaches object to pass
                     ProjectIdentifier = row[20].split(';')
-                    if ProjectIdentifier[0] !== "EPABEACH":
+                    if ProjectIdentifier[0] != "EPABEACH":
                         beach_id = ProjectIdentifier[0]
                     else:
                         beach_id = ProjectIdentifier[1]
