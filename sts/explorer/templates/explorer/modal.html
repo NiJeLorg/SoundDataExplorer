@@ -103,9 +103,9 @@
 			            					{% endif %}
 
 			            					{% if sample.precipSum >= 0.5 %}
-			            						<td class="other info">{{ sample.precipSum|floatformat }}</td>
+			            						<td class="other info">{{ sample.precipSum|floatformat:2 }}</td>
 			            					{% else %}
-			            						<td class="other warning">{{ sample.precipSum|floatformat }}</td>
+			            						<td class="other warning">{{ sample.precipSum|floatformat:2 }}</td>
 			            					{% endif %}
 			            					
 		            					</tr>
