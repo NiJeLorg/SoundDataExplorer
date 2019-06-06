@@ -5,6 +5,7 @@ import csv
 from datetime import datetime
 from dateutil.rrule import rrule, DAILY
 from dateutil.relativedelta import relativedelta
+from django.db.models import Sum
 
 # import settings to point to the media directory
 from django.conf import settings
