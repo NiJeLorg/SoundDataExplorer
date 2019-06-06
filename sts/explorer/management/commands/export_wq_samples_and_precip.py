@@ -6,11 +6,10 @@ from datetime import datetime
 from dateutil.rrule import rrule, DAILY
 from dateutil.relativedelta import relativedelta
 
+# import settings to point to the media directory
+from django.conf import settings
 
 
-"""
-  Loads BEACON beaches from CSV
-"""
 class Command(BaseCommand):
 	
 	def export_wq_samples_and_precip(self):
