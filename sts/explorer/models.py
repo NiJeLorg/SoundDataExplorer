@@ -128,6 +128,22 @@ class MonthlyScores(models.Model):
 	def __str__(self):
 		return self.NumberOfSamples
 
+class AnnualScores(models.Model):
+	BeachID = models.ForeignKey(Beaches)
+	Year = models.DateField()
+	NumberOfSamples = models.IntegerField()
+	TotalPassSamples = models.IntegerField()
+	TotalDryWeatherSamples = models.IntegerField()
+	DryWeatherPassSamples = models.IntegerField()
+	TotalWetWeatherSamples = models.IntegerField()
+	WetWeatherPassSamples = models.IntegerField()
+	WetWeatherPassSamples = models.IntegerField()
+	MaxValueWet = models.IntegerField()
+	MaxValueDry = models.IntegerField()
+
+	def __str__(self):
+		return self.NumberOfSamples
+
 
 # models for the CMS below
 # custom image model for Wagtail
