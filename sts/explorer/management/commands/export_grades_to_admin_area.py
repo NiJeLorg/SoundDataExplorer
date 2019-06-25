@@ -31,11 +31,11 @@ class Command(BaseCommand):
 			tenYearsAgoYear = tenYearsAgoDate.year
 
 			#header rows
-			headerRow1 = ['SiteID', 'Site Name', 'State', 'County', 'Total Number of Passing Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Number of Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Percent Pass All Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Grade All Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Dry Weather Passing Samples  (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Total Dry Weather Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Percent Pass Dry Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Grade Dry Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Wet Weather Passing Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Total Wet Weather Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Percent Pass Wet Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Grade Wet Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')']
+			headerRow1 = ['SiteID', 'Site Name', 'State', 'County', 'Total Number of Passing Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Number of Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Percent Pass All Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Dry Weather Passing Samples  (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Total Dry Weather Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Percent Pass Dry Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Wet Weather Passing Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Total Wet Weather Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')', 'Percent Pass Wet Samples (' + str(fiveYearsAgoYear) + ' to ' + str(lastYear) + ')']
 
 			for dateEval in rrule(YEARLY, dtstart=tenYearsAgoDate, until=endDate):
 				year = str(dateEval.year)
-				addToHeader = ['Percent Pass All Samples (' + year + ')', 'Grade All Samples (' + year + ')']
+				addToHeader = ['Percent Pass Dry Samples (' + year + ')', 'Percent Pass Wet Samples (' + year + ')', 'Maximum Magnitude Dry (' + year + ')', 'Maximum Magnitude Wet (' + year + ')', 'Total Points (' + year + ')', 'Grade (' + year + ')']
 				headerRow1.extend(addToHeader)
 
 			writer.writerow(headerRow1)
@@ -43,35 +43,29 @@ class Command(BaseCommand):
 
 			beaches = Beaches.objects.all()
 			for beach in beaches:
-				scores = MonthlyScores.objects.filter(MonthYear__range=[fiveYearsAgoDate,endDate],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
+				scores = AnnualScores.objects.filter(Year__range=[fiveYearsAgoDate,endDate],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
 				for score in scores:
 
 					#calculate pct pass and passing grade in total
 					if score['NumberOfSamples__sum'] > 0:
 						pctPass = (float(score['TotalPassSamples__sum']) / float(score['NumberOfSamples__sum'])) * 100
 						pctPass = round(pctPass, 2)
-						gradeAll = self.calcGrade(pctPass)
 					else:
 						pctPass = ''
-						gradeAll = ''
 
 					#calculate pct pass and passing grade dry weather
 					if score['TotalDryWeatherSamples__sum'] > 0:
 						pctPassDry = (float(score['DryWeatherPassSamples__sum']) / float(score['TotalDryWeatherSamples__sum'])) * 100
 						pctPassDry = round(pctPassDry, 2)
-						gradeDry = self.calcGrade(pctPassDry)
 					else:
 						pctPassDry = ''
-						gradeDry = ''
 
 					#calculate pct pass and passing grade wet weather
 					if score['TotalWetWeatherSamples__sum']:
 						pctPassWet = (float(score['WetWeatherPassSamples__sum']) / float(score['TotalWetWeatherSamples__sum'])) * 100
 						pctPassWet = round(pctPassWet, 2)
-						gradeWet = self.calcGrade(pctPassWet)
 					else:
 						pctPassWet = ''
-						gradeWet = ''
 
 					row = []
 					row.append(beach.BeachID) 
@@ -81,67 +75,112 @@ class Command(BaseCommand):
 					row.append(score['TotalPassSamples__sum'])
 					row.append(score['NumberOfSamples__sum'])
 					row.append(pctPass)
-					row.append(gradeAll)
 					row.append(score['DryWeatherPassSamples__sum'])
 					row.append(score['TotalDryWeatherSamples__sum'])
 					row.append(pctPassDry)
-					row.append(gradeDry)
 					row.append(score['WetWeatherPassSamples__sum'])
 					row.append(score['TotalWetWeatherSamples__sum'])
 					row.append(pctPassWet)
-					row.append(gradeWet)
 
-					for dateEval in rrule(YEARLY, dtstart=tenYearsAgoDate, until=endDate):
-						firstOfYear = dateEval
-						lastOfYear = dateEval + relativedelta(years=+1, days=-1)
-						scores = MonthlyScores.objects.filter(MonthYear__range=[firstOfYear,lastOfYear],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'))
-						for score in scores:
+				for dateEval in rrule(YEARLY, dtstart=tenYearsAgoDate, until=endDate):
+					firstOfYear = dateEval
+					lastOfYear = dateEval + relativedelta(years=+1, days=-1)
+					scores = AnnualScores.objects.filter(Year__range=[firstOfYear,lastOfYear],BeachID__exact=beach)
+					for score in scores:
 
-							#calculate pct pass and passing grade in total
-							if score['NumberOfSamples__sum'] > 0:
-								pctPass = (float(score['TotalPassSamples__sum']) / float(score['NumberOfSamples__sum'])) * 100
-								pctPass = round(pctPass, 2)
-								gradeAll = self.calcGrade(pctPass)
-							else:
-								pctPass = ''
-								gradeAll = ''
+						#calculate pct pass and passing grade in total
+						if score.TotalDryWeatherSamples > 0:
+							pctPassDry = (float(score.DryWeatherPassSamples) / float(score.TotalDryWeatherSamples)) * 100
+							pctPassDry = round(pctPassDry, 2)
+							dryFrequencyPoints = self.FrequencyPoints(100-pctPassDry)
+						else:
+							pctPassDry = ''
+							dryFrequencyPoints = 0
 
-							row.append(pctPass)
-							row.append(gradeAll)
+						if score.TotalWetWeatherSamples > 0:
+							pctPassWet = (float(score.WetWeatherPassSamples) / float(score.TotalWetWeatherSamples)) * 100
+							pctPassWet = round(pctPassWet, 2)
+							wetFrequencyPoints = self.FrequencyPoints(100-pctPassWet)
+						else:
+							pctPassWet = ''	
+							wetFrequencyPoints = 0	
+
+						if dryFrequencyPoints == 0:
+							dryFrequencyPoints = wetFrequencyPoints
+
+						if wetFrequencyPoints == 0:
+							wetFrequencyPoints = dryFrequencyPoints
+						
+						dryMagnitudePoints = self.MagnitudePoints(score.MaxValueDry)
+						wetMagnitudePoints = self.MagnitudePoints(score.MaxValueWet)
+
+						totalPoints = dryFrequencyPoints + wetFrequencyPoints + dryMagnitudePoints + wetMagnitudePoints
+
+						grade = self.calcGrade(totalPoints)
+						
+
+						row.append(pctPassDry)
+						row.append(pctPassWet)
+						row.append(score.MaxValueDry)
+						row.append(score.MaxValueWet)
+						row.append(totalPoints)
+						row.append(grade)
 
 
-					writer.writerow(row)
 
-	def calcGrade(self, pct):
-		if pct >= 99:
+				writer.writerow(row)
+
+
+	def MagnitudePoints(self, d):
+		if d > 1040:
+			return 1
+		elif d > 521:
+			return 3
+		elif d > 105:
+			return 5
+		else:
+			return 7
+
+	def FrequencyPoints(self, d):
+		if d > 23:
+			return 1
+		elif d > 10:
+			return 3
+		elif d > 5:
+			return 5
+		else:
+			return 7
+	
+
+	def calcGrade(self, points):
+		if points >= 27:
 			return 'A+'
-		elif pct >= 97:
+		elif points >= 25:
 			return 'A'
-		elif pct >= 95:
+		elif points >= 23:
 			return 'A-'
-		elif pct >= 93:
+		elif points >= 21:
 			return 'B+'
-		elif pct >= 91:
+		elif points >= 19:
 			return 'B'
-		elif pct >= 89:
+		elif points >= 17:
 			return 'B-'
-		elif pct >= 87:
+		elif points >= 15:
 			return 'C+'
-		elif pct >= 85:
+		elif points >= 13:
 			return 'C'
-		elif pct >= 83:
+		elif points >= 11:
 			return 'C-'
-		elif pct >= 81:
+		elif points >= 9:
 			return 'D+'
-		elif pct >= 79:
+		elif points >= 7:
 			return 'D'
-		elif pct >= 77:
+		elif points >= 5:
 			return 'D-'
-		elif pct >= 0:
+		elif points >= 0:
 			return 'F'
 		else:
 			return ''
-
 
 	def handle(self, *args, **options):
 		print "Export current 5 year average and annual grade for most recent 10 years...."

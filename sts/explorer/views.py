@@ -34,8 +34,8 @@ def index(request):
 
 	beachId = request.GET.get("beach","")
 
-	endDate = datetime.date(2018, 12, 30)
-	startDate = endDate + relativedelta(years=-5, days=+1)
+	endDate = datetime.date(2018, 12, 31)
+	startDate = endDate + relativedelta(years=-1, days=+1)
 
 	try:
 		beach = Beaches.objects.get(BeachID__exact=beachId)
@@ -43,8 +43,7 @@ def index(request):
 		beach = None
 
 	#select the monthly scores for this beach in the dates requested
-	scores = MonthlyScores.objects.filter(MonthYear__range=[startDate,endDate]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
-
+	scores = AnnualScores.objects.filter(Year__range=[startDate,endDate])
 
 	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab, 'beachId':beachId, 'beach':beach})
 
@@ -62,7 +61,7 @@ def beaconApi(request):
 	endDateobject = endDateparsed.date()
 
 	if startDateobject >= endDateobject:
-		endDateobject = startDateobject + relativedelta(months=1)
+		endDateobject = startDateobject + relativedelta(years=+1, days=-1)
 
 	#select all the beaches and loop through them
 	beaches = Beaches.objects.all()
@@ -75,9 +74,9 @@ def beaconApi(request):
 			endDatefilter = endDateobject
 
 		#pull data based on date range selected
-		scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDatefilter],BeachID__exact=beach).values('BeachID').annotate(Sum('NumberOfSamples'), Sum('TotalPassSamples'), Sum('TotalDryWeatherSamples'), Sum('DryWeatherPassSamples'), Sum('TotalWetWeatherSamples'), Sum('WetWeatherPassSamples'))
+		scores = AnnualScores.objects.filter(Year__range=[startDateobject,endDatefilter],BeachID__exact=beach)
 
-		alltimesamples = MonthlyScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
+		alltimesamples = AnnualScores.objects.filter(BeachID__exact=beach).aggregate(Sum('NumberOfSamples'))
 		minMaxDate = BeachWQSamples.objects.filter(BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").aggregate(Min('StartDate'), Max('StartDate'))
 
 		# pull beach stories 
@@ -90,7 +89,7 @@ def beaconApi(request):
 
 
 		for score in scores:
-			if score['NumberOfSamples__sum'] >= 0:
+			if score.NumberOfSamples >= 0:
 				# parse dates into strings
 				data = {}
 				data['type'] = 'Feature'
@@ -102,12 +101,14 @@ def beaconApi(request):
 				data['properties']['StartDate'] = minMaxDate['StartDate__min']
 				data['properties']['EndDate'] = minMaxDate['StartDate__max']
 				data['properties']['AllTimeNumberOfSamples'] = alltimesamples['NumberOfSamples__sum']
-				data['properties']['NumberOfSamples'] = score['NumberOfSamples__sum']
-				data['properties']['TotalPassSamples'] = score['TotalPassSamples__sum']
-				data['properties']['TotalDryWeatherSamples'] = score['TotalDryWeatherSamples__sum']
-				data['properties']['DryWeatherPassSamples'] = score['DryWeatherPassSamples__sum']
-				data['properties']['TotalWetWeatherSamples'] = score['TotalWetWeatherSamples__sum']
-				data['properties']['WetWeatherPassSamples'] = score['WetWeatherPassSamples__sum']
+				data['properties']['NumberOfSamples'] = score.NumberOfSamples
+				data['properties']['TotalPassSamples'] = score.TotalPassSamples
+				data['properties']['TotalDryWeatherSamples'] = score.TotalDryWeatherSamples
+				data['properties']['DryWeatherPassSamples'] = score.DryWeatherPassSamples
+				data['properties']['TotalWetWeatherSamples'] = score.TotalWetWeatherSamples
+				data['properties']['WetWeatherPassSamples'] = score.WetWeatherPassSamples
+				data['properties']['MaxValueWet'] = score.MaxValueWet
+				data['properties']['MaxValueDry'] = score.MaxValueDry
 				data['properties']['BeachStory'] = story['url']
 				data['geometry'] = {}
 				data['geometry']['type'] = 'Point'
@@ -154,7 +155,7 @@ def modalApi(request):
 	endDateobject = endDateplusone + relativedelta(days=-1)
 
 	if startDateobject >= endDateobject:
-		endDateobject = startDateobject + relativedelta(months=+1, days=-1)
+		endDateobject = startDateobject + relativedelta(years=+1, days=-1)
 
 
 	#beach look up
@@ -167,8 +168,8 @@ def modalApi(request):
 	for bs in beachStory:
 		story['url'] = bs.url	
 
-	#select the monthly scores for this beach in the dates requested
-	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject],BeachID__exact=beach).values('BeachID').annotate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
+	#select the annual scores for this beach in the dates requested
+	scores = AnnualScores.objects.filter(Year__range=[startDateobject,endDateobject],BeachID__exact=beach)
 
 	#list of values to calulate gmean
 	sampleList = []
@@ -187,11 +188,12 @@ def modalApi(request):
 		if NumberOfSamples > 0:
 			for sample in samples:
 				today = sample.StartDate
-				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+				yesterday = sample.StartDate + relativedelta(days=-1)
+				twoDaysAgo = sample.StartDate + relativedelta(days=-2)
 				oneYearAgo = sample.StartDate + relativedelta(years=-1)
 
 				# check to see if personal weather station data exist for this beach on these days
-				pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).count()
+				pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=twoDaysAgo, Date__lte=yesterday).count()
 				if pwscount > 0:
 					# get the nearest staion with data
 					stations = WeatherStationsPWS.objects.filter(BeachID__exact=beach).order_by('DistanceKm')
@@ -201,11 +203,11 @@ def modalApi(request):
 						# check to see if the station has 0 precipitation within the last year -- if so skip this station
 						precip_check = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=oneYearAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
 						# get count of precip objects excluding any that have a daily value greater than 5 inches and skip if there are none
-						precipcount_under5 = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).exclude(PrecipitationIn__gt=5).count()
+						precipcount_under5 = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=twoDaysAgo, Date__lte=yesterday).exclude(PrecipitationIn__gt=5).count()
 
 						if precip_check['PrecipitationIn__sum'] > 0 and precipcount_under5 > 0:
 							# pull precip data for next step
-							precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+							precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 							#if there are precip objects and the sum of precip is > 0, then break the for loop
 							if precip['PrecipitationIn__sum'] is not None:
 								used_stations += 1
@@ -214,14 +216,14 @@ def modalApi(request):
 
 					if used_stations == 0:
 						# fall back to the airport precip data if no personal weather stations with usable data
-						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 						# look up Weather Station 
 						ws = WeatherStations.objects.get(BeachID__exact=beach)
 						stationCode = ws.Icao
 
 				else:
 					# fall back to the airport precip data if no personal weather stations nearby
-					precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+					precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 					# look up Weather Station 
 					ws = WeatherStations.objects.get(BeachID__exact=beach)
 					stationCode = ws.Icao
@@ -270,11 +272,12 @@ def modalApi(request):
 		if NumberOfSamples > 0:
 			for sample in allSamples:
 				today = sample.StartDate
-				threeDaysAgo = sample.StartDate + relativedelta(days=-3)
+				yesterday = sample.StartDate + relativedelta(days=-1)
+				twoDaysAgo = sample.StartDate + relativedelta(days=-2)
 				oneYearAgo = sample.StartDate + relativedelta(years=-1)
 
 				# check to see if personal weather station data exist for this beach on these days
-				pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).count()
+				pwscount = WeatherDataPWS.objects.filter(Station__BeachID__exact=beach, Date__gte=twoDaysAgo, Date__lte=yesterday).count()
 				if pwscount > 0:
 					# get the nearest staion with data
 					stations = WeatherStationsPWS.objects.filter(BeachID__exact=beach).order_by('DistanceKm')
@@ -284,11 +287,11 @@ def modalApi(request):
 						# check to see if the station has 0 precipitation within the last year -- if so skip this station
 						precip_check = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=oneYearAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
 						# get count of precip objects excluding any that have a daily value greater than 5 inches and skip if there are none
-						precipcount_under5 = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).exclude(PrecipitationIn__gt=5).count()
+						precipcount_under5 = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=twoDaysAgo, Date__lte=yesterday).exclude(PrecipitationIn__gt=5).count()
 
 						if precip_check['PrecipitationIn__sum'] > 0 and precipcount_under5 > 0:
 							# pull precip data for next step
-							precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+							precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 							#if there are precip objects and the sum of precip is > 0, then break the for loop
 							if precip['PrecipitationIn__sum'] is not None:
 								used_stations += 1
@@ -297,7 +300,7 @@ def modalApi(request):
 
 					if used_stations == 0:
 						# fall back to the airport precip data if no personal weather stations with usable data
-						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+						precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 						# look up Weather Station 
 						ws = WeatherStations.objects.get(BeachID__exact=beach)
 						stationCode = ws.Icao
@@ -305,7 +308,7 @@ def modalApi(request):
 
 				else:
 					# fall back to the airport precip data if no personal weather stations nearby
-					precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).aggregate(Sum('PrecipitationIn'))
+					precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 					# look up Weather Station 
 					ws = WeatherStations.objects.get(BeachID__exact=beach)
 					stationCode = ws.Icao
@@ -365,10 +368,10 @@ def precipApi(request):
 	endDateobject = endDateparsed.date()
 
 	if startDateobject >= endDateobject:
-		endDateobject = startDateobject + relativedelta(months=1)
+		endDateobject = startDateobject + relativedelta(years=+1, days=-1)
 
 	#select the monthly scores for this beach in the dates requested
-	scores = MonthlyScores.objects.filter(MonthYear__range=[startDateobject,endDateobject]).aggregate(NumberOfSamplesSum=Sum('NumberOfSamples'), TotalPassSamplesSum=Sum('TotalPassSamples'), TotalDryWeatherSamplesSum=Sum('TotalDryWeatherSamples'), DryWeatherPassSamplesSum=Sum('DryWeatherPassSamples'), TotalWetWeatherSamplesSum=Sum('TotalWetWeatherSamples'), WetWeatherPassSamplesSum=Sum('WetWeatherPassSamples'))
+	scores = AnnualScores.objects.filter(Year__range=[startDateobject,endDateobject])
 
 	return render(request, 'explorer/precipVis.html', {'scores':scores, 'startDate':startDateobject, 'endDate':endDateobject, 'tab':tab})
 

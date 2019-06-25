@@ -109,67 +109,41 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
         color: '#636363'
 	};
 
-	var start_date = moment($( "#start_date option:selected" ).val()).format('MMM YYYY');
-	var end_date = moment($( "#end_date option:selected" ).val()).format('MMM YYYY');
-
-	var sample_start_date = moment(feature.properties.StartDate).format('MMMM YYYY');
-	var sample_end_date = moment(feature.properties.EndDate).format('MMMM YYYY');
-
-	var pctFail = Math.round(100 - ((feature.properties.TotalPassSamples / feature.properties.NumberOfSamples) * 100));
-
-	var pctDryFail = Math.round(100 - ((feature.properties.DryWeatherPassSamples / feature.properties.TotalDryWeatherSamples) * 100));
-
-	var pctWetFail = Math.round(100 - ((feature.properties.WetWeatherPassSamples / feature.properties.TotalWetWeatherSamples) * 100));
 
 	layer.bindLabel("<span class='text-capitalize'>" + feature.properties.BeachName + "<br />" + feature.properties.County + "</span> County, " + feature.properties.State, { direction:'auto' });
 	
     // onclick set content in bottom bar and open doc if not open already 
 	layer.on("click",function(ev){
+		console.log(feature.properties.TotalPoints);
 
+		var year_selected = $(".annualFilter.active").val();
+		
 		if (feature.properties.BeachStory) {
 			var beachStory = "<br /><a href='"+ feature.properties.BeachStory +"' target='_blank'>Read this Beach Story</a>";			
 		} else {
 			var beachStory = "";
 		}
 
-		//console.log("Total Pass Samples: ", feature.properties.TotalPassSamples);
-		//console.log("Total Samples: ", feature.properties.NumberOfSamples);
-
-		if (!isNaN(pctWetFail)) {
-			var dropSvg = SoundExplorerMap.createDrop(pctWetFail);
-			if (bodyWidth <= 768) {
-				var dropPrint = "<div class='col-xs-4 text-center rainPad'>" + dropSvg + "</div>";
-			} else {
-				var dropPrint = "<div class='dropMargin pull-left'>" + dropSvg + "</div><div class='textPopup textDropPopup'>"+pctWetFail+"% of samples after wet weather.</div></div><div class='clearfix'></div>";
-			}
-		} else {
-			var dropPrint = '';
-		}
-		
-		if (!isNaN(pctDryFail)) {
-			var sunSvg = SoundExplorerMap.createSun(pctDryFail);
-			if (bodyWidth <= 768) {
-				var sunPrint = "<div class='col-xs-4 text-center sunPad'>" + sunSvg + "</div>";
-			} else {
-				var sunPrint = "<div class='pull-left'>" + sunSvg + "</div><div class='textPopup textSunPopup'>"+pctDryFail+"% of samples after dry weather.</div></div><div class='clearfix'>";
-			}
-		} else {
-			var sunPrint = '';
-		}
 		
 		MY_MAP.popup.setLatLng(ev.target._latlng);
 		if (feature.properties.NumberOfSamples < 9) {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.<br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>");
-		} else if (bodyWidth <= 768) {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='continer-fluid'><div class='row'><div class='col-xs-4 text-center dialPad'><div id='ringSvgPopup'></div></div>" + dropPrint + sunPrint + "</div><div class='row'><div class='col-xs-4 text-center'>All</div><div class='col-xs-4 text-center'>Wet</div><div class='col-xs-4 text-center'>Dry</div></div></div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples tested in "+ year_selected + ".</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.<br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples taken "+ start_date + "-" + end_date + ".</small><br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br />Failed safe swimming standard: <div class='clearfix'></div><div class='dropMargin pull-left'><div id='ringSvgPopup'></div></div><div class='textPopup textDropPopup'>"+pctFail+"% of the samples.</div></div><div class='clearfix'></div>" + dropPrint + sunPrint + "</div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><div class='clearfix'></div><div class='dropMargin pull-left'><div id='gradeSvgPopup'></div></div><div class='textPopup textDropPopup'><h4 class='text-center'>"+ feature.properties.NumberOfSamples + " samples tested in "+ year_selected + ".</h4></div></div><div class='clearfix'></div><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br /><h5>DRY WEATHER</h5><div class='pull-left'><div id='dryFrequency'></div></div><div class='textPopup textDropPopup'><div id='dryFrequencyText'>Hello</div></div><div class='clearfix'></div><div class='pull-left'><div id='dryMagnitude'></div></div><div class='textPopup textDropPopup'><div id='dryMagnitudeText'>Hello</div></div><div class='clearfix'></div><h5>WET WEATHER</h5><div class='pull-left'><div id='wetFrequency'></div></div><div class='textPopup textDropPopup'><div id='wetFrequencyText'>Hello</div></div><div class='clearfix'></div><div class='pull-left'><div id='wetMagnitude'></div></div><div class='textPopup textDropPopup'><div id='wetMagnitudeText'>Hello</div></div><div class='clearfix'></div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
 
-		// draw ring after popup is open
-		SoundExplorerMap.createRing(feature.properties.pctPassFail);
+		// draw grade seal after popup is open
+		SoundExplorerMap.createGrade(feature);
+
+		SoundExplorerMap.createFrequency(feature.properties.frequencyDryPoints, "#dryFrequency", "#dryFrequencyText");
+
+		SoundExplorerMap.createMagnitude(feature.properties.magnitudeDryPoints, "#dryMagnitude", "#dryMagnitudeText");
+
+		SoundExplorerMap.createFrequency(feature.properties.frequencyWetPoints, "#wetFrequency", "#wetFrequencyText");
+
+		SoundExplorerMap.createMagnitude(feature.properties.magnitudeWetPoints, "#wetMagnitude", "#wetMagnitudeText");
 
 
 	});
@@ -191,11 +165,13 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 
 }
 
-SoundExplorerMap.createRing = function (pctPassFail){
-	var w = 55;
-	var h = 60;
-	var innerRadius = 20;
-	var outerRadius = 25;
+SoundExplorerMap.createGrade = function (feature){
+	var w = 80;
+	var h = 80;
+	var circleRadius = 31;
+	var circleStroke = 4;
+	var innerRadius = 31;
+	var outerRadius = 34;
 
 	var arc = d3.svg.arc()
 	    .outerRadius(outerRadius)
@@ -205,101 +181,116 @@ SoundExplorerMap.createRing = function (pctPassFail){
 		.sort(null)
 		.value(function(d) { return Math.round(d.pct); });
 
-	var ringSvg = d3.select('#ringSvgPopup').append('svg')
+	var gradeSvg = d3.select('#gradeSvgPopup').append('svg')
 		.attr('width', w)
 		.attr('height', h)
 		.append('g')
-		.attr("class", "rings")
+		.attr("class", "grades")
 		.attr("transform", "translate("+w/2+","+h/2+")")
 		.selectAll(".arc")
-		.data(function(d) { return pie(pctPassFail); });
+		.data(function(d) { return pie(feature.properties.pctPassFail); });
 
-	ringSvg.enter().append('text')
+	gradeSvg.enter().append('circle')
+		.attr('r', circleRadius)
+		.attr('fill', function(d){
+			console.log(feature);
+			if (feature.properties.NumberOfSamples < 9) {
+				return "#ccc";
+			} else {
+				return SoundExplorerMap.SDEPctPassColor(feature.properties.TotalPoints);
+			}
+		})
+		.attr('stroke', '#252525')
+		.attr('stroke-width', circleStroke);
+
+	gradeSvg.enter().append('text')
 		.attr("text-anchor", "middle")
-		.attr("transform", "translate(0,6)")
-		.attr('style', function(d) { 
-			if (d.data.name == "fail") {
-				var pctNum = +d.data.pct;
-				if (pctNum == 100) {
-					var fontSize = 16;
-				} else {
-					var fontSize = 20;
-				}				
-				return "font-size: "+ fontSize +"px; stroke: #be1e2d; font-family:'Print Clearly'; }"
-			} 
+		.attr("transform", "translate(1,10)")
+		.attr('style', function(d) { 			
+			return "font-size: 34px; font-family:'Print Clearly'; }"
 		})
 		.text(function(d) { 
-			if (d.data.name == "fail") {
-				return Math.round(d.data.pct) + "%";
+			if (feature.properties.NumberOfSamples < 9) {
+				return 'N/A';
+			} else {
+				return SoundExplorerMap.SDEPctPassGrade(feature.properties.TotalPoints);	
 			}
 		});
 
 
-	var rings = ringSvg.enter()
+	var rings = gradeSvg.enter()
 		.append("path")
 		.attr("class", "arc")
 		.attr("d", arc)
 		.style("fill", function(d) {
-			if (d.data.name == "pass") {
-				return "#009444";
-			} else {
-				return "#be1e2d";
-			}
+			return '#252525';
+			// if (d.data.name == "pass") {
+			// 	return "#009444";
+			// } else {
+			// 	return "#be1e2d";
+			// }
 		});
+}
+
+SoundExplorerMap.createFrequency = function (points, div1, div2) {
+	var w = 50;
+	var h = 25;
+	var gradeSvg = d3.select(div1).append('svg')
+		.attr('width', w)
+		.attr('height', h);
+
+	gradeSvg.append('rect')
+		.attr('x', 1)
+		.attr('y', 1)
+		.attr('width', w-2)
+		.attr('height', h-2)
+		.attr('fill', function(d){
+			return SoundExplorerMap.SDEFreqMagColor(points);
+		})
+		.attr('stroke', 'black')
+		.attr('stroke-width', 1);
+
+	gradeSvg.append('text')
+		.attr("text-anchor", "middle")
+		.attr("transform", "translate(25,17)")
+		.attr('style', function(d) { 			
+			return "font-size: 14px; font-family:'Print Clearly'; }"
+		})
+		.text("FRQ");
+
+	$(div2).text(SoundExplorerMap.frequencyText(points));
 
 }
 
-SoundExplorerMap.createDrop = function (pctWetFail){
-	var dropSvg = '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="53.771" height="59.867249" id="svg2" xml:space="preserve"><g transform="matrix(1.25,0,0,-1.25,0,59.86725)" id="g10"><g transform="translate(9.4551,8.6643)"id="g20"><path d="m 0,0 c 6.529,-6.529 17.116,-6.53 23.643,-0.002 6.528,6.528 6.527,17.114 -0.002,23.643 L 11.82,35.462 0,23.642 C -6.528,17.114 -6.528,6.528 0,0" id="path22" style="fill:#c1e5e6;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g><g transform="translate(9.4551,8.6643)" id="g24"><path d="m 0,0 c 6.529,-6.529 17.116,-6.53 23.643,-0.002 6.528,6.528 6.527,17.114 -0.002,23.643 L 11.82,35.462 0,23.642 C -6.528,17.114 -6.528,6.528 0,0 z" id="path26" style="fill:none;stroke:#0a8ba7;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" /></g></g>';
+SoundExplorerMap.createMagnitude = function (points, div1, div2) {
+	var w = 50;
+	var h = 25;
+	var gradeSvg = d3.select(div1).append('svg')
+		.attr('width', w)
+		.attr('height', h);
 
-	// change translation if 100%, between 99 and 10 percent and less than 10 percent.
-	if (pctWetFail == 100) {
-		var fontSize = 16;
-		var translateRight = 9;
-	} else if (pctWetFail > 9.99) {
-		var fontSize = 20;
-		var translateRight = 10;		
-	} else {
-		var fontSize = 20;
-		var translateRight = 15;				
-	}
+	gradeSvg.append('rect')
+		.attr('x', 1)
+		.attr('y', 1)
+		.attr('width', w-2)
+		.attr('height', h-2)
+		.attr('fill', function(d){
+			return SoundExplorerMap.SDEFreqMagColor(points);
+		})
+		.attr('stroke', 'black')
+		.attr('stroke-width', 1);
 
-	var dropSvgText = '<g transform="translate('+ translateRight +',40)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'px; stroke:#0a8ba7;">'+pctWetFail+'%</text></g>';
+	gradeSvg.append('text')
+		.attr("text-anchor", "middle")
+		.attr("transform", "translate(25,17)")
+		.attr('style', function(d) { 			
+			return "font-size: 14px; font-family:'Print Clearly'; }"
+		})
+		.text("MAG");
 
-	var dropSvgClose = '</svg>';
+	$(div2).text(SoundExplorerMap.magnitudeText(points));
 
-	dropSvg = dropSvg + dropSvgText + dropSvgClose;
-
-	return dropSvg;
-
-} 
-
-
-SoundExplorerMap.createSun = function (pctDryFail){
-	var sunSvg = '<svg width="78.911" height="78.212"><g transform="matrix(1.25 0 0 -1.25 0 78.21)"><path d="M46.63 30.497c0-8.034-6.512-14.546-14.545-14.546-8.034 0-14.546 6.513-14.546 14.547s6.51 14.546 14.545 14.546c8.033 0 14.546-6.512 14.546-14.546" fill="#ee4137"/><path d="M46.63 30.497c0-8.034-6.512-14.546-14.545-14.546-8.034 0-14.546 6.513-14.546 14.547s6.51 14.546 14.545 14.546c8.033 0 14.546-6.512 14.546-14.546z" fill="none" stroke="#f79420" stroke-width="3" stroke-miterlimit="10"/><path d="M52.164 30.497h6.84M46.283 44.695l4.836 4.836M32.085 50.576v6.84M17.886 44.695L13.05 49.53M17.886 16.298l-3.842-3.842M32.123 10.726v-6.84M46.283 16.298l4.836-4.836M4.207 30.497h6.84" fill="none" stroke="#faaf41" stroke-width="5" stroke-linecap="round" stroke-miterlimit="10"/></g>';
-
-	// change translation if 100%, between 99 and 10 percent and less than 10 percent.
-	if (pctDryFail == 100) {
-		var fontSize = 14;
-		var translateRight = 24;
-	} else if (pctDryFail > 9.99) {
-		var fontSize = 18;
-		var translateRight = 25;		
-	} else {
-		var fontSize = 20;
-		var translateRight = 28;				
-	}
-
-
-	var sunSvgText = '<g transform="translate('+ translateRight +',45)" id="g26"><text style="font-family:\'Print Clearly\'; font-size: '+ fontSize +'px; stroke:#fff;">'+pctDryFail+'%</text></g>';
-
-	var sunSvgClose = '</svg>';
-
-	sunSvg = sunSvg + sunSvgText + sunSvgClose;
-
-	return sunSvg;
-
-} 
+}
 
 
 SoundExplorerMap.prototype.loadPointLayers = function (){
@@ -312,22 +303,7 @@ SoundExplorerMap.prototype.loadPointLayers = function (){
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
 
-		$.each(geojsonData.features, function(i, d){
-			d.properties.leafletId = 'layerID' + i;
-			// create coordiantes with latLon instead of lonLat for use with D3 later
-			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			if (d.properties.NumberOfSamples > 0) {
-				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-				d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
-			} else {
-				d.properties.pctPass = 100;
-				d.properties.pctPassNotRounded = 100;
-				d.properties.pctFail = 0;
-				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
-			}
-		});
+		geojsonData = SoundExplorerMap.processData(geojsonData);
 
 		thismap.BEACON_POINTS = L.geoJson(geojsonData, {
 		    pointToLayer: SoundExplorerMap.getStyleFor_BEACON_POINTS,
@@ -358,7 +334,7 @@ SoundExplorerMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 			color: '#636363',
 			weight: 1,
 			opacity: 1,
-			fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.pctPassNotRounded),
+			fillColor: SoundExplorerMap.SDEPctPassColor(feature.properties.TotalPoints),
 			fillOpacity: 1
 		});		
 	}
@@ -741,37 +717,75 @@ SoundExplorerMap.fillColor_IMPERVIOUS = function (d){
 
 }
 
+SoundExplorerMap.SDEFreqMagColor = function (d){
+    return d >= 7 ? '#39b54a' :
+           d >= 5 ? '#f9ae08' :
+           d >= 3 ? '#f47f45' :
+           d >= 1 ? '#ef4136' :
+                   	'#545454' ;	
+}
+
+SoundExplorerMap.frequencyText = function (d){
+    return d >= 7 ? 'Consistently Passes' :
+           d >= 5 ? 'Rarely Fails' :
+           d >= 3 ? 'Sometimes Fails' :
+           d >= 1 ? 'Consistently Fails' :
+                   	'' ;	
+}
+
+SoundExplorerMap.magnitudeText = function (d){
+    return d >= 7 ? 'No Samples Fail' :
+           d >= 5 ? 'Low Intensity Fails' :
+           d >= 3 ? 'Medium Intensity Fails' :
+           d >= 1 ? 'High Intensity Fails' :
+                   	'' ;	
+}
+
 SoundExplorerMap.SDEPctPassColor = function (d){
-    return d >= 95 ? '#39b54a' :
-           d >= 89 ? '#f7e34f' :
-           d >= 83 ? '#f9ae08' :
-           d >= 77 ? '#f47f45' :
+    return d >= 23 ? '#39b54a' :
+           d >= 17 ? '#f7e34f' :
+           d >= 11 ? '#f9ae08' :
+           d >= 5  ? '#f47f45' :
            d >= 0  ? '#ef4136' :
                    	 '#545454' ;	
 }
 
 SoundExplorerMap.SDEPctPassGrade = function (d){
-    return d >= 99 ? 'A+' :
-           d >= 97 ? 'A' :
-           d >= 95 ? 'A-' :
-           d >= 93 ? 'B+' :
-           d >= 91 ? 'B' :
-           d >= 89 ? 'B-' :
-           d >= 87 ? 'C+' :
-           d >= 85 ? 'C' :
-           d >= 83 ? 'C-' :
-           d >= 81 ? 'D+' :
-           d >= 79 ? 'D' :
-           d >= 77 ? 'D-' :
+    return d >= 27 ? 'A+' :
+           d >= 25 ? 'A' :
+           d >= 23 ? 'A-' :
+           d >= 21 ? 'B+' :
+           d >= 19 ? 'B' :
+           d >= 17 ? 'B-' :
+           d >= 15 ? 'C+' :
+           d >= 13 ? 'C' :
+           d >= 11 ? 'C-' :
+           d >= 9  ? 'D+' :
+           d >= 7  ? 'D' :
+           d >= 5  ? 'D-' :
            d >= 0  ? 'F' :
                    	 '' ;	
 }
 
+SoundExplorerMap.MagnitudePoints = function (d){
+    return d > 1040 ? 1:
+           d > 521  ? 3:
+           d > 105  ? 5:
+                   	  7;	
+}
+
+SoundExplorerMap.FrequencyPoints = function (d){
+    return d > 23 ? 1:
+           d > 10 ? 3:
+           d > 5  ? 5:
+                   	7;	
+}
+
 
 SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
-	var circleRadius = 20;
+	var circleRadius = 21;
 	var circleStroke = 4;
-	var innerRadius = 20;
+	var innerRadius = 21;
 	var outerRadius = 24;
 
 	thismap.BEACON_D3_POINTS = L.d3SvgOverlay( function(sel,proj){
@@ -783,15 +797,15 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 			beaconCircles.select('circle')
 				.attr('r', circleRadius/scale)
 				.attr('cx',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
-				.attr('cy',function(d){return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
+				.attr('cy',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
 				.attr('fill', function(d){
 					if (d.properties.NumberOfSamples < 9) {
 						return "#ccc";
 					} else {
-						return SoundExplorerMap.SDEPctPassColor(d.properties.pctPassNotRounded);
+						return SoundExplorerMap.SDEPctPassColor(d.properties.TotalPoints);
 					}
 				})
-				.attr('stroke', 'white')
+				.attr('stroke', '#252525')
 				.attr('stroke-width', circleStroke/scale);
 
 			var beaconRings = beaconCircles.select("g")
@@ -806,11 +820,12 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("class", "arc")
 				.attr("d", arc)
 				.style("fill", function(d) {
-					if (d.data.name == "pass") {
-						return "#009444";
-					} else {
-						return "#be1e2d";
-					}
+					return '#252525';
+					// if (d.data.name == "pass") {
+					// 	return "#009444";
+					// } else {
+					// 	return "#be1e2d";
+					// }
 				});
 
 			beaconCircles.select("text")
@@ -822,7 +837,7 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 					if (d.properties.NumberOfSamples < 9) {
 						return 'N/A';
 					} else {
-						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
+						return SoundExplorerMap.SDEPctPassGrade(d.properties.TotalPoints);	
 					}
 				});
 
@@ -872,8 +887,6 @@ SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 }
 
 
-
-
 SoundExplorerMap.updateMapFromSlider = function (value, main){
 	// close popups
 	MY_MAP.map.closePopup();
@@ -888,27 +901,13 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 
 	startDate = startDate.format("YYYY-MM-DD");
 
-
 	// update map
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
 
-		$.each(geojsonData.features, function(i, d){
-			d.properties.leafletId = 'layerID' + i;
-			// create coordiantes with latLon instead of lonLat for use with D3 later
-			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			if (d.properties.NumberOfSamples > 0) {
-				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-				d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail},{name: "pass", pct: d.properties.pctPass}];
-			} else {
-				d.properties.pctPass = 100;
-				d.properties.pctPassNotRounded = 100;
-				d.properties.pctFail = 0;
-				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail},{name: "pass", pct: d.properties.pctPass}];
-			}
-		});
+		geojsonData = SoundExplorerMap.processData(geojsonData);
+
+		console.log(geojsonData);
 
 		// clear layer
 		MY_MAP.BEACON_POINTS.clearLayers();
@@ -942,24 +941,65 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 
 	});
 
-	// update precip charts
-	// which tab is open
-	if ($('#precipMain').hasClass('show')) {
-		var tab = 'precip';
-	}
-	if ($('#timelineMain').hasClass('show')) {
-		var tab = 'timeline';
-	}
+}
 
-	$.ajax({
-        type: 'GET',
-        url:  'precipapi/?startDate=' + startDate + '&endDate=' + endDate + '&tab=' + tab,
-        success: function(data){
-        	$(".sliderPrecipWrapper").html(data);
-        }
-    });
+SoundExplorerMap.processData = function (geojsonData){
+	$.each(geojsonData.features, function(i, d){
+		d.properties.leafletId = 'layerID' + i;
+		// create coordiantes with latLon instead of lonLat for use with D3 later
+		d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
+		if (d.properties.NumberOfSamples > 0) {
+			// calculate scoring
+			// Magnitude Dry
+			if (d.properties.TotalDryWeatherSamples > 0) {
+				d.properties.magnitudeDryPoints = SoundExplorerMap.MagnitudePoints(d.properties.MaxValueDry);
+			} else {
+				d.properties.magnitudeDryPoints = SoundExplorerMap.MagnitudePoints(d.properties.MaxValueWet);
+			}
+			
+			// Magnitude Wet
+			if (d.properties.TotalWetWeatherSamples > 0) {
+				d.properties.magnitudeWetPoints = SoundExplorerMap.MagnitudePoints(d.properties.MaxValueWet);	
+			} else {
+				d.properties.magnitudeWetPoints = SoundExplorerMap.MagnitudePoints(d.properties.MaxValueDry);
+			}		
 
+			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+			d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
+			d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
 
+			// Frequency Dry
+			if (d.properties.TotalDryWeatherSamples > 0) {
+				d.properties.frequencyDryPoints = SoundExplorerMap.FrequencyPoints(100 - ((d.properties.DryWeatherPassSamples / d.properties.TotalDryWeatherSamples) * 100));
+			} else {
+				d.properties.frequencyDryPoints = SoundExplorerMap.FrequencyPoints(100 - ((d.properties.WetWeatherPassSamples / d.properties.TotalWetWeatherSamples) * 100));
+			} 
+
+			// Frequency Wet
+			if (d.properties.TotalWetWeatherSamples > 0) {
+				d.properties.frequencyWetPoints = SoundExplorerMap.FrequencyPoints(100 - ((d.properties.WetWeatherPassSamples / d.properties.TotalWetWeatherSamples) * 100));
+			} else {
+				d.properties.frequencyWetPoints = SoundExplorerMap.FrequencyPoints(100 - ((d.properties.DryWeatherPassSamples / d.properties.TotalDryWeatherSamples) * 100));
+			}
+			
+			// Total points
+			d.properties.TotalPoints = d.properties.magnitudeDryPoints + d.properties.magnitudeWetPoints + d.properties.frequencyDryPoints + d.properties.frequencyWetPoints;
+
+		} else {
+			d.properties.pctPass = 100;
+			d.properties.pctPassNotRounded = 100;
+			d.properties.pctFail = 0;
+			d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			d.properties.magnitudeDryPoints = 7;
+			d.properties.magnitudeWetPoints = 7;
+			d.properties.frequencyDryPoints = 7;
+			d.properties.frequencyWetPoints = 7;
+			d.properties.TotalPoints = d.properties.magnitudeDryPoints + d.properties.magnitudeWetPoints + d.properties.frequencyDryPoints + d.properties.frequencyWetPoints;
+
+		}
+	});
+	return geojsonData;
 }
 
 SoundExplorerMap.checkZoomSwitchLayers = function (){

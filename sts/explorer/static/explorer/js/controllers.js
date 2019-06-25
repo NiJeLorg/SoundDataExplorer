@@ -63,8 +63,8 @@ $( document ).ready(function() {
 		}, 10);
 		MY_MAP_MODAL = modalMap;
 		// ajax call to WQ samples api 
-		var startDate = moment($( "#start_date option:selected" ).val()).format("YYYY-MM-DD");
-		var endDate = moment($( "#end_date option:selected" ).val()).format("YYYY-MM-DD");
+		var startDate = moment($( ".annualFilter.active" ).val()).startOf('year').format("YYYY-MM-DD");
+		var endDate = moment($( ".annualFilter.active" ).val()).endOf('year').format("YYYY-MM-DD");
 
 	    $.ajax({
 	        type: 'GET',
@@ -77,7 +77,7 @@ $( document ).ready(function() {
 					SoundExplorerMap.modalZoom(parseFloat(beachLat), parseFloat(beachLon));		
 				}, 2000);
 			    
-	        }
+			}
 	    });
 
 	    // update facebook and twitter share urls
@@ -102,8 +102,8 @@ $( document ).ready(function() {
 		}, 10);
 		MY_MAP_MODAL = modalMap;
 		// ajax call to WQ samples api 
-		var startDate = moment($( "#start_date option:selected" ).val()).format("YYYY-MM-DD");
-		var endDate = moment($( "#end_date option:selected" ).val()).format("YYYY-MM-DD");
+		var startDate = moment($( ".annualFilter.active" ).val()).startOf('year').format("YYYY-MM-DD");
+		var endDate = moment($( ".annualFilter.active" ).val()).endOf('year').format("YYYY-MM-DD");
 
 	    $.ajax({
 	        type: 'GET',

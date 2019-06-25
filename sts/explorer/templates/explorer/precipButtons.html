@@ -1,0 +1,67 @@
+<div class="annualFilterOuterWrapper container-fluid">
+  <div class="row">
+    <div class="col-xs-1 text-center">
+      <i class="fa fa-caret-left fa-2x leftArrow"></i>
+    </div>
+    <div class="col-xs-10 padding-left-0 padding-right-0">
+      <div class="annualFilterWrapper">
+        <div id="timeButtons"></div>
+      </div>
+    </div>
+    <div class="col-xs-1 text-center">
+      <i class="fa fa-caret-right fa-2x rightArrow"></i>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  $( document ).ready(function() {
+
+    function drawButtons() {
+      var buttons = '';
+      var active = '';
+      var emdash = '';
+      endYear = endDate.split('-');
+      // loop trough years fro 2004 to most recent year and make buttons
+      for (let i = 2004; i <= endYear[0]; i++) {
+        if (i == endYear[0]) {
+          active = 'active';
+          emdash = '';
+        } else {
+          active = '';
+          emdash = '&mdash;';
+        }
+        buttons += '<button class="annualFilter ' + active + '" type="button" value="' + i + '">' + i + '</button>' + emdash;
+      }
+      $('#timeButtons').html(buttons);
+      var leftPos = $('.annualFilterWrapper').scrollLeft();
+      $(".annualFilterWrapper").animate({scrollLeft: leftPos + 2000}, 10);
+    }
+
+    // register an on click listener for dynamically created buttons above
+    $('body').on('click', 'button.annualFilter', function() {
+        var minDate = new Date(this.value,0,1);
+        var maxDate = new Date(this.value,11,31);
+        var value = [minDate, maxDate];
+        $("body").addClass("loading");
+        SoundExplorerMap.updateMapFromSlider(value, true);
+        $(".annualFilter").removeClass('active');
+        $(this).addClass('active');
+    });
+
+    $('body').on('click', 'i.leftArrow', function () { 
+      var leftPos = $('.annualFilterWrapper').scrollLeft();
+      $(".annualFilterWrapper").animate({scrollLeft: leftPos - 100}, 200);
+    });
+
+    $('body').on('click', 'i.rightArrow', function () { 
+      var leftPos = $('.annualFilterWrapper').scrollLeft();
+      $(".annualFilterWrapper").animate({scrollLeft: leftPos + 100}, 200);
+    });
+
+    drawButtons();
+
+  });
+
+</script>

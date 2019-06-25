@@ -82,29 +82,13 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 	var thismap = this;
 
 	// create date for today and for 5 years ago
-	var startDate = moment($( "#start_date option:selected" ).val()).startOf('month').format("YYYY-MM-DD");
-	var endDate = moment($( "#end_date option:selected" ).val()).endOf('month').format("YYYY-MM-DD");
+	var startDate = moment($( ".annualFilter.active" ).val()).startOf('year').format("YYYY-MM-DD");
+	var endDate = moment($( ".annualFilter.active" ).val()).endOf('year').format("YYYY-MM-DD");
 
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
 
-		$.each(geojsonData.features, function(i, d){
-			d.properties.leafletId = 'layerModalID' + i;
-			// create coordiantes with latLon instead of lonLat for use with D3 later
-			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-			if (d.properties.NumberOfSamples > 0) {
-				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-				d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
-			} else {
-				d.properties.pctPass = 100;
-				d.properties.pctPassNotRounded = 100;
-				d.properties.pctFail = 0;
-				d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
-			}
-
-		});
+		geojsonData = SoundExplorerModalMap.processData(geojsonData);
 
 		thismap.BEACON_POINTS = L.geoJson(geojsonData, {
 		    pointToLayer: SoundExplorerModalMap.getStyleFor_BEACON_POINTS,
@@ -568,37 +552,76 @@ SoundExplorerModalMap.fillColor_IMPERVIOUS = function (d){
 }
 
 
+SoundExplorerModalMap.SDEFreqMagColor = function (d){
+    return d >= 7 ? '#39b54a' :
+           d >= 5 ? '#f9ae08' :
+           d >= 3 ? '#f47f45' :
+           d >= 1 ? '#ef4136' :
+                   	'#545454' ;	
+}
+
+SoundExplorerModalMap.frequencyText = function (d){
+    return d >= 7 ? 'Consistently Passes' :
+           d >= 5 ? 'Rarely Fails' :
+           d >= 3 ? 'Sometimes Fails' :
+           d >= 1 ? 'Consistently Fails' :
+                   	'' ;	
+}
+
+SoundExplorerModalMap.magnitudeText = function (d){
+    return d >= 7 ? 'No Samples Fail' :
+           d >= 5 ? 'Low Intensity Fails' :
+           d >= 3 ? 'Medium Intensity Fails' :
+           d >= 1 ? 'High Intensity Fails' :
+                   	'' ;	
+}
+
 SoundExplorerModalMap.SDEPctPassColor = function (d){
-    return d >= 95 ? '#39b54a' :
-           d >= 89 ? '#f7e34f' :
-           d >= 83 ? '#f9ae08' :
-           d >= 77 ? '#f47f45' :
+    return d >= 23 ? '#39b54a' :
+           d >= 17 ? '#f7e34f' :
+           d >= 11 ? '#f9ae08' :
+           d >= 5  ? '#f47f45' :
            d >= 0  ? '#ef4136' :
                    	 '#545454' ;	
 }
 
 SoundExplorerModalMap.SDEPctPassGrade = function (d){
-    return d >= 99 ? 'A+' :
-           d >= 97 ? 'A' :
-           d >= 95 ? 'A-' :
-           d >= 93 ? 'B+' :
-           d >= 91 ? 'B' :
-           d >= 89 ? 'B-' :
-           d >= 87 ? 'C+' :
-           d >= 85 ? 'C' :
-           d >= 83 ? 'C-' :
-           d >= 81 ? 'D+' :
-           d >= 79 ? 'D' :
-           d >= 77 ? 'D-' :
+    return d >= 27 ? 'A+' :
+           d >= 25 ? 'A' :
+           d >= 23 ? 'A-' :
+           d >= 21 ? 'B+' :
+           d >= 19 ? 'B' :
+           d >= 17 ? 'B-' :
+           d >= 15 ? 'C+' :
+           d >= 13 ? 'C' :
+           d >= 11 ? 'C-' :
+           d >= 9  ? 'D+' :
+           d >= 7  ? 'D' :
+           d >= 5  ? 'D-' :
            d >= 0  ? 'F' :
                    	 '' ;	
 }
 
+SoundExplorerModalMap.MagnitudePoints = function (d){
+    return d > 1040 ? 1:
+           d > 521  ? 3:
+           d > 105  ? 5:
+                   	  7;	
+}
+
+SoundExplorerModalMap.FrequencyPoints = function (d){
+    return d > 23 ? 1:
+           d > 10 ? 3:
+           d > 5  ? 5:
+                   	7;	
+}
+
+
 
 SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
-	var circleRadius = 20;
+	var circleRadius = 21;
 	var circleStroke = 4;
-	var innerRadius = 20;
+	var innerRadius = 21;
 	var outerRadius = 24;
 
 	thismap.BEACON_D3_POINTS = L.d3SvgOverlay( function(sel,proj){
@@ -610,15 +633,15 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 			beaconCircles.select('circle')
 				.attr('r', circleRadius/scale)
 				.attr('cx',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).x;})
-				.attr('cy',function(d){return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
+				.attr('cy',function(d){ return proj.latLngToLayerPoint(d.properties.latLonCoordinates).y;})
 				.attr('fill', function(d){
 					if (d.properties.NumberOfSamples < 9) {
 						return "#ccc";
 					} else {
-						return SoundExplorerModalMap.SDEPctPassColor(d.properties.pctPassNotRounded);
+						return SoundExplorerModalMap.SDEPctPassColor(d.properties.TotalPoints);
 					}
 				})
-				.attr('stroke', 'white')
+				.attr('stroke', '#252525')
 				.attr('stroke-width', circleStroke/scale);
 
 			var beaconRings = beaconCircles.select("g")
@@ -633,11 +656,12 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 				.attr("class", "arc")
 				.attr("d", arc)
 				.style("fill", function(d) {
-					if (d.data.name == "pass") {
-						return "#009444";
-					} else {
-						return "#be1e2d";
-					}
+					return '#252525';
+					// if (d.data.name == "pass") {
+					// 	return "#009444";
+					// } else {
+					// 	return "#be1e2d";
+					// }
 				});
 
 			beaconCircles.select("text")
@@ -649,11 +673,12 @@ SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 					if (d.properties.NumberOfSamples < 9) {
 						return 'N/A';
 					} else {
-						return SoundExplorerMap.SDEPctPassGrade(d.properties.pctPassNotRounded);	
+						return SoundExplorerModalMap.SDEPctPassGrade(d.properties.TotalPoints);	
 					}
 				});
 
 		}
+
 
 		// set up vars
 		var scale = this._scale;
@@ -729,24 +754,7 @@ SoundExplorerModalMap.updateMapFromSlider = function (value){
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
 
-		$.each(geojsonData.features, function(i, d){
-			d.properties.leafletId = 'layerID' + i;
-			// create coordiantes with latLon instead of lonLat for use with D3 later
-			d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
-
-			if (d.properties.NumberOfSamples > 0) {
-				d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
-				d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
-				var pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
-				d.properties.pctPassFail = [{name: "fail", pct: pctFail}, {name: "pass", pct: d.properties.pctPass}];
-			} else {
-				d.properties.pctPass = 100;
-				d.properties.pctPassNotRounded = 100;
-				var pctFail = 0;
-				d.properties.pctPassFail = [{name: "fail", pct: pctFail}, {name: "pass", pct: d.properties.pctPass}];
-			}
-
-		});
+		geojsonData = SoundExplorerModalMap.processData(geojsonData);
 
 		// clear layer
 		MY_MAP_MODAL.BEACON_POINTS.clearLayers();
@@ -760,6 +768,65 @@ SoundExplorerModalMap.updateMapFromSlider = function (value){
 		
 	});
 
+}
+
+SoundExplorerModalMap.processData = function (geojsonData){
+	$.each(geojsonData.features, function(i, d){
+		d.properties.leafletId = 'layerModalID' + i;
+		// create coordiantes with latLon instead of lonLat for use with D3 later
+		d.properties.latLonCoordinates = [d.geometry.coordinates[1], d.geometry.coordinates[0]];
+		if (d.properties.NumberOfSamples > 0) {
+			// calculate scoring
+			// Magnitude Dry
+			if (d.properties.TotalDryWeatherSamples > 0) {
+				d.properties.magnitudeDryPoints = SoundExplorerModalMap.MagnitudePoints(d.properties.MaxValueDry);
+			} else {
+				d.properties.magnitudeDryPoints = SoundExplorerModalMap.MagnitudePoints(d.properties.MaxValueWet);
+			}
+			
+			// Magnitude Wet
+			if (d.properties.TotalWetWeatherSamples > 0) {
+				d.properties.magnitudeWetPoints = SoundExplorerModalMap.MagnitudePoints(d.properties.MaxValueWet);	
+			} else {
+				d.properties.magnitudeWetPoints = SoundExplorerModalMap.MagnitudePoints(d.properties.MaxValueDry);
+			}		
+
+			d.properties.pctPass = Math.round((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100);
+			d.properties.pctPassNotRounded = (d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100;
+			d.properties.pctFail = Math.round(100 - ((d.properties.TotalPassSamples / d.properties.NumberOfSamples) * 100));
+			d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+
+			// Frequency Dry
+			if (d.properties.TotalDryWeatherSamples > 0) {
+				d.properties.frequencyDryPoints = SoundExplorerModalMap.FrequencyPoints(100 - ((d.properties.DryWeatherPassSamples / d.properties.TotalDryWeatherSamples) * 100));
+			} else {
+				d.properties.frequencyDryPoints = SoundExplorerModalMap.FrequencyPoints(100 - ((d.properties.WetWeatherPassSamples / d.properties.TotalWetWeatherSamples) * 100));
+			} 
+
+			// Frequency Wet
+			if (d.properties.TotalWetWeatherSamples > 0) {
+				d.properties.frequencyWetPoints = SoundExplorerModalMap.FrequencyPoints(100 - ((d.properties.WetWeatherPassSamples / d.properties.TotalWetWeatherSamples) * 100));
+			} else {
+				d.properties.frequencyWetPoints = SoundExplorerModalMap.FrequencyPoints(100 - ((d.properties.DryWeatherPassSamples / d.properties.TotalDryWeatherSamples) * 100));
+			}
+			
+			// Total points
+			d.properties.TotalPoints = d.properties.magnitudeDryPoints + d.properties.magnitudeWetPoints + d.properties.frequencyDryPoints + d.properties.frequencyWetPoints;
+
+		} else {
+			d.properties.pctPass = 100;
+			d.properties.pctPassNotRounded = 100;
+			d.properties.pctFail = 0;
+			d.properties.pctPassFail = [{name: "fail", pct: d.properties.pctFail}, {name: "pass", pct: d.properties.pctPass}];
+			d.properties.magnitudeDryPoints = 7;
+			d.properties.magnitudeWetPoints = 7;
+			d.properties.frequencyDryPoints = 7;
+			d.properties.frequencyWetPoints = 7;
+			d.properties.TotalPoints = d.properties.magnitudeDryPoints + d.properties.magnitudeWetPoints + d.properties.frequencyDryPoints + d.properties.frequencyWetPoints;
+
+		}
+	});
+	return geojsonData;
 }
 
 

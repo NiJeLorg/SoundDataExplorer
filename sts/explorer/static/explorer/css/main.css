@@ -101,11 +101,10 @@ body.loading .loading-modal {
 }
  
 .popup-content {
-	display: none;
 	text-align: left;
 	width: 100%;
-    height: 25%;
-    display: block;	
+  height: 100%;
+  display: block;	
 }
 
 .dialPad {
@@ -134,7 +133,6 @@ body.loading .loading-modal {
 
 .grey-background {
   background: #d1d3d4;
-  min-height: 240px;
 }
 
 .grey-background-modal {
@@ -155,12 +153,28 @@ body.loading .loading-modal {
 	padding-bottom: 10px;
 }
 
+.padding-left-0 {
+  padding-left: 0px;
+}
+
+.padding-right-0 {
+  padding-right: 0px;
+}
+
 .margin-left-10 {
   margin-left: 10px;
 }
 
 .margin-top-0 {
   margin-top: 0px;
+}
+
+.margin-top-neg-10 {
+  margin-top: -10px;
+}
+
+.height-100 {
+  height: 100%;
 }
 
 #timeSlider {
@@ -170,6 +184,49 @@ body.loading .loading-modal {
 #timeSliderModal {
   margin: 50px 20px 30px 20px;
 }
+
+/*
+* Time filter buttons
+*/
+.annualFilterOuterWrapper {
+  white-space: nowrap;
+}
+
+.annualFilterWrapper {
+  overflow: scroll;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none; 
+}
+
+.annualFilterWrapper::-webkit-scrollbar { display: none; }
+
+.annualFilter {
+  background-color: transparent;
+  border: 0;
+}
+
+.annualFilter.active {
+  font-size: larger;
+  color: #098ca8;
+}
+
+.annualFilter:hover {
+  font-size: larger;
+  color: #8cc63f; 
+}
+
+.rightArrow, .leftArrow {
+  color: #098ca8;
+}
+
+.rightArrow:hover, .leftArrow:hover {
+  cursor: pointer;
+  color: #8cc63f;
+}
+
+
+
 
 /*
 * Leaflet overrides
@@ -473,7 +530,6 @@ hr {
 .textPopup {
   display: block;
   overflow: hidden;
-  margin-top: 10px;
 }
 
 .textRingPopup {
