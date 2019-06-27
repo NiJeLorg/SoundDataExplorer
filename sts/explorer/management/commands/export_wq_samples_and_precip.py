@@ -66,22 +66,22 @@ class Command(BaseCommand):
 									precip = WeatherData.objects.filter(Station__BeachID__exact=beach, Date__gte=threeDaysAgo, Date__lte=today).order_by('Date')
 
 
-						#empty list for a row
-						row = ['','','','','','','','','','','']
-						row[0] = beach.State
-						row[1] = beach.County
-						row[2] = beach.BeachID
-						row[3] = beach.BeachName
-						row[4] = dateEval.strftime('%m-%d-%Y')
-						row[5] = sample.ResultValue
-						row[6] = sample.CharacteristicName
+								#empty list for a row
+								row = ['','','','','','','','','','','']
+								row[0] = beach.State
+								row[1] = beach.County
+								row[2] = beach.BeachID
+								row[3] = beach.BeachName
+								row[4] = dateEval.strftime('%m-%d-%Y')
+								row[5] = sample.ResultValue
+								row[6] = sample.CharacteristicName
 
-						for i,p in enumerate(precip):
-							position = i + 7
-							row[position] = p.PrecipitationIn
+								for i,p in enumerate(precip):
+									position = i + 7
+									row[position] = p.PrecipitationIn
 
 
-						writer.writerow(row)
+								writer.writerow(row)
 
 
 	def handle(self, *args, **options):
