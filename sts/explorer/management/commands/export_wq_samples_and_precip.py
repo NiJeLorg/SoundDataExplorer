@@ -23,7 +23,7 @@ class Command(BaseCommand):
 			beaches = Beaches.objects.all()
 			for beach in beaches:
 				today = datetime.today()
-				earliest = datetime(2016, 1, 1)
+				earliest = datetime(2003, 1, 1)
 				for dateEval in rrule(DAILY, dtstart=earliest, until=today):
 					samples = BeachWQSamples.objects.filter(BeachID__exact=beach, StartDate__exact=dateEval)
 
