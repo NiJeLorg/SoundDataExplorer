@@ -106,13 +106,13 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		print "Loading Daily Weather.com Historical Data for local Airports...."
-		# self.get_precip_data_airport(2016)
-		# self.get_precip_data_airport(2017)
-		# self.get_precip_data_airport(2018)
+		self.get_precip_data_airport(2016)
+		self.get_precip_data_airport(2017)
+		self.get_precip_data_airport(2018)
 		print "Loading Daily Weather.com Historical Data for local PWS...."
 		self.get_precip_data_pws(2016)
-		# self.get_precip_data_pws(2017)
-		# self.get_precip_data_pws(2018)
+		self.get_precip_data_pws(2017)
+		self.get_precip_data_pws(2018)
 		print "Done."
 
 
