@@ -81,6 +81,14 @@ class WeatherData(models.Model):
 	def __str__(self):
 		return self.PrecipitationIn
 
+class HourlyWeatherData(models.Model):
+	Station = models.ForeignKey(WeatherStations)
+	DateTimeUTC = models.DateTimeField()
+	PrecipitationIn = models.CharField(max_length=10, blank=True, null=True)
+
+	def __str__(self):
+		return self.PrecipitationIn
+
 class WeatherStationsPWS(models.Model):
 	PwsId = models.CharField(max_length=20, blank=True, null=True)
 	BeachID = models.ForeignKey(Beaches)
@@ -104,6 +112,13 @@ class WeatherDataPWS(models.Model):
 	def __str__(self):
 		return self.PrecipitationIn
 
+class HourlyWeatherDataPWS(models.Model):
+	Station = models.ForeignKey(WeatherStationsPWS)
+	DateTimeUTC = models.DateTimeField()
+	PrecipitationIn = models.CharField(max_length=10, blank=True, null=True)
+
+	def __str__(self):
+		return self.PrecipitationIn
 
 # For weather data for the 2016 season and beyond
 class WeatherDataHistoryAPI(models.Model):
