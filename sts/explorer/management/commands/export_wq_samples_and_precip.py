@@ -80,7 +80,10 @@ class Command(BaseCommand):
 								if NumberOfPrecip > 0:
 									for i,p in enumerate(precip):
 										position = i + 7
-										row[position] = p.PrecipitationIn
+										try:
+											row[position] = p.PrecipitationIn
+										except IndexError as e:
+											pass
 
 
 								writer.writerow(row)
