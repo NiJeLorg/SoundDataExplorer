@@ -76,9 +76,11 @@ class Command(BaseCommand):
 								row[5] = sample.ResultValue
 								row[6] = sample.CharacteristicName
 
-								for i,p in enumerate(precip):
-									position = i + 7
-									row[position] = p.PrecipitationIn
+								NumberOfPrecip = len(precip)
+								if NumberOfPrecip > 0:
+									for i,p in enumerate(precip):
+										position = i + 7
+										row[position] = p.PrecipitationIn
 
 
 								writer.writerow(row)
