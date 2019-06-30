@@ -315,13 +315,6 @@ def modalApi(request):
 
 				sample.precipSum = precip['PrecipitationIn__sum']
 
-				# make list of sample values for gmean
-				# exclude Fecal Coliform from geomean
-				if sample.CharacteristicName != "Fecal Coliform":
-					if sample.ResultValue > 0:
-						sampleList.append(float(sample.ResultValue))
-					else:
-						sampleList.append(0.1)
 
 				# add to CSV
 				#empty list for a row
@@ -351,6 +344,7 @@ def modalApi(request):
 	sampleAggregates = BeachWQSamples.objects.filter(StartDate__range=[startDateobject,endDateobject],BeachID__exact=beach).exclude(CharacteristicName__exact="Total Coliform").values('BeachID').annotate(AvgValue=Avg('ResultValue'),MinValue=Min('ResultValue'),MaxValue=Max('ResultValue'))
 
 	#calculate the geometric mean
+	print (sampleList)
 	geomean = gmean(sampleList)
 
 	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered, 'beachStory': story['url']})

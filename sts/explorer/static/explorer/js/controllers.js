@@ -63,8 +63,8 @@ $( document ).ready(function() {
 		}, 10);
 		MY_MAP_MODAL = modalMap;
 		// ajax call to WQ samples api 
-		var startDate = moment($( ".annualFilter.active" ).val()).startOf('year').format("YYYY-MM-DD");
-		var endDate = moment($( ".annualFilter.active" ).val()).endOf('year').format("YYYY-MM-DD");
+		var startDate = moment($( ".annualFilter.active" ).val(), "YYYY").startOf('year').format("YYYY-MM-DD");
+		var endDate = moment($( ".annualFilter.active" ).val(), "YYYY").endOf('year').format("YYYY-MM-DD");
 
 	    $.ajax({
 	        type: 'GET',
@@ -102,8 +102,8 @@ $( document ).ready(function() {
 		}, 10);
 		MY_MAP_MODAL = modalMap;
 		// ajax call to WQ samples api 
-		var startDate = moment($( ".annualFilter.active" ).val()).startOf('year').format("YYYY-MM-DD");
-		var endDate = moment($( ".annualFilter.active" ).val()).endOf('year').format("YYYY-MM-DD");
+		var startDate = moment($( ".annualFilter.active" ).val(), "YYYY").startOf('year').format("YYYY-MM-DD");
+		var endDate = moment($( ".annualFilter.active" ).val(), "YYYY").endOf('year').format("YYYY-MM-DD");
 
 	    $.ajax({
 	        type: 'GET',

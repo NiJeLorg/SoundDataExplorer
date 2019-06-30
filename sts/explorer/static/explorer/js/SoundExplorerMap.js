@@ -129,7 +129,7 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		if (feature.properties.NumberOfSamples < 9) {
 			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><small>"+ feature.properties.NumberOfSamples + " samples tested in "+ year_selected + ".</small><br />Too few samples to provide a grade. Beaches should be sampled at least once a week during swimming season. Typical swimming season is 16 weeks.<br /><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>");
 		} else {
-			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><div class='clearfix'></div><div class='dropMargin pull-left'><div id='gradeSvgPopup'></div></div><div class='textPopup textDropPopup'><h4 class='text-center'>"+ feature.properties.NumberOfSamples + " samples tested in "+ year_selected + ".</h4></div></div><div class='clearfix'></div><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br /><h5>DRY WEATHER</h5><div class='pull-left'><div id='dryFrequency'></div></div><div class='textPopup textDropPopup'><div id='dryFrequencyText'>Hello</div></div><div class='clearfix'></div><div class='pull-left'><div id='dryMagnitude'></div></div><div class='textPopup textDropPopup'><div id='dryMagnitudeText'>Hello</div></div><div class='clearfix'></div><h5>WET WEATHER</h5><div class='pull-left'><div id='wetFrequency'></div></div><div class='textPopup textDropPopup'><div id='wetFrequencyText'>Hello</div></div><div class='clearfix'></div><div class='pull-left'><div id='wetMagnitude'></div></div><div class='textPopup textDropPopup'><div id='wetMagnitudeText'>Hello</div></div><div class='clearfix'></div>");
+			MY_MAP.popup.setContent(feature.properties.BeachName + "<br /><div class='clearfix'></div><div class='pull-left'><div id='gradeSvgPopup'></div></div><div class='textPopup textDropPopup'><h4 class='text-center'>"+ feature.properties.NumberOfSamples + " samples tested in "+ year_selected + ".</h4></div></div><div class='clearfix'></div><a href='#' data-toggle='modal' data-target='#siteView' data-beachid='"+ feature.properties.BeachID +"' data-beachname='"+ feature.properties.BeachName +"' data-lat='"+ feature.geometry.coordinates[1] +"' data-lon='"+ feature.geometry.coordinates[0] +"'>Enter Site View for more information.</a>"+ beachStory +"<br /><h5>DRY WEATHER</h5><div class='pull-left'><div id='dryFrequency'></div></div><div class='textPopup textDropPopup'><div id='dryFrequencyText'>Hello</div></div><div class='clearfix'></div><div class='pull-left'><div id='dryMagnitude'></div></div><div class='textPopup textDropPopup'><div id='dryMagnitudeText'>Hello</div></div><div class='clearfix'></div><h5>WET WEATHER</h5><div class='pull-left'><div id='wetFrequency'></div></div><div class='textPopup textDropPopup'><div id='wetFrequencyText'>Hello</div></div><div class='clearfix'></div><div class='pull-left'><div id='wetMagnitude'></div></div><div class='textPopup textDropPopup'><div id='wetMagnitudeText'>Hello</div></div><div class='clearfix'></div>");
 		}
 
 		MY_MAP.map.openPopup(MY_MAP.popup);
@@ -166,8 +166,8 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 }
 
 SoundExplorerMap.createGrade = function (feature){
-	var w = 80;
-	var h = 80;
+	var w = 70;
+	var h = 70;
 	var circleRadius = 31;
 	var circleStroke = 4;
 	var innerRadius = 31;
@@ -205,9 +205,9 @@ SoundExplorerMap.createGrade = function (feature){
 
 	gradeSvg.enter().append('text')
 		.attr("text-anchor", "middle")
-		.attr("transform", "translate(1,10)")
+		.attr("transform", "translate(2,13)")
 		.attr('style', function(d) { 			
-			return "font-size: 34px; font-family:'Print Clearly'; }"
+			return "font-size: 42px; font-family:'print_boldregular';"
 		})
 		.text(function(d) { 
 			if (feature.properties.NumberOfSamples < 9) {
@@ -254,7 +254,7 @@ SoundExplorerMap.createFrequency = function (points, div1, div2) {
 		.attr("text-anchor", "middle")
 		.attr("transform", "translate(25,17)")
 		.attr('style', function(d) { 			
-			return "font-size: 14px; font-family:'Print Clearly'; }"
+			return "font-size: 14px; font-family:'print_boldregular'; }"
 		})
 		.text("FRQ");
 
@@ -284,7 +284,7 @@ SoundExplorerMap.createMagnitude = function (points, div1, div2) {
 		.attr("text-anchor", "middle")
 		.attr("transform", "translate(25,17)")
 		.attr('style', function(d) { 			
-			return "font-size: 14px; font-family:'Print Clearly'; }"
+			return "font-size: 14px; font-family:'print_boldregular'; }"
 		})
 		.text("MAG");
 
@@ -718,9 +718,9 @@ SoundExplorerMap.fillColor_IMPERVIOUS = function (d){
 }
 
 SoundExplorerMap.SDEFreqMagColor = function (d){
-    return d >= 7 ? '#39b54a' :
-           d >= 5 ? '#f9ae08' :
-           d >= 3 ? '#f47f45' :
+    return d >= 7 ? '#2bb673' :
+           d >= 5 ? '#fff200' :
+           d >= 3 ? '#f7941d' :
            d >= 1 ? '#ef4136' :
                    	'#545454' ;	
 }
@@ -730,22 +730,22 @@ SoundExplorerMap.frequencyText = function (d){
            d >= 5 ? 'Rarely Fails' :
            d >= 3 ? 'Sometimes Fails' :
            d >= 1 ? 'Consistently Fails' :
-                   	'' ;	
+                   	'Not Enough Data' ;	
 }
 
 SoundExplorerMap.magnitudeText = function (d){
-    return d >= 7 ? 'No Samples Fail' :
-           d >= 5 ? 'Low Intensity Fails' :
-           d >= 3 ? 'Medium Intensity Fails' :
-           d >= 1 ? 'High Intensity Fails' :
-                   	'' ;	
+    return d >= 7 ? 'No Sample Failure' :
+           d >= 5 ? 'Low Intensity Failure' :
+           d >= 3 ? 'Medium Intensity Failure' :
+           d >= 1 ? 'High Intensity Failure' :
+                   	'Not Enough Data' ;	
 }
 
 SoundExplorerMap.SDEPctPassColor = function (d){
-    return d >= 23 ? '#39b54a' :
-           d >= 17 ? '#f7e34f' :
-           d >= 11 ? '#f9ae08' :
-           d >= 5  ? '#f47f45' :
+    return d >= 23 ? '#2bb673' :
+           d >= 17 ? '#c3db67' :
+           d >= 11 ? '#fff200' :
+           d >= 5  ? '#f7941d' :
            d >= 0  ? '#ef4136' :
                    	 '#545454' ;	
 }
@@ -906,8 +906,6 @@ SoundExplorerMap.updateMapFromSlider = function (value, main){
 		geojsonData = data;
 
 		geojsonData = SoundExplorerMap.processData(geojsonData);
-
-		console.log(geojsonData);
 
 		// clear layer
 		MY_MAP.BEACON_POINTS.clearLayers();

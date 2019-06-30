@@ -215,6 +215,9 @@ body.loading .loading-modal {
   font-size: larger;
   color: #8cc63f; 
 }
+.annualFilter:focus {
+  outline: none;
+}
 
 .rightArrow, .leftArrow {
   color: #098ca8;

@@ -82,8 +82,8 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 	var thismap = this;
 
 	// create date for today and for 5 years ago
-	var startDate = moment($( ".annualFilter.active" ).val()).startOf('year').format("YYYY-MM-DD");
-	var endDate = moment($( ".annualFilter.active" ).val()).endOf('year').format("YYYY-MM-DD");
+	var startDate = moment($( ".annualFilter.active" ).val(), "YYYY").startOf('year').format("YYYY-MM-DD");
+	var endDate = moment($( ".annualFilter.active" ).val(), "YYYY").endOf('year').format("YYYY-MM-DD");
 
 	d3.json('/beaconapi/?startDate=' + startDate + '&endDate=' + endDate, function(data) {
 		geojsonData = data;
@@ -553,9 +553,9 @@ SoundExplorerModalMap.fillColor_IMPERVIOUS = function (d){
 
 
 SoundExplorerModalMap.SDEFreqMagColor = function (d){
-    return d >= 7 ? '#39b54a' :
-           d >= 5 ? '#f9ae08' :
-           d >= 3 ? '#f47f45' :
+    return d >= 7 ? '#2bb673' :
+           d >= 5 ? '#fff200' :
+           d >= 3 ? '#f7941d' :
            d >= 1 ? '#ef4136' :
                    	'#545454' ;	
 }
@@ -569,18 +569,18 @@ SoundExplorerModalMap.frequencyText = function (d){
 }
 
 SoundExplorerModalMap.magnitudeText = function (d){
-    return d >= 7 ? 'No Samples Fail' :
-           d >= 5 ? 'Low Intensity Fails' :
-           d >= 3 ? 'Medium Intensity Fails' :
+    return d >= 7 ? 'No Sample Failure' :
+           d >= 5 ? 'Low Intensity Failure' :
+           d >= 3 ? 'Medium Intensity Failure' :
            d >= 1 ? 'High Intensity Fails' :
                    	'' ;	
 }
 
 SoundExplorerModalMap.SDEPctPassColor = function (d){
-    return d >= 23 ? '#39b54a' :
-           d >= 17 ? '#f7e34f' :
-           d >= 11 ? '#f9ae08' :
-           d >= 5  ? '#f47f45' :
+    return d >= 23 ? '#2bb673' :
+           d >= 17 ? '#c3db67' :
+           d >= 11 ? '#fff200' :
+           d >= 5  ? '#f7941d' :
            d >= 0  ? '#ef4136' :
                    	 '#545454' ;	
 }
