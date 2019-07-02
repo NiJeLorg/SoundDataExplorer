@@ -8,7 +8,7 @@ from explorer.models import *
 import json
 
 # for date parsing
-import datetime
+from datetime import datetime, date, time
 import dateutil.parser
 from dateutil.relativedelta import relativedelta
 
@@ -22,7 +22,6 @@ from scipy.stats import gmean
 import csv
 
 # path to media root for adding a CSV file 
-import time
 import os
 from django.conf import settings
 MEDIA_ROOT = settings.MEDIA_ROOT
@@ -34,7 +33,7 @@ def index(request):
 
 	beachId = request.GET.get("beach","")
 
-	endDate = datetime.date(2018, 12, 31)
+	endDate = date(2018, 12, 31)
 	startDate = endDate + relativedelta(years=-1, days=+1)
 
 	try:
@@ -69,7 +68,7 @@ def beaconApi(request):
 		# for certain BeachID, set end data to last day of sampling regardless of what end data the user chose
 		if beach.BeachID == 'CT303091':
 			# set end date to last day of year for last season
-			endDatefilter = datetime.date(2012, 12, 31)
+			endDatefilter = date(2012, 12, 31)
 		else:
 			endDatefilter = endDateobject
 
@@ -137,11 +136,11 @@ def modalApi(request):
 	endDate = request.GET.get("endDate","2100-01-01")
 	beachId = request.GET.get("beachId","")
 	tab = request.GET.get("tab","precip")
-	twentySixteen = datetime.date(2016, 1, 1)
-	midnight = datetime.time(0,0,0)
+	twentySixteen = date(2016, 1, 1)
+	midnight = time(0,0,0)
 
 	#setup for CSV files
-	ts = str(int(time.time()))
+	ts = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 	folder = "/csv_files/"+ beachId +"/"
 	filename_all = "SoundHealthExplorer_download_all_"+ beachId +".csv"
 	filename_filtered = "SoundHealthExplorer_download_filtered_"+ beachId +"_"+ ts +".csv"
@@ -183,7 +182,7 @@ def modalApi(request):
 	filtered_csv_path = os.path.join(MEDIA_ROOT + folder + filename_filtered)
 	with open(filtered_csv_path, 'wb') as f:
 		writer = csv.writer(f, quoting=csv.QUOTE_ALL)
-		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)', 'Weather Station ID']
+		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)']
 		writer.writerow(headerRow)
 
 		NumberOfSamples = len(samples)
@@ -211,6 +210,7 @@ def modalApi(request):
 								# pull precip data for next step
 								precip = WeatherDataPWS.objects.filter(Station__exact=station, Date__gte=twoDaysAgo, Date__lte=yesterday).aggregate(Sum('PrecipitationIn'))
 								used_stations += 1
+
 								break
 
 						if used_stations == 0:
@@ -227,9 +227,9 @@ def modalApi(request):
 					# make a date time object from the sample date time in UTC 
 					# if time == '00:00:00' then assume sample is taken at 11am Eastern (6am UTC)
 					if sample.StartTime == midnight:
-						sampleDateTime = datetime.datetime.combine(sample.StartDate, time(6,0,0))
+						sampleDateTime = datetime.combine(sample.StartDate, time(6,0,0))
 					else:
-						sampleDateTime = datetime.datetime.combine(sample.StartDate, sample.StartTime) + relativedelta(hours=-5)
+						sampleDateTime = datetime.combine(sample.StartDate, sample.StartTime) + relativedelta(hours=-5)
 
 					fortyEightHoursAgo = sampleDateTime + relativedelta(hours=-48)
 					oneYearAgo = sampleDateTime + relativedelta(years=-1)
@@ -300,7 +300,7 @@ def modalApi(request):
 
 				# add to CSV
 				#empty list for a row
-				row = ['','','','','','','','','','','','']
+				row = ['','','','','','','','','','','']
 				row[0] = beach.BeachID
 				row[1] = sample.BeachName
 				row[2] = sample.StationID
@@ -312,7 +312,7 @@ def modalApi(request):
 				row[8] = sample.ResultMeasureUnit
 				row[9] = sample.CharacteristicName
 				row[10] = sample.precipSum
-				row[11] = stationCode
+
 				# write row to CSV
 				writer.writerow(row)
 
@@ -325,7 +325,7 @@ def modalApi(request):
 	all_csv_path = os.path.join(MEDIA_ROOT + folder + filename_all)
 	with open(all_csv_path, 'wb') as f:
 		writer = csv.writer(f, quoting=csv.QUOTE_ALL)
-		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)', 'Weather Station ID']
+		headerRow = ['Beach ID','Beach Name', 'Station ID', 'Station Name', 'State Code', 'County Name', 'Sample Date', 'Result Value', 'Result Measure Unit', 'Characteristic Name', 'Precipitation (In.)']
 		writer.writerow(headerRow)
 
 		NumberOfSamples = len(allSamples)
@@ -434,7 +434,7 @@ def modalApi(request):
 
 				# add to CSV
 				#empty list for a row
-				row = ['','','','','','','','','','','','']
+				row = ['','','','','','','','','','','']
 				row[0] = beach.BeachID
 				row[1] = sample.BeachName
 				row[2] = sample.StationID
@@ -446,7 +446,7 @@ def modalApi(request):
 				row[8] = sample.ResultMeasureUnit
 				row[9] = sample.CharacteristicName
 				row[10] = sample.precipSum
-				row[11] = stationCode
+
 				# write row to CSV
 				writer.writerow(row)
 
