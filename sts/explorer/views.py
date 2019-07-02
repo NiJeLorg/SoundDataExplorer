@@ -227,9 +227,9 @@ def modalApi(request):
 					# make a date time object from the sample date time in UTC 
 					# if time == '00:00:00' then assume sample is taken at 11am Eastern (6am UTC)
 					if sample.StartTime == midnight:
-						sampleDateTime = datetime.combine(sample.StartDate, time(6,0,0))
+						sampleDateTime = datetime.datetime.combine(sample.StartDate, time(6,0,0))
 					else:
-						sampleDateTime = datetime.combine(sample.StartDate, sample.StartTime) + relativedelta(hours=-5)
+						sampleDateTime = datetime.datetime.combine(sample.StartDate, sample.StartTime) + relativedelta(hours=-5)
 
 					fortyEightHoursAgo = sampleDateTime + relativedelta(hours=-48)
 					oneYearAgo = sampleDateTime + relativedelta(years=-1)
