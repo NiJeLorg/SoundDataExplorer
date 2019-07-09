@@ -18,7 +18,7 @@ class Command(BaseCommand):
 		with open(os.path.join(__location__, 'documents/wq_samples_and_precip.csv'), 'wb') as f:
 			writer = csv.writer(f, quoting=csv.QUOTE_ALL)
 			# header row
-			headerRow = ['State','County','BeachID','Beach Name', 'Date', 'Sample Value', 'Characteristic Name' 'Precip 48 Hours Prior']
+			headerRow = ['State','County','BeachID','Beach Name', 'Date', 'Sample Value', 'Characteristic Name', 'Precip 48 Hours Prior']
 			writer.writerow(headerRow)
 
 			# important dates
