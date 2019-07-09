@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
 			# important dates
 			today = datetime.today()
-			earliest = datetime(2016, 1, 1)
+			earliest = datetime(2003, 1, 1)
 			twentySixteen = datetime(2016, 1, 1)
 			midnight = time(0,0,0)
 
