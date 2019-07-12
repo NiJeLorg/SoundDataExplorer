@@ -93,27 +93,39 @@ class Command(BaseCommand):
 							pctPassDry = (float(score.DryWeatherPassSamples) / float(score.TotalDryWeatherSamples)) * 100
 							pctPassDry = round(pctPassDry, 2)
 							dryFrequencyPoints = self.FrequencyPoints(100-pctPassDry)
+							maxValueDry = score.MaxValueDry
+							dryMagnitudePoints = self.MagnitudePoints(maxValueDry)
 						else:
 							pctPassDry = ''
 							dryFrequencyPoints = 0
+							maxValueDry = ''
+							dryMagnitudePoints = 0
 
 						if score.TotalWetWeatherSamples > 0:
 							pctPassWet = (float(score.WetWeatherPassSamples) / float(score.TotalWetWeatherSamples)) * 100
 							pctPassWet = round(pctPassWet, 2)
 							wetFrequencyPoints = self.FrequencyPoints(100-pctPassWet)
+							maxValueWet = score.MaxValueWet
+							wetMagnitudePoints = self.MagnitudePoints(maxValueWet)
 						else:
 							pctPassWet = ''	
 							wetFrequencyPoints = 0	
+							maxValueWet = ''
+							wetMagnitudePoints = 0
 
 						if dryFrequencyPoints == 0:
 							dryFrequencyPoints = wetFrequencyPoints
 
 						if wetFrequencyPoints == 0:
 							wetFrequencyPoints = dryFrequencyPoints
-						
-						dryMagnitudePoints = self.MagnitudePoints(score.MaxValueDry)
-						wetMagnitudePoints = self.MagnitudePoints(score.MaxValueWet)
 
+						if dryMagnitudePoints == 0:
+							dryMagnitudePoints = wetMagnitudePoints
+
+						if wetMagnitudePoints == 0:
+							wetMagnitudePoints = dryMagnitudePoints
+						
+						
 						totalPoints = dryFrequencyPoints + wetFrequencyPoints + dryMagnitudePoints + wetMagnitudePoints
 
 						grade = self.calcGrade(totalPoints)
@@ -123,8 +135,12 @@ class Command(BaseCommand):
 						row.append(pctPassWet)
 						row.append(score.MaxValueDry)
 						row.append(score.MaxValueWet)
-						row.append(totalPoints)
-						row.append(grade)
+						if score.NumberOfSamples >= 9:
+							row.append(totalPoints)
+							row.append(grade)
+						else:
+							row.append('--')
+							row.append('--')
 
 
 
