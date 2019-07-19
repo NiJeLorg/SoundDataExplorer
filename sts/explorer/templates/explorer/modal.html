@@ -1246,7 +1246,7 @@
 		            				<th class="date" data-defaultsort="desc">Date</th>
 		            				<th class="other" data-toggle="tooltip" data-placement="top" title='Enterococcus ("Entero") is a fecal-indicating bacteria, as is fecal coliform.'>Type</th>
 		            				<th class="other" data-toggle="tooltip" data-placement="top" title="The count of bacteria in each sample. For Enterococcus, a count greater than 104 is considered unsafe for swimming and should result in a beach closure.">Score</th>
-		            				<th class="other" data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 72 hours prior to the sample being taken.">Rainfall (In.)</th>
+		            				<th class="other" data-toggle="tooltip" data-placement="top" title="The cumulative amount of rainfall in inches in the 48 hours prior to the sample being taken.">Rainfall (In.)</th>
 		            			</thead>
 		            			<tbody>
 		            				{% for sample in samples %}
@@ -1263,7 +1263,7 @@
 			            						<td class="other success">{{ sample.ResultValue|floatformat }}</td>
 			            					{% endif %}
 
-			            					{% if sample.precipSum >= 0.5 %}
+			            					{% if sample.precipSum >= 0.25 %}
 			            						<td class="other info">{{ sample.precipSum|floatformat:2 }}</td>
 			            					{% else %}
 			            						<td class="other warning">{{ sample.precipSum|floatformat:2 }}</td>

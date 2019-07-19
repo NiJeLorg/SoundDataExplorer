@@ -110,7 +110,7 @@ SoundExplorerModalMap.prototype.loadPointLayers = function (){
 SoundExplorerModalMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 	if (feature.properties.NumberOfSamples < 9) {
 		var marker = L.circleMarker(latlng, {
-			radius: 5,
+			radius: 0,
 			color: '#636363',
 			weight: 1,
 			opacity: 1,
@@ -119,7 +119,7 @@ SoundExplorerModalMap.getStyleFor_BEACON_POINTS = function (feature, latlng){
 		});		
 	} else {
 		var marker = L.circleMarker(latlng, {
-			radius: 5,
+			radius: 0,
 			color: '#636363',
 			weight: 1,
 			opacity: 1,
@@ -620,7 +620,7 @@ SoundExplorerModalMap.FrequencyPoints = function (d){
 
 SoundExplorerModalMap.createBEACON_D3_POINTS = function (features, thismap) {
 	var circleRadius = 21;
-	var circleStroke = 4;
+	var circleStroke = 2;
 	var innerRadius = 21;
 	var outerRadius = 24;
 

@@ -56,7 +56,7 @@ function SoundExplorerMap() {
 	this.map.addControl(L.control.zoom({ position: 'topright' }));
 	
 	//load geocoder control
-	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Google()}));
+	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Nominatim()}));
 	
 	//load scale bars
 	this.map.addControl(L.control.scale());
@@ -137,13 +137,23 @@ SoundExplorerMap.onEachFeature_BEACON_POINTS = function(feature,layer){
 		// draw grade seal after popup is open
 		SoundExplorerMap.createGrade(feature);
 
-		SoundExplorerMap.createFrequency(feature.properties.frequencyDryPoints, "#dryFrequency", "#dryFrequencyText");
+		if (feature.properties.TotalDryWeatherSamples > 0) {
+			SoundExplorerMap.createFrequency(feature.properties.frequencyDryPoints, "#dryFrequency", "#dryFrequencyText");
 
-		SoundExplorerMap.createMagnitude(feature.properties.magnitudeDryPoints, "#dryMagnitude", "#dryMagnitudeText");
+			SoundExplorerMap.createMagnitude(feature.properties.magnitudeDryPoints, "#dryMagnitude", "#dryMagnitudeText");
+		} else {
+			SoundExplorerMap.createFrequency(0, "#dryFrequency", "#dryFrequencyText");
+			SoundExplorerMap.createMagnitude(0, "#dryMagnitude", "#dryMagnitudeText");
+		}
 
-		SoundExplorerMap.createFrequency(feature.properties.frequencyWetPoints, "#wetFrequency", "#wetFrequencyText");
+		if (feature.properties.TotalWetWeatherSamples > 0) {
+			SoundExplorerMap.createFrequency(feature.properties.frequencyWetPoints, "#wetFrequency", "#wetFrequencyText");
 
-		SoundExplorerMap.createMagnitude(feature.properties.magnitudeWetPoints, "#wetMagnitude", "#wetMagnitudeText");
+			SoundExplorerMap.createMagnitude(feature.properties.magnitudeWetPoints, "#wetMagnitude", "#wetMagnitudeText");
+		} else {
+			SoundExplorerMap.createFrequency(0, "#wetFrequency", "#wetFrequencyText");
+			SoundExplorerMap.createMagnitude(0, "#wetMagnitude", "#wetMagnitudeText");
+		}
 
 
 	});
@@ -169,7 +179,7 @@ SoundExplorerMap.createGrade = function (feature){
 	var w = 70;
 	var h = 70;
 	var circleRadius = 31;
-	var circleStroke = 4;
+	var circleStroke = 2;
 	var innerRadius = 31;
 	var outerRadius = 34;
 
@@ -722,7 +732,7 @@ SoundExplorerMap.SDEFreqMagColor = function (d){
            d >= 5 ? '#fff200' :
            d >= 3 ? '#f7941d' :
            d >= 1 ? '#ef4136' :
-                   	'#545454' ;	
+                   	'#bcbec0' ;	
 }
 
 SoundExplorerMap.frequencyText = function (d){
@@ -747,7 +757,7 @@ SoundExplorerMap.SDEPctPassColor = function (d){
            d >= 11 ? '#fff200' :
            d >= 5  ? '#f7941d' :
            d >= 0  ? '#ef4136' :
-                   	 '#545454' ;	
+                   	 '#bcbec0' ;	
 }
 
 SoundExplorerMap.SDEPctPassGrade = function (d){
@@ -784,7 +794,7 @@ SoundExplorerMap.FrequencyPoints = function (d){
 
 SoundExplorerMap.createBEACON_D3_POINTS = function (features, thismap) {
 	var circleRadius = 21;
-	var circleStroke = 4;
+	var circleStroke = 2;
 	var innerRadius = 21;
 	var outerRadius = 24;
 

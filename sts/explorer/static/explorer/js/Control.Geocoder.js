@@ -326,7 +326,7 @@
 	L.Control.Geocoder.Nominatim = L.Class.extend({
 		options: {
 			serviceUrl: '//nominatim.openstreetmap.org/',
-			geocodingQueryParams: {},
+			geocodingQueryParams: {countrycodes:'us'},
 			reverseQueryParams: {},
 			htmlTemplate: function(r) {
 				var a = r.address,
@@ -354,30 +354,65 @@
 		},
 
 		geocode: function(query, cb, context) {
-			L.Control.Geocoder.jsonp(this.options.serviceUrl + 'search/', L.extend({
-				q: query,
-				limit: 5,
-				format: 'json',
-				addressdetails: 1
-			}, this.options.geocodingQueryParams),
-			function(data) {
-				var results = [];
-				for (var i = data.length - 1; i >= 0; i--) {
-					var bbox = data[i].boundingbox;
-					for (var j = 0; j < 4; j++) bbox[j] = parseFloat(bbox[j]);
-					results[i] = {
-						icon: data[i].icon,
-						name: data[i].display_name,
-						html: this.options.htmlTemplate ?
-							this.options.htmlTemplate(data[i])
-							: undefined,
-						bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
-						center: L.latLng(data[i].lat, data[i].lon),
-						properties: data[i]
+			// create custom database query via ajax to search for a specific beach 
+
+			var matched = false;
+			var results = [];
+
+			MY_MAP.BEACON_POINTS.eachLayer(function (layer) {
+				// hide all labels
+				layer.hideLabel();
+			    var BeachName = layer.feature.properties.BeachName;
+			    if (BeachName.toLowerCase().indexOf(query) != -1){
+			    	matched = true;
+			    	var north = layer.feature.geometry.coordinates[1] + 0.02;
+			    	var east = layer.feature.geometry.coordinates[0] + 0.02;
+			    	var south = layer.feature.geometry.coordinates[1] - 0.02;
+			    	var west = layer.feature.geometry.coordinates[0] - 0.02;
+
+			    	results[0] = {
+						name: BeachName,
+						bbox: L.latLngBounds(L.latLng(north, east), L.latLng(south, west)),
+						center: L.latLng(layer.feature.geometry.coordinates[1], layer.feature.geometry.coordinates[0]),
+						beach: true,
+						layer: layer,
 					};
+									    
 				}
+			});
+
+			if (matched) {
+
 				cb.call(context, results);
-			}, this, 'json_callback');
+
+			} else {
+
+				L.Control.Geocoder.jsonp(this.options.serviceUrl + 'search/', L.extend({
+					q: query,
+					limit: 5,
+					format: 'json',
+					addressdetails: 1
+				}, this.options.geocodingQueryParams),
+				function(data) {
+					var results = [];
+					for (var i = data.length - 1; i >= 0; i--) {
+						var bbox = data[i].boundingbox;
+						for (var j = 0; j < 4; j++) bbox[j] = parseFloat(bbox[j]);
+						results[i] = {
+							icon: data[i].icon,
+							name: data[i].display_name,
+							html: this.options.htmlTemplate ?
+								this.options.htmlTemplate(data[i])
+								: undefined,
+							bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
+							center: L.latLng(data[i].lat, data[i].lon),
+							properties: data[i]
+						};
+					}
+					cb.call(context, results);
+				}, this, 'json_callback');
+				
+			}
 		},
 
 		reverse: function(location, scale, cb, context) {
