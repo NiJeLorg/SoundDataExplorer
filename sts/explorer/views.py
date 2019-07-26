@@ -44,7 +44,10 @@ def index(request):
 	#select the monthly scores for this beach in the dates requested
 	scores = AnnualScores.objects.filter(Year__range=[startDate,endDate])
 
-	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab, 'beachId':beachId, 'beach':beach})
+	# pull average precip by year 
+	avg_precips = AnnualAvgPrecip.objects.filter(Date__range=[date(2004,1,1),endDate])
+
+	return render(request, 'explorer/index.html', {'scores':scores, 'startDate':startDate, 'endDate':endDate, 'tab':tab, 'beachId':beachId, 'beach':beach, 'avg_precips':avg_precips})
 
 def beaconApi(request):
 	response = {}

@@ -204,6 +204,8 @@ body.loading .loading-modal {
 .annualFilter {
   background-color: transparent;
   border: 0;
+  line-height: 18px;
+  vertical-align: text-top;
 }
 
 .annualFilter.active {
@@ -217,6 +219,10 @@ body.loading .loading-modal {
 }
 .annualFilter:focus {
   outline: none;
+}
+
+.annualFilterSmaller {
+  font-size: 0.9em
 }
 
 .rightArrow, .leftArrow {

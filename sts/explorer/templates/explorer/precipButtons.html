@@ -17,6 +17,10 @@
 <script type="text/javascript">
 
   $( document ).ready(function() {
+    let avg_precips = {}
+    {% for p in avg_precips %}
+      avg_precips['{{ p.Date|date:"Y" }}'] = {{ p.AvgPrecipitationIn|floatformat:1 }}
+    {% endfor %}
 
     function drawButtons() {
       var buttons = '';
@@ -32,7 +36,7 @@
           active = '';
           emdash = '&mdash;';
         }
-        buttons += '<button class="annualFilter ' + active + '" type="button" value="' + i + '">' + i + '</button>' + emdash;
+        buttons += '<button class="annualFilter ' + active + '" type="button" value="' + i + '">' + i + '<br /><span class="annualFilterSmaller">' + avg_precips[i] + 'in.</span></button>' + emdash;
       }
       $('#timeButtons').html(buttons);
       var leftPos = $('.annualFilterWrapper').scrollLeft();
