@@ -34,7 +34,7 @@ class Command(BaseCommand):
 						for w in wd:
 							try:
 								daily_precip = float(w.PrecipitationIn)
-							except ValueError as e:
+							except (ValueError, TypeError) as e:
 								pass
 					except WeatherData.DoesNotExist:
 						pass
