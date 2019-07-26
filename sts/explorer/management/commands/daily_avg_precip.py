@@ -22,8 +22,11 @@ class Command(BaseCommand):
 			stations = WeatherStations.objects.distinct()
 			daily_precips = []
 			for station in stations:
-				try: 
-					wd = WeatherData.objects.filter(Station=station, Date=date)[:1]
+				try:
+					if date < twentySixteen:
+						wd = WeatherData.objects.filter(Station=station, Date=date)[:1]
+					else:
+						wd = HourlyWeatherData.objects.filter(Station=station, DateTimeUTC=date)[:1]
 					for w in wd:
 						try:
 							daily_precip = float(w.PrecipitationIn)
