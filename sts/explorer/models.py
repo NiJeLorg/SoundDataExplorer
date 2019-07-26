@@ -159,7 +159,7 @@ class AnnualScores(models.Model):
 	def __str__(self):
 		return self.NumberOfSamples
 
-class DailyAvgPrecip(models.Model):
+class AnnualAvgPrecip(models.Model):
 	Date = models.DateField()
 	AvgPrecipitationIn = models.FloatField()
 
