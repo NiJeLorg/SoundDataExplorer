@@ -159,6 +159,13 @@ class AnnualScores(models.Model):
 	def __str__(self):
 		return self.NumberOfSamples
 
+class DailyAvgPrecip(models.Model):
+	Date = models.DateField()
+	AvgPrecipitationIn = models.FloatField()
+
+	def __str__(self):
+		return self.Date	
+
 
 # models for the CMS below
 # custom image model for Wagtail
