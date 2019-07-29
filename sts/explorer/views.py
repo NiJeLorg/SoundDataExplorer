@@ -26,6 +26,8 @@ import os
 from django.conf import settings
 MEDIA_ROOT = settings.MEDIA_ROOT
 
+from django.db import connection
+
 
 # Create your views here.
 def index(request):	
@@ -464,6 +466,8 @@ def modalApi(request):
 
 	#calculate the geometric mean
 	geomean = gmean(sampleList)
+
+	print connection.queries
 
 	return render(request, 'explorer/modal.html', {'startDate': startDateobject, 'endDate': endDateobject, 'beach':beach , 'tab':tab ,'scores': scores, 'samples': samples, 'latestSample': latestSample, 'earliestSample': earliestSample, 'sampleAggregates':sampleAggregates, 'geomean':geomean, 'folder':folder, 'filename_all':filename_all, 'filename_filtered':filename_filtered, 'beachStory': story['url']})
 
