@@ -56,7 +56,7 @@ function SoundExplorerMap() {
 	this.map.addControl(L.control.zoom({ position: 'topright' }));
 	
 	//load geocoder control
-	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Nominatim()}));
+	// var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Nominatim()}));
 	
 	//load scale bars
 	this.map.addControl(L.control.scale());
@@ -521,13 +521,13 @@ SoundExplorerMap.prototype.loadExtraLayers = function (){
 	*/
 
 	thismap.WASTEWATER_NY = L.esri.featureLayer({
-		url: "http://services.arcgis.com/jDGuO8tYggdCCnUJ/ArcGIS/rest/services/Municipal_wastewater_discharge_facilities_in_NYS/FeatureServer/0",
+		url: "https://services.arcgis.com/jDGuO8tYggdCCnUJ/ArcGIS/rest/services/Municipal_wastewater_discharge_facilities_in_NYS/FeatureServer/0",
 		pointToLayer: SoundExplorerMap.getStyleFor_WASTEWATER,
 		onEachFeature: SoundExplorerMap.onEachFeature_WASTEWATER_NY
 	});
 
 	thismap.LANDUSE = L.esri.dynamicMapLayer({
-	    url: 'http://gis1.usgs.gov/arcgis/rest/services/gap/GAP_Land_Cover_NVC_Class_Landuse/MapServer',
+	    url: 'https://gis1.usgs.gov/arcgis/rest/services/gap/GAP_Land_Cover_NVC_Class_Landuse/MapServer',
 	    opacity: 0.5,
 	    useCors: false
 	});
