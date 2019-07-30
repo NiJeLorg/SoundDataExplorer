@@ -28,7 +28,7 @@ function SoundExplorerMap() {
 	});
 
 	// locate visitor on map
-	this.map.locate();
+	//this.map.locate();
 
 	var that = this;
 	this.map.on('locationfound', function(e) {
@@ -56,7 +56,7 @@ function SoundExplorerMap() {
 	this.map.addControl(L.control.zoom({ position: 'topright' }));
 	
 	//load geocoder control
-	// var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Nominatim()}));
+	var geocoder = this.map.addControl(L.Control.geocoder({collapsed: true, placeholder:'Search...', geocoder:new L.Control.Geocoder.Nominatim()}));
 	
 	//load scale bars
 	this.map.addControl(L.control.scale());
